@@ -3,15 +3,14 @@
 
   <head>
     <meta charset="utf-8"/>
-    <title>Print maps</title>
+    <title>Print Maps</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no"/>
 
     <link rel="stylesheet" href="css/mapbox-gl.css"/>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
-    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-    crossorigin="anonymous">
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
     <link rel="stylesheet" href="css/style.css"/>
-
   </head>
 
   <body>
@@ -29,8 +28,58 @@
         </div>
       </noscript>
 
+      <form id="config">
+          <div class="row">
+            <div class="col-sm-3">
+              <div class="form-group">
+                <label for="trackFile">Upload track</label>
+                <input type="file" id="trackFile" accept=".geojson,.gpx,.kml">
+              </div>
+            </div>
+
+            <div class="col-sm-3">
+              <div class="form-group">
+                <label for="style">Map style</label>
+                <select id="style" class="form-control">
+                  <option value="outdoors">Outdoors</option>
+                  <option value="bright">Bright</option>
+                  <option value="emerald">Emerald</option>
+                  <option value="light">Light</option>
+                  <option value="streets">Streets</option>
+                  <option value="satellite">Satellite</option>
+                  <option value="satellite-streets">Satellite and Streets</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="col-sm-3">
+              <div class="form-group">
+                <label for="scale">Map scale</label>
+                <div class="input-group">
+                  <span class="input-group-addon" id="basic-addon1">1:</span>
+                  <input id="scale" type="number" class="form-control" min="5000" step="1000" value="75000">
+                </div>
+              </div>
+            </div>
+
+            <div class="col-sm-3">
+              <div class="form-group">
+                <label for="paperFormat">Map format</label>
+                <select id="paperFormat" class="form-control">
+                  <option value="a5">A5</option>
+                  <option value="a4">A4</option>
+                  <option value="letter">Letter</option>
+                </select>
+              </div>
+            </div>
+
+          </div>
+      </form>
+
+
+
       <div class="row">
-        <div class="col-sm-12 ">
+        <div class="col-sm-12">
           <div class="panel panel-default">
             <div class="panel-heading">
               <h3 class="panel-title">Preview Map</h3>
@@ -45,6 +94,5 @@
     </div>
 
     <script type="text/javascript" src="js/bundle.js"></script>
-
   </body>
 </html>
