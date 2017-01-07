@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8"/>
+    <title>Print maps</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no"/>
+
+    <link rel="stylesheet" href="css/mapbox-gl.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+    crossorigin="anonymous">
+    <link rel="stylesheet" href="css/style.css"/>
+
+  </head>
+
+  <body>
+    <div class="container">
+
+      <div class="page-header">
+        <h1>Print Maps
+          <small>High-resolution maps in the browser, for printing.</small>
+        </h1>
+      </div>
+
+      <noscript>
+        <div class="alert alert-danger" role="alert">
+          This site requires JavaScript to function, but it seems to be disabled in your browser.
+        </div>
+      </noscript>
+
+      <div class="row">
+        <div class="col-sm-12 ">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3 class="panel-title">Preview Map</h3>
+            </div>
+            <div class="panel-body map-container">
+              <div id="map"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <script type="text/javascript" src="js/bundle.js"></script>
+
+  </body>
+</html>
