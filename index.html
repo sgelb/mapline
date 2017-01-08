@@ -30,10 +30,19 @@
 
       <form id="config">
           <div class="row">
+
             <div class="col-sm-3">
               <div class="form-group">
-                <label for="trackFile">Upload track</label>
-                <input type="file" id="trackFile" accept=".geojson,.gpx,.kml">
+                <label for="trackFile">Track</label>
+                <div class="input-group">
+                  <label class="input-group-btn">
+                    <span class="btn btn-default">
+                      Browse&hellip;
+                    <input type="file" id="trackFile" style="display: none;" accept=".geojson,.gpx">
+                  </span>
+                  </label>
+                  <input type="text" id="trackFileName" class="form-control" readonly>
+                </div>
               </div>
             </div>
 

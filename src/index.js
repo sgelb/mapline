@@ -1,4 +1,7 @@
 var mapboxgl = require('mapbox-gl');
+var tj = require('@mapbox/togeojson');
+DOMParser = require('xmldom').DOMParser;
+
 var mapboxToken = require('./mapboxToken.js');
 mapboxgl.accessToken = mapboxToken();
 
@@ -18,12 +21,16 @@ var toStyleURI = function(style) {
 var form = document.getElementById('config');
 var trackData;
 
-form.trackFile.addEventListener('change', function(e) {
+form.trackFile.addEventListener('change', function() {
   console.log("Load track");
   var reader = new FileReader();
+  var filename = this.files[0].name;
+  var ext = filename.split('.').pop().toLowerCase();
+
   reader.onload = function(e) {
-    trackData = JSON.parse(reader.result);
+    trackData = togeojson(ext, reader.result);
     addTrackLayer();
+    form.trackFileName.value = filename;
   }
   reader.readAsText(this.files[0]);
 }, false);
@@ -40,6 +47,18 @@ form.paperformat.addEventListener('change', function(e) {
   console.log("Changed paper format: " + this.value);
 });
 
+function togeojson(format, data) {
+  if (format === 'geojson') {
+    return JSON.parse(data);
+  }
+
+  if (format === 'gpx') {
+    if (typeof data === 'string') {
+      data = (new DOMParser()).parseFromString(data, 'text/xml');
+    }
+    return tj[format](data);
+  }
+}
 
 //
 // Track layer
@@ -69,6 +88,7 @@ function addTrackLayer() {
 
 }
 
+
 //
 // Preview map
 //
@@ -83,6 +103,9 @@ var map  = new mapboxgl.Map({
 map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 map.addControl(new mapboxgl.ScaleControl());
 map.on('style.load', function() {
-  if (trackData) addTrackLayer();
+  // reloads tracklayer after switching styles
+  if (trackData) {
+    addTrackLayer();
+  }
 });
 
