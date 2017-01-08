@@ -30,8 +30,11 @@ function showAlertBox(message) {
 //
 
 var form = document.getElementById('config');
-var trackData;
 
+
+// track data
+
+var trackData;
 form.trackFile.addEventListener('change', function() {
   console.log("Load track");
   var reader = new FileReader();
@@ -46,18 +49,37 @@ form.trackFile.addEventListener('change', function() {
       return;
     }
     addTrackLayer();
+    toggleFileInputVisibility();
     form.trackFileName.value = filename;
   }
   reader.readAsText(this.files[0]);
 }, false);
 
+form.querySelector('#trackField .input-group-addon').style.cursor = 'pointer';
+form.querySelector('#trackField .input-group-addon').addEventListener('click', function() {
+  toggleFileInputVisibility();
+  map.removeLayer('route');
+  map.removeSource('route');
+})
+
+function toggleFileInputVisibility() {
+  form.querySelector('#trackBtn').classList.toggle('hidden');
+  form.querySelector('#trackField').classList.toggle('hidden');
+}
+
+// map style
+
 form.style.addEventListener('change', function(e) {
   map.setStyle(toStyleURI(this.value));
 });
 
+// map scale
+
 form.scale.addEventListener('change', function() {
   console.log("Changed scale: " + this.value);
 });
+
+// paper format
 
 form.paperformat.addEventListener('change', function(e) {
   console.log("Changed paper format: " + this.value);
@@ -119,7 +141,7 @@ var map  = new mapboxgl.Map({
 map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 map.addControl(new mapboxgl.ScaleControl());
 map.on('style.load', function() {
-  // reloads tracklayer after switching styles
+  // reload existing tracklayer after switching styles
   if (trackData) {
     addTrackLayer();
   }

@@ -30,66 +30,70 @@
 
       <div class="alert alert-danger alert-dismissible hidden" id="alertbox" role="alert">
         <button type="button" class="close" aria-hidden="true">
-          &times;
+          <span class="glyphicon glyphicon-remove"></span>
         </button>
         <div id="alert-msg"></div>
       </div>
 
       <form id="config">
-          <div class="row">
+        <div class="row">
 
-            <div class="col-sm-3">
-              <div class="form-group">
-                <label for="trackFile">Track</label>
-                <div class="input-group">
-                  <label class="input-group-btn">
-                    <span class="btn btn-default">
-                      Browse&hellip;
-                    <input type="file" id="trackFile" style="display: none;" accept=".geojson,.gpx">
-                  </span>
-                  </label>
-                  <input type="text" id="trackFileName" class="form-control" readonly>
-                </div>
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label for="trackFile">Track</label>
+
+              <label id="trackBtn" class="input-group">
+                <span class="btn btn-default">
+                  Browse local files
+                  <input type="file" id="trackFile" style="display: none;" accept=".geojson,.gpx">
+                </span>
+              </label>
+
+              <div id="trackField" class="hidden input-group">
+                <input type="text" id="trackFileName" class="form-control" readonly>
+                <span class="input-group-addon"><span class="glyphicon glyphicon-trash"</span></span>
               </div>
-            </div>
 
-            <div class="col-sm-3">
-              <div class="form-group">
-                <label for="style">Map style</label>
-                <select id="style" class="form-control">
-                  <option value="outdoors">Outdoors</option>
-                  <option value="bright">Bright</option>
-                  <option value="dark">Dark</option>
-                  <option value="light">Light</option>
-                  <option value="streets">Streets</option>
-                  <option value="satellite">Satellite</option>
-                  <option value="satellite-streets">Satellite and Streets</option>
-                </select>
-              </div>
             </div>
-
-            <div class="col-sm-3">
-              <div class="form-group">
-                <label for="scale">Map scale</label>
-                <div class="input-group">
-                  <span class="input-group-addon" id="basic-addon1">1:</span>
-                  <input id="scale" type="number" class="form-control" min="5000" step="1000" value="75000">
-                </div>
-              </div>
-            </div>
-
-            <div class="col-sm-3">
-              <div class="form-group">
-                <label for="paperformat">Map format</label>
-                <select id="paperformat" class="form-control">
-                  <option value="a5">A5</option>
-                  <option value="a4">A4</option>
-                  <option value="letter">Letter</option>
-                </select>
-              </div>
-            </div>
-
           </div>
+
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label for="style">Map style</label>
+              <select id="style" class="form-control">
+                <option value="outdoors">Outdoors</option>
+                <option value="bright">Bright</option>
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+                <option value="streets">Streets</option>
+                <option value="satellite">Satellite</option>
+                <option value="satellite-streets">Satellite and Streets</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label for="scale">Map scale</label>
+              <div class="input-group">
+                <span class="input-group-addon" id="basic-addon1">1:</span>
+                <input id="scale" type="number" class="form-control" min="5000" step="1000" value="75000">
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-3">
+            <div class="form-group">
+              <label for="paperformat">Map format</label>
+              <select id="paperformat" class="form-control">
+                <option value="a5">A5</option>
+                <option value="a4">A4</option>
+                <option value="letter">Letter</option>
+              </select>
+            </div>
+          </div>
+
+        </div>
       </form>
 
 
