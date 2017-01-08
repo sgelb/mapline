@@ -13,6 +13,17 @@ var toStyleURI = function(style) {
   return 'mapbox://styles/mapbox/' + style + '-v9?optimize=true';
 }
 
+var alertBox = document.getElementById('alertbox');
+alertBox.querySelector('.close').addEventListener('click', function() {
+  alertBox.classList.add('hidden');
+});
+
+function showAlertBox(message) {
+  var alert = alertBox.querySelector('#alert-msg');
+  alert.innerHTML = message;
+  alertBox.classList.remove('hidden');
+}
+
 
 //
 // Input forms
@@ -28,7 +39,12 @@ form.trackFile.addEventListener('change', function() {
   var ext = filename.split('.').pop().toLowerCase();
 
   reader.onload = function(e) {
-    trackData = togeojson(ext, reader.result);
+    try {
+      trackData = togeojson(ext, reader.result);
+    } catch (e) {
+      showAlertBox("Converting " + filename + " failed. " + e);
+      return;
+    }
     addTrackLayer();
     form.trackFileName.value = filename;
   }
@@ -53,11 +69,11 @@ function togeojson(format, data) {
   }
 
   if (format === 'gpx') {
-    if (typeof data === 'string') {
-      data = (new DOMParser()).parseFromString(data, 'text/xml');
-    }
+    data = (new DOMParser()).parseFromString(data, 'text/xml');
     return tj[format](data);
   }
+
+  throw "Unknown file format: " + format;
 }
 
 //
