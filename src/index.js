@@ -131,13 +131,18 @@ function addTrackLayer() {
 // Preview map
 //
 
-var map  = new mapboxgl.Map({
-  container: 'map',
-  center: [0, 0],
-  zoom: 0.5,
-  style: toStyleURI(form.style.value),
-});
-
+var map;
+try {
+  map = new mapboxgl.Map({
+    container: 'map',
+    center: [0, 0],
+    zoom: 0.5,
+    style: toStyleURI(form.style.value),
+  });
+} catch(e) {
+  showAlertBox("Initiating MapboxGL failed. " + e);
+  return;
+}
 map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 map.addControl(new mapboxgl.ScaleControl());
 map.on('style.load', function() {
