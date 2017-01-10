@@ -1,7 +1,7 @@
 'use strict';
 
 const mapboxgl = require('mapbox-gl');
-const trackTools = require('./trackTools.js');
+const trackUtils = require('./trackUtils.js');
 
 mapboxgl.accessToken = require('./mapboxToken.js');
 
@@ -31,7 +31,6 @@ function showAlertBox(message) {
 
 var form = document.getElementById('config');
 
-
 // track data
 
 var track = {};
@@ -43,17 +42,17 @@ form.trackFile.addEventListener('change', function() {
 
   reader.onload = function(e) {
     try {
-      track.data = trackTools.togeojson(ext, reader.result);
+      track.data = trackUtils.togeojson(ext, reader.result);
     } catch (e) {
       showAlertBox("Converting " + filename + " failed. " + e);
       return;
     }
-    track.data = trackTools.reduce(track.data)
+    track.data = trackUtils.reduce(track.data)
     addTrackLayer();
     if (!track.bounds) {
-      track.bounds = trackTools.bounds(track.data);
+      track.bounds = trackUtils.bounds(track.data);
     }
-    track.totalDistance = trackTools.totalDistance(track.data);
+    track.totalDistance = trackUtils.totalDistance(track.data);
     console.log(track.totalDistance + "km");
     map.fitBounds(track.bounds, {padding: 10});
     toggleFileInputVisibility();
