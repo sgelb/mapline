@@ -5,6 +5,19 @@ const DOMParser = require('xmldom').DOMParser;
 
 var trackTools = {};
 
+// return track reduced to LineString and and MultiLineString
+trackTools.reduce = function(track) {
+  var reducedFeatures = track.features.filter(function(feature) {
+    var type = feature.geometry.type;
+    return (type === 'LineString' || type === 'MultiLineString');
+  });
+
+  return {
+    "type": "FeatureCollection",
+    "features": reducedFeatures
+  };
+}
+
 // convert data to geojson
 trackTools.togeojson = function(format, data) {
   if (format === 'geojson') {

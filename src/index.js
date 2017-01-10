@@ -48,6 +48,7 @@ form.trackFile.addEventListener('change', function() {
       showAlertBox("Converting " + filename + " failed. " + e);
       return;
     }
+    track.data = trackTools.reduce(track.data)
     addTrackLayer();
     toggleFileInputVisibility();
     form.trackFileName.value = filename;
