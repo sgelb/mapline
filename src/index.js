@@ -50,6 +50,10 @@ form.trackFile.addEventListener('change', function() {
     }
     track.data = trackTools.reduce(track.data)
     addTrackLayer();
+    if (!track.bounds) {
+      track.bounds = trackTools.bounds(track.data);
+    }
+    map.fitBounds(track.bounds, {padding: 10});
     toggleFileInputVisibility();
     form.trackFileName.value = filename;
   }

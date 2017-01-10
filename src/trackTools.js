@@ -1,9 +1,15 @@
 'use strict';
 
+const geojsonExtent = require('geojson-extent');
 const tj = require('@mapbox/togeojson');
 const DOMParser = require('xmldom').DOMParser;
 
 var trackTools = {};
+
+// return bounds of track
+trackTools.bounds = function(track) {
+  return geojsonExtent(track);
+}
 
 // return track reduced to LineString and and MultiLineString
 trackTools.reduce = function(track) {
