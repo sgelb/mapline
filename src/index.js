@@ -1,9 +1,9 @@
-var mapboxgl = require('mapbox-gl');
-var tj = require('@mapbox/togeojson');
-DOMParser = require('xmldom').DOMParser;
+'use strict';
 
-var mapboxToken = require('./mapboxToken.js');
-mapboxgl.accessToken = mapboxToken();
+const mapboxgl = require('mapbox-gl');
+const trackTools = require('./trackTools.js');
+
+mapboxgl.accessToken = require('./mapboxToken.js');
 
 //
 // Helper
@@ -34,7 +34,7 @@ var form = document.getElementById('config');
 
 // track data
 
-var trackData;
+var track = {};
 form.trackFile.addEventListener('change', function() {
   console.log("Load track");
   var reader = new FileReader();
@@ -43,7 +43,7 @@ form.trackFile.addEventListener('change', function() {
 
   reader.onload = function(e) {
     try {
-      trackData = togeojson(ext, reader.result);
+      track.data = trackTools.togeojson(ext, reader.result);
     } catch (e) {
       showAlertBox("Converting " + filename + " failed. " + e);
       return;
@@ -52,8 +52,9 @@ form.trackFile.addEventListener('change', function() {
     toggleFileInputVisibility();
     form.trackFileName.value = filename;
   }
+
   reader.readAsText(this.files[0]);
-}, false);
+});
 
 form.querySelector('#trackField .input-group-addon').style.cursor = 'pointer';
 form.querySelector('#trackField .input-group-addon').addEventListener('click', function() {
@@ -85,27 +86,15 @@ form.paperformat.addEventListener('change', function(e) {
   console.log("Changed paper format: " + this.value);
 });
 
-function togeojson(format, data) {
-  if (format === 'geojson') {
-    return JSON.parse(data);
-  }
-
-  if (format === 'gpx') {
-    data = (new DOMParser()).parseFromString(data, 'text/xml');
-    return tj[format](data);
-  }
-
-  throw "Unknown file format: " + format;
-}
-
 //
 // Track layer
 //
 
 function addTrackLayer() {
+  console.log("addTrackLayer");
   map.addSource('route', {
     type: 'geojson',
-    data: trackData,
+    data: track.data,
   });
 
   map.addLayer({
@@ -137,7 +126,7 @@ try {
     container: 'map',
     center: [0, 0],
     zoom: 0.5,
-    style: toStyleURI(form.style.value),
+    style: toStyleURI(form.style.value)
   });
 } catch(e) {
   showAlertBox("Initiating MapboxGL failed. " + e);
@@ -147,7 +136,7 @@ map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 map.addControl(new mapboxgl.ScaleControl());
 map.on('style.load', function() {
   // reload existing tracklayer after switching styles
-  if (trackData) {
+  if (track.data) {
     addTrackLayer();
   }
 });
