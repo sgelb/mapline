@@ -1,6 +1,7 @@
 'use strict';
 
 const geojsonExtent = require('geojson-extent');
+const lineDistance = require('@turf/line-distance');
 const tj = require('@mapbox/togeojson');
 const DOMParser = require('xmldom').DOMParser;
 
@@ -22,6 +23,11 @@ trackTools.reduce = function(track) {
     "type": "FeatureCollection",
     "features": reducedFeatures
   };
+}
+
+// return total distance of track
+trackTools.totalDistance = function(track) {
+  return lineDistance(track).toFixed(2);
 }
 
 // convert data to geojson

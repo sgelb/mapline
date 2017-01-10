@@ -53,6 +53,8 @@ form.trackFile.addEventListener('change', function() {
     if (!track.bounds) {
       track.bounds = trackTools.bounds(track.data);
     }
+    track.totalDistance = trackTools.totalDistance(track.data);
+    console.log(track.totalDistance + "km");
     map.fitBounds(track.bounds, {padding: 10});
     toggleFileInputVisibility();
     form.trackFileName.value = filename;
