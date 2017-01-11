@@ -8,7 +8,6 @@ mapboxgl.accessToken = require('./mapboxToken.js');
 //
 // Helper
 //
-
 var toStyleURI = function(style) {
   return 'mapbox://styles/mapbox/' + style + '-v9?optimize=true';
 }
@@ -28,8 +27,8 @@ function showAlertBox(message) {
 //
 // Input forms
 //
-
-var form = document.getElementById('config');
+var form = document.getElementById("config");
+var generateBtn = document.getElementById("generate-btn");
 
 // track data
 
@@ -57,7 +56,7 @@ form.trackFile.addEventListener('change', function() {
     map.fitBounds(track.bounds, {padding: 10});
     toggleFileInputVisibility();
     form.trackFileName.value = filename;
-  }
+  };
 
   reader.readAsText(this.files[0]);
 });
@@ -72,6 +71,11 @@ form.querySelector('#trackField .input-group-addon').addEventListener('click', f
 function toggleFileInputVisibility() {
   form.querySelector('#trackBtn').classList.toggle('hidden');
   form.querySelector('#trackField').classList.toggle('hidden');
+  if (generateBtn.hasAttribute("disabled")) {
+    generateBtn.removeAttribute("disabled");
+  } else {
+    generateBtn.setAttribute("disabled", true);
+  }
 }
 
 // map style
@@ -91,6 +95,37 @@ form.scale.addEventListener('change', function() {
 form.paperformat.addEventListener('change', function(e) {
   console.log("Changed paper format: " + this.value);
 });
+
+// generate button
+generateBtn.setAttribute("disabled", true);
+generateBtn.addEventListener("click", generateSheets);
+
+function generateSheets() {
+  // calculate sheet bounds from track, scale and paper format
+  var sheets = trackUtils.sheets(
+    track.data,
+    form.scale.value,
+    form.paperformat.value,
+    addBboxLayer
+  );
+  // show "create pdf" button
+}
+
+function addBboxLayer(id, bbox) {
+  map.addLayer({
+    "id": id,
+    "type": "line",
+    "source": {
+      "type": "geojson",
+      "data": {
+        "type": "Feature",
+        "geometry": { "type": "LineString", "coordinates": bbox }
+      }
+    },
+    "layout": { "line-join": "round" },
+    "paint": { "line-color": "#ffcocb", "line-width": 8, "line-opacity": 0.6 }
+  });
+}
 
 //
 // Track layer

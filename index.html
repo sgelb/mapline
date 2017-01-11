@@ -42,7 +42,8 @@
             <div class="form-group">
               <label for="trackFile">Track</label>
 
-              <label id="trackBtn" class="input-group">
+              <label id="trackBtn" class="input-group" for="trackFile">
+                <!-- FIXME: focus button and open file dialog using keys -->
                 <span class="btn btn-default">
                   Browse local files
                   <input type="file" id="trackFile" style="display: none;" accept=".geojson,.gpx">
@@ -109,6 +110,14 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-8">
+          <button type="submit" class="btn btn-primary btn-lg" id="generate-btn">Generate map sheets</button>
+          <div id="spinner"></div>
+        </div>
+        <div class="col-sm-4" id="info"></div>
       </div>
 
     </div>
