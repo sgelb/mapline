@@ -181,4 +181,12 @@ map.on('style.load', function() {
     addTrackLayer();
   }
 });
+map.on("mousemove", function(e) {
+  document.getElementById(
+    "info"
+  ).innerHTML = // e.point is the x, y coordinates of the mousemove event relative
+  // to the top-left corner of the map
+  // e.lngLat is the longitude, latitude geographical position of the event
+  "lat: " + e.lngLat.lat.toFixed(4) + ", lng:" + e.lngLat.lng.toFixed(4);
+});
 
