@@ -1,9 +1,10 @@
 'use strict';
 
 const mapboxgl = require('mapbox-gl');
-const trackUtils = require('./trackUtils.js');
+const trackUtils = require('./trackutils.js');
+const mapcutter = require('./mapcutter.js');
 
-mapboxgl.accessToken = require('./mapboxToken.js');
+mapboxgl.accessToken = require('./mapboxtoken.js');
 
 //
 // Helper
@@ -102,7 +103,7 @@ generateBtn.addEventListener("click", generateSheets);
 
 function generateSheets() {
   // calculate sheet bounds from track, scale and paper format
-  var sheets = trackUtils.sheets(
+  var sheets = mapcutter.bboxes(
     track.data,
     form.scale.value,
     form.paperformat.value,
@@ -119,11 +120,19 @@ function addBboxLayer(id, bbox) {
       "type": "geojson",
       "data": {
         "type": "Feature",
-        "geometry": { "type": "LineString", "coordinates": bbox }
+        "geometry": {
+          "type": "LineString",
+          "coordinates": bbox }
       }
     },
-    "layout": { "line-join": "round" },
-    "paint": { "line-color": "#ffcocb", "line-width": 8, "line-opacity": 0.6 }
+    "layout": {
+      "line-join": "round"
+    },
+    "paint": {
+      "line-color": "#ffcocb",
+      "line-width": 8,
+      "line-opacity": 0.6
+    }
   });
 }
 
