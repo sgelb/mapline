@@ -47,17 +47,25 @@ Bbox.prototype.largerThan = function(maxWidth, maxHeight) {
     this.bbox[1]
   ]);
 
-  return width > maxWidth || height > maxHeight;
+  return (width > maxWidth || height > maxHeight) && (height > maxWidth || width > maxHeight)
 };
 
 // resize bbox to width and height
 Bbox.prototype.resize = function(width, height) {
-  var wDiff = 0.5 * (width - this.ruler.distance(
+  var w = this.ruler.distance(
     [ this.bbox[0], this.bbox[3] ], 
-    [ this.bbox[2], this.bbox[3] ]));
-  var hDiff = 0.5 * (height - this.ruler.distance(
+    [ this.bbox[2], this.bbox[3] ]);
+  var h = this.ruler.distance(
     [ this.bbox[0], this.bbox[3] ], 
-    [ this.bbox[0], this.bbox[1] ]));
+    [ this.bbox[0], this.bbox[1] ]);
+
+  var wDiff = 0.5 * (width - w);
+  var hDiff = 0.5 * (height - h);
+
+  if (h <= width && w <= height) {
+    wDiff = 0.5 * (height - w);
+    hDiff = 0.5 * (width - h);
+  }
 
   this.bbox[0] = this.ruler.destination([this.bbox[0], this.bbox[3]], wDiff, 270)[0];
   this.bbox[1] = this.ruler.destination([this.bbox[0], this.bbox[1]], hDiff, 180)[1];
