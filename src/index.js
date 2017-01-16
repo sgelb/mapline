@@ -29,102 +29,126 @@ function showAlertBox(message) {
 // Input forms
 //
 var form = document.getElementById("config");
-var generateBtn = document.getElementById("generate-btn");
+var generatePdfBtn = document.getElementById("generate-btn");
 
-// track data
+// Track
 
 var track = {};
 form.trackFile.addEventListener('change', function() {
+  loadTrack(this.files[0]);
+});
+
+var emptyData = {
+  "type": "FeatureCollection",
+  "features": []
+};
+
+
+function loadTrack(file) {
   console.log("Load track");
   var reader = new FileReader();
-  var filename = this.files[0].name;
+  var filename = file.name;
   var ext = filename.split('.').pop().toLowerCase();
 
-  reader.onload = function(e) {
+  reader.onload = function() {
     try {
       track.data = trackUtils.togeojson(ext, reader.result);
     } catch (e) {
       showAlertBox("Converting " + filename + " failed. " + e);
       return;
     }
+
+    // track
     track.data = trackUtils.reduce(track.data)
-    addTrackLayer();
+    map.getSource("track").setData(track.data);
+
+    // cutouts
+    track.cutouts = mapcutter.featurecollection(track.data, form.scale.value,
+      form.paperformat.value);
+    map.getSource("cutouts").setData(track.cutouts);
+
+    // bounds
     if (!track.bounds) {
-      track.bounds = trackUtils.bounds(track.data);
+      track.bounds = trackUtils.bounds(track.cutouts);
     }
+    map.fitBounds(track.bounds, {padding: 10});
+
+    // track info
     track.totalDistance = trackUtils.totalDistance(track.data);
     console.log(track.totalDistance + "km");
-    map.fitBounds(track.bounds, {padding: 10});
+
+    // UI change
     toggleFileInputVisibility();
     form.trackFileName.value = filename;
   };
 
-  reader.readAsText(this.files[0]);
-});
+  reader.readAsText(file);
+
+}
 
 form.querySelector('#trackField .input-group-addon').style.cursor = 'pointer';
 form.querySelector('#trackField .input-group-addon').addEventListener('click', function() {
   toggleFileInputVisibility();
-  map.removeLayer('route');
-  map.removeSource('route');
+  // remove track data
+  map.getSource("track").setData(emptyData);
+  map.getSource("cutouts").setData(emptyData);
 })
 
 function toggleFileInputVisibility() {
   form.querySelector('#trackBtn').classList.toggle('hidden');
   form.querySelector('#trackField').classList.toggle('hidden');
-  if (generateBtn.hasAttribute("disabled")) {
-    generateBtn.removeAttribute("disabled");
+  if (generatePdfBtn.hasAttribute("disabled")) {
+    generatePdfBtn.removeAttribute("disabled");
   } else {
-    generateBtn.setAttribute("disabled", true);
+    generatePdfBtn.setAttribute("disabled", true);
   }
 }
 
 // map style
 
-form.style.addEventListener('change', function(e) {
+form.style.addEventListener('change', function() {
   map.setStyle(toStyleURI(this.value));
 });
 
 // map scale
 
 form.scale.addEventListener('change', function() {
-  console.log("Changed scale: " + this.value);
+  if (track.data) {
+    track.cutouts = mapcutter.featurecollection(track.data, form.scale.value,
+      form.paperformat.value);
+    map.getSource("cutouts").setData(track.cutouts);
+  }
 });
 
 // paper format
 
-form.paperformat.addEventListener('change', function(e) {
-  console.log("Changed paper format: " + this.value);
+form.paperformat.addEventListener('change', function() {
+  if (track.data) {
+    track.cutouts = mapcutter.featurecollection(track.data, form.scale.value,
+      form.paperformat.value);
+    map.getSource("cutouts").setData(track.cutouts);
+  }
 });
 
 // generate button
-generateBtn.setAttribute("disabled", true);
-generateBtn.addEventListener("click", generateSheets);
+generatePdfBtn.setAttribute("disabled", true);
+generatePdfBtn.addEventListener("click", generatePDF);
 
-function generateSheets() {
-  // calculate sheet bounds from track, scale and paper format
-  var sheets = mapcutter.bboxes(
-    track.data,
-    form.scale.value,
-    form.paperformat.value,
-    addBboxLayer
-  );
-  // show "create pdf" button
+function generatePDF() {
+  console.log("TODO: generate PDF");
 }
 
-function addBboxLayer(id, bbox) {
+// Cutouts layer
+function addCutoutsLayer() {
+  map.addSource("cutouts", {
+    "type": "geojson",
+    "data": emptyData
+  });
+
   map.addLayer({
-    "id": id,
+    "id": "cutouts-outline",
     "type": "line",
-    "source": {
-      "type": "geojson",
-      "data": {
-        "type": "Feature",
-        "geometry": {
-          "type": "LineString",
-          "coordinates": bbox }
-      }
-    },
+    "source": "cutouts",
     "layout": {
       "line-join": "round"
     },
@@ -134,27 +158,31 @@ function addBboxLayer(id, bbox) {
       "line-opacity": 0.6
     }
   });
+
+  map.addLayer({
+    "id": "cutouts-fill",
+    "type": "fill",
+    "source": "cutouts",
+    "paint": {
+      "fill-opacity": 0
+    }
+  });
 }
 
-//
 // Track layer
-//
-
 function addTrackLayer() {
-  console.log("addTrackLayer");
-  map.addSource('route', {
+  map.addSource('track', {
     type: 'geojson',
-    data: track.data,
+    "data": emptyData
   });
 
   map.addLayer({
-    "id": "route",
+    "id": "track",
     "type": "line",
-    "source": "route",
+    "source": "track",
     "layout": {
       "line-join": "round",
       "line-cap": "round"
-
     },
     "paint": {
       "line-color": "#888888",
@@ -162,7 +190,6 @@ function addTrackLayer() {
       "line-opacity": 0.6,
     },
   });
-
 }
 
 
@@ -182,12 +209,21 @@ try {
   showAlertBox("Initiating MapboxGL failed. " + e);
   return;
 }
+
 map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 map.addControl(new mapboxgl.ScaleControl());
+
+
 map.on('style.load', function() {
-  // reload existing tracklayer after switching styles
+  // (re-)load custom layers
+  addTrackLayer();
+  addCutoutsLayer();
+
   if (track.data) {
-    addTrackLayer();
+    map.getSource("track").setData(track.data);
+  }
+  if (track.cutouts) {
+    map.getSource("cutouts").setData(track.cutouts);
   }
 });
 map.on("mousemove", function(e) {
