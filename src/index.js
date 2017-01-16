@@ -6,24 +6,9 @@ const mapcutter = require('./mapcutter.js');
 
 mapboxgl.accessToken = require('./mapboxtoken.js');
 
-//
-// Helper
-//
-var toStyleURI = function(style) {
-  return 'mapbox://styles/mapbox/' + style + '-v9?optimize=true';
+if (!mapboxgl.supported()) {
+  showAlertBox("Sorry, your browser does not support Mapbox GL JS.");
 }
-
-var alertBox = document.getElementById('alertbox');
-alertBox.querySelector('.close').addEventListener('click', function() {
-  alertBox.classList.add('hidden');
-});
-
-function showAlertBox(message) {
-  var alert = alertBox.querySelector('#alert-msg');
-  alert.innerHTML = message;
-  alertBox.classList.remove('hidden');
-}
-
 
 //
 // Input forms
@@ -226,12 +211,31 @@ map.on('style.load', function() {
     map.getSource("cutouts").setData(track.cutouts);
   }
 });
-map.on("mousemove", function(e) {
-  document.getElementById(
-    "info"
-  ).innerHTML = // e.point is the x, y coordinates of the mousemove event relative
-  // to the top-left corner of the map
-  // e.lngLat is the longitude, latitude geographical position of the event
-  "lat: " + e.lngLat.lat.toFixed(4) + ", lng:" + e.lngLat.lng.toFixed(4);
+
+map.on("mousedown", function(e) {
+  var features = map.queryRenderedFeatures(e.point, {layers: ['cutouts-fill']});
+  if (features.length) {
+    document.getElementById("info").innerHTML =
+    JSON.stringify(features[0].geometry.coordinates, null, 2);
+  }
 });
+
+//
+// Helper
+//
+
+function toStyleURI(style) {
+  return 'mapbox://styles/mapbox/' + style + '-v9?optimize=true';
+}
+
+function showAlertBox(message) {
+  var alertBox = document.getElementById('alertbox');
+  alertBox.querySelector('.close').addEventListener('click', function() {
+    alertBox.classList.add('hidden');
+  });
+
+  var alert = alertBox.querySelector('#alert-msg');
+  alert.innerHTML = message;
+  alertBox.classList.remove('hidden');
+}
 
