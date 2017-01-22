@@ -1,15 +1,7 @@
 "use strict";
 
 const cheapRuler = require("cheap-ruler");
-
-const paperformats = {
-  "a3": [ 297, 420 ],
-  "a4": [ 210, 297 ],
-  "a5": [ 148, 210 ],
-  "a6": [ 104, 148 ],
-  "letter": [ 210, 279 ],
-  "legal": [ 216, 356 ]
-};
+const paperformat = require("./paperformat.js");
 
 function Bbox(lat) {
 
@@ -91,12 +83,18 @@ Bbox.prototype.linestring = function() {
 
 // return bbox as Feature of type LineString
 Bbox.prototype.feature = function() {
+  var [width, height] = this.dimensions();
   return {"type": "Feature",
+    // new bbox [w, s, e, n]
+    "bbox": this.bbox,
     "geometry": {
       "type": "LineString",
       "coordinates": this.linestring()
     },
-    "properties": {"name": "cutout"
+    "properties": {
+      "name": "cutout",
+      "width": width,
+      "height": height
     }
   };
 };
@@ -113,7 +111,7 @@ var mapcutter = {};
 
 // return array of sheet bboxes in specified scale and format along track
 mapcutter.featurecollection = function(track, scale, format) {
-  var format = paperformats[format];
+  var format = paperformat.dimensions(format);
 
   // real world width and height of map sheet in meter
   var rw = format[0] / 1000 * scale;

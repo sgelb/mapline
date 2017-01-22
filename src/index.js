@@ -65,6 +65,7 @@ function loadTrack(file) {
     // UI change
     toggleFileInputVisibility();
     form.trackFileName.value = filename;
+
   };
 
   reader.readAsText(file);
