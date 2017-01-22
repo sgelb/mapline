@@ -87,7 +87,13 @@ printmap.generatePDF = function(style, scale, format, track) {
 
       map.once('load', function() {
         console.log("Map loaded");
-        let mapImage = map.getCanvas().toDataURL('image/png');
+
+        // with firefox 50/chromium 55/opera 42 on linux, using image/jpeg
+        // instead of image/png results in toDataURL() being ~2-3x faster and
+        // pdf.addImage() being 10-14x faster. File size is ~10% larger.
+        // No visible quality loss.
+
+        let mapImage = map.getCanvas().toDataURL('image/jpeg', 1.0);
         map.remove();
 
         // Report result back
@@ -111,7 +117,13 @@ function asyncRenderFeatures(features, iterator, callback) {
       [img.height, img.width] = [img.width, img.height];
     }
 
-    pdf.addImage(img.data, 'png', 0, 0, img.width, img.height, null, 'FAST');
+    pdf.addImage({
+      imageData: img.data,
+      w: img.width,
+      h: img.height,
+      compression: 'FAST',
+      alias: "mapImage" + nextItemIndex  // setting alias improves speed ~2x
+    });
 
     // are we done?
     nextItemIndex++;
