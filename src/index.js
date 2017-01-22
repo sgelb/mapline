@@ -3,6 +3,7 @@
 const mapboxgl = require('mapbox-gl');
 const trackUtils = require('./trackutils.js');
 const mapcutter = require('./mapcutter.js');
+const printmap = require('./printmap.js');
 
 mapboxgl.accessToken = require('./mapboxtoken.js');
 
@@ -121,8 +122,12 @@ generatePdfBtn.setAttribute("disabled", true);
 generatePdfBtn.addEventListener("click", generatePDF);
 
 function generatePDF() {
-  console.log("TODO: generate PDF");
-}
+  printmap.generatePDF(
+    toStyleURI(form.style.value),
+    form.scale.value,
+    form.paperformat.value,
+    track);
+};
 
 // Cutouts layer
 function addCutoutsLayer() {

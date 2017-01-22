@@ -1,5 +1,5 @@
 "use strict";
-const geojsonExtent = require("geojson-extent");
+const bbox = require("@turf/bbox");
 const lineDistance = require("@turf/line-distance");
 const tj = require("@mapbox/togeojson");
 const DOMParser = require("xmldom").DOMParser;
@@ -8,14 +8,16 @@ var trackUtils = {};
 
 // return bounds of track
 trackUtils.bounds = function(track) {
-  return geojsonExtent(track);
+  // TODO: replace with s.th smaller: own implementation or @mapbox/extent
+  // http://geojson.org/geojson-spec.html#bounding-boxes
+  return bbox(track);
 };
 
 // return track reduced to LineString and and MultiLineString
 trackUtils.reduce = function(track) {
   var reducedFeatures = track.features.filter(function(feature) {
     var type = feature.geometry.type;
-    return (type === 'LineString' || type === 'MultiLineString');
+    return type.endsWith("LineString");
   });
 
   return { "type": "FeatureCollection", "features": reducedFeatures };
@@ -23,7 +25,7 @@ trackUtils.reduce = function(track) {
 
 // return total distance of track
 trackUtils.totalDistance = function(track) {
-  // TODO: replace with own code, see
+  // TODO: replace with cheap-ruler or own code, see
   // https://github.com/mapbox/cheap-ruler/blob/master/index.js#L138
   return lineDistance(track).toFixed(2);
 };
