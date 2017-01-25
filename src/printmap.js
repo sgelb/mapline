@@ -14,14 +14,12 @@ function timer(name) {
       var end  = performance.now()
       console.log(
         (name + " ".repeat(15)).slice(0, 15),
-        (" ".repeat(6) + Math.trunc(end - start)).slice(-6),
-        'ms');
+        (" ".repeat(6) + Math.trunc(end - start)).slice(-6), 'ms');
     }
   }
 };
 
 function toPixels(length) {
-  'use strict';
   // 96 dpi / 25.4mm/in = dots per mm
   return (96 / 25.4 ) * length + 'px';
 }
@@ -38,17 +36,6 @@ function initContainer(width, height) {
 function resizeContainer(container, width, height) {
   container.style.width = toPixels(width);
   container.style.height = toPixels(height);
-}
-
-function initMap(container, center, style) {
-  // Init render map
-  return new mapboxgl.Map({
-    container: container,
-    center: center,
-    style: style,
-    interactive: false,
-    attributionControl: false
-  });
 }
 
 function bboxCenter(bbox) {
@@ -74,15 +61,31 @@ printmap.generatePDF = function(style, scale, format, track, progressfn) {
 
   var t = timer("PDF generation");
 
-  var totalMaps = track.cutouts.features.length;
-  var count = 1;
-  progressfn(count, totalMaps);
-
+  // initialise pdf. delete first page to simplify addImage-loop
   var pdf = new jspdf({compress: true});
   pdf.deletePage(1);
 
-  var loadMapImage = loadMap(format, style);
+  // initialise container div and map. both will be reused for every map cutout
+  var container = initContainer(0, 0);
+  var map =  new mapboxgl.Map({
+    container: container,
+    center: [0,0],
+    style: style,
+    interactive: false,
+    attributionControl: false,
+    renderWorldCopies: false
+  });
+
+  // add route
+
+  // generate functions
+  // TODO: rename loadMap
+  var loadMapImage = loadMap(map, format, style);
   var addMapImage = addMap(pdf);
+
+  var count = 1;
+  var totalMaps = track.cutouts.features.length;
+  progressfn(count, totalMaps);
 
   track.cutouts.features.reduce(
     function(sequence, feature) {
@@ -93,61 +96,52 @@ printmap.generatePDF = function(style, scale, format, track, progressfn) {
         addMapImage(image);
         t.stop();
         progressfn(count++, totalMaps);
-        console.log("--------------");
       });
     }, Promise.resolve()
   ).then(function() {
     pdf.save()
     progressfn(totalMaps, totalMaps);
+    map.remove()
     t.stop();
     Object.defineProperty(window, 'devicePixelRatio', {
-      get: function() {return actualPixelRatio}
+      get: () => actualPixelRatio
     });
   });
 }
 
-function loadMap(format, style) {
+function loadMap(map, format, style) {
   return function(feature) {
     return new Promise(function(resolve, reject) {
 
       var t = timer("#loadMap");
+
       var orientation = (feature.properties.width > feature.properties.height) ? "l" : "p";
       var [width, height] = paperformat.dimensions(format);
       if (orientation === "l") {
         [width, height] = [height, width];
       }
 
-      // Initialize container div
-      var container = initContainer(width, height);
+      resizeContainer(map.getContainer(), width, height);
 
-      // Prepare map
-      var map =  new mapboxgl.Map({
-        container: container,
-        center: bboxCenter(feature.bbox),
-        style: style,
-        interactive: false,
-        attributionControl: false,
-        renderWorldCopies: false
-      });
-      map.fitBounds(bboxBounds(feature.bbox));
+      map.setCenter(bboxCenter(feature.bbox));
+      map.fitBounds(bboxBounds(feature.bbox), {duration: 0});
+      map.resize();
 
-
-
-
-
-      map.once('load', function() {
-        let tt = timer("#getCanvas")
-        var mapImage = map.getCanvas().toDataURL('image/jpeg', 1.0);
-        container.parentNode.removeChild(container);
-        resolve({data: mapImage, orientation: orientation, width: width,
-          height: height, format: format});
-        tt.stop()
-        t.stop();
-        map.remove()  // XXX: does this even work?
+      map.on('render', function listener() {
+        if (map.loaded()) {
+          console.log("rendered & loaded for map " + feature.bbox);
+          let tt = timer("#getCanvas")
+          // TODO: benchmark png vs jpg and compare quality diffs
+          var mapImage = map.getCanvas().toDataURL('image/jpeg', 1.0);
+          resolve({data: mapImage, orientation: orientation, width: width,
+            height: height, format: format});
+          tt.stop()
+          t.stop();
+          map.off('render', listener);
+        }
       });
 
       map.on('error', function(e) {
-        map.remove()
         container.parentNode.removeChild(container);
         reject(Error(e.message));
       });
@@ -167,7 +161,7 @@ function addMap(pdf) {
       compression: 'FAST',
       alias: "map" + count++  // setting alias improves speed ~2x
     });
-  }
+  };
 }
 
 module.exports = printmap;
