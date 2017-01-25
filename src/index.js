@@ -79,6 +79,7 @@ form.querySelector('#trackField .input-group-addon').addEventListener('click', f
   // remove track data
   map.getSource("track").setData(emptyData);
   map.getSource("cutouts").setData(emptyData);
+  document.querySelector('#progressbar').classList.add('hidden');
 })
 
 function toggleFileInputVisibility() {
@@ -122,12 +123,36 @@ generatePdfBtn.setAttribute("disabled", true);
 generatePdfBtn.addEventListener("click", generatePDF);
 
 function generatePDF() {
+  var progressbarUpdater = initProgressbarUpdater();
   printmap.generatePDF(
     toStyleURI(form.style.value),
     form.scale.value,
     form.paperformat.value,
-    track);
+    track,
+    progressbarUpdater
+  );
 };
+
+function initProgressbarUpdater() {
+  var progressbar = document.querySelector('#progressbar > div');
+  progressbar.parentNode.classList.remove('hidden');
+  progressbar.setAttribute("aria-valuenow", 0);
+  progressbar.style.width = "0%";
+
+  return function(currentItem, maxItems) {
+    let percent = 100 / maxItems * currentItem;
+    progressbar.setAttribute("aria-valuenow", percent);
+    progressbar.style.width = percent + "%";
+
+    let text = "Generating map " + currentItem + " of " + maxItems;
+    if (currentItem === maxItems) {
+      text = "Generation complete"
+      progressbar.classList.remove('active');
+    }
+    progressbar.innerHTML = text;
+  };
+}
+
 
 // Cutouts layer
 function addCutoutsLayer() {

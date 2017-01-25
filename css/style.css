@@ -29,7 +29,7 @@ body {
 /*
  * Hide high-res map rendering
  */
-.hidden-map {
+#hidden-map {
   overflow: hidden;
   height: 0;
   width: 0;

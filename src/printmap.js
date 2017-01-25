@@ -4,7 +4,21 @@ const trackUtils = require('./trackutils.js');
 const paperformat = require('./paperformat.js');
 const jspdf = require('jspdf');
 const mapboxgl = require('mapbox-gl');
+
 mapboxgl.accessToken = require('./mapboxtoken.js');
+
+function timer(name) {
+  var start = performance.now();
+  return {
+    stop: function() {
+      var end  = performance.now()
+      console.log(
+        (name + " ".repeat(15)).slice(0, 15),
+        (" ".repeat(6) + Math.trunc(end - start)).slice(-6),
+        'ms');
+    }
+  }
+};
 
 function toPixels(length) {
   'use strict';
@@ -14,14 +28,10 @@ function toPixels(length) {
 
 function initContainer(width, height) {
   // Create map container
-  var hidden = document.createElement('div');
-  hidden.className = 'hidden-map';
-  document.body.appendChild(hidden);
   var container = document.createElement('div');
   container.style.width = toPixels(width);
   container.style.height = toPixels(height);
-  hidden.appendChild(container);
-
+  document.querySelector('#hidden-map').appendChild(container);
   return container;
 }
 
@@ -30,11 +40,10 @@ function resizeContainer(container, width, height) {
   container.style.height = toPixels(height);
 }
 
-function initMap(container, zoom, center, style) {
+function initMap(container, center, style) {
   // Init render map
   return new mapboxgl.Map({
     container: container,
-    zoom: zoom,
     center: center,
     style: style,
     interactive: false,
@@ -42,10 +51,17 @@ function initMap(container, zoom, center, style) {
   });
 }
 
+function bboxCenter(bbox) {
+  return [0.5 * (bbox[0] + bbox[2]), 0.5 * (bbox[1] + bbox[3])];
+}
+
+function bboxBounds(bbox) {
+  return new mapboxgl.LngLatBounds([bbox[0], bbox[1]], [bbox[2], bbox[3]]);
+}
 
 var printmap = {};
 
-printmap.generatePDF = function(style, scale, format, track) {
+printmap.generatePDF = function(style, scale, format, track, progressfn) {
   var dpi = 300;
 
   // Calculate pixel ratio
@@ -56,89 +72,102 @@ printmap.generatePDF = function(style, scale, format, track) {
     }
   });
 
-  // Init div container
-  var [width, height] = paperformat.dimensions(format);
-  var container = initContainer(width, height);
+  var t = timer("PDF generation");
 
-  // Create map images
-  asyncRenderFeatures(
-    track.cutouts.features,
-    function(feature, report) {
-      console.log("Map loading started");
-      // Resize container div
-      let orientation = 'p';
-      if (feature.properties.width > feature.properties.height) {
-        resizeContainer(container, height, width);
-        orientation = 'l';
-      } else {
-        resizeContainer(container, width, height);
-      }
-       
-      // Calc center and bounds of feature
-      let center = [0.5 * (feature.bbox[0] + feature.bbox[2]),
-        0.5 * (feature.bbox[1] + feature.bbox[3])];
-      let bbounds = new mapboxgl.LngLatBounds([feature.bbox[0], feature.bbox[1]], 
-        [feature.bbox[2], feature.bbox[3]]);
+  var totalMaps = track.cutouts.features.length;
+  var count = 1;
+  progressfn(count, totalMaps);
 
-      // Init map
-      let map = initMap(container, 1, center, style);
-      map.resize();
-      map.fitBounds(bbounds);
-
-      map.once('load', function() {
-        console.log("Map loaded");
-
-        // with firefox 50/chromium 55/opera 42 on linux, using image/jpeg
-        // instead of image/png results in toDataURL() being ~2-3x faster and
-        // pdf.addImage() being 10-14x faster. File size is ~10% larger.
-        // No visible quality loss.
-
-        let mapImage = map.getCanvas().toDataURL('image/jpeg', 1.0);
-        map.remove();
-
-        // Report result back
-        report({data: mapImage, orientation: orientation, width: width,
-          height: height, format: format});
-      });
-    }, 
-    function() {}
-  );
-}
-
-function asyncRenderFeatures(features, iterator, callback) {
-  var nextItemIndex = 0;
   var pdf = new jspdf({compress: true});
   pdf.deletePage(1);
 
-  function report(img) {
+  var loadMapImage = loadMap(format, style);
+  var addMapImage = addMap(pdf);
+
+  track.cutouts.features.reduce(
+    function(sequence, feature) {
+      return sequence.then(function() {
+        return loadMapImage(feature);
+      }).then(function(image) {
+        let t = timer("#addMapImage");
+        addMapImage(image);
+        t.stop();
+        progressfn(count++, totalMaps);
+        console.log("--------------");
+      });
+    }, Promise.resolve()
+  ).then(function() {
+    pdf.save()
+    progressfn(totalMaps, totalMaps);
+    t.stop();
+    Object.defineProperty(window, 'devicePixelRatio', {
+      get: function() {return actualPixelRatio}
+    });
+  });
+}
+
+function loadMap(format, style) {
+  return function(feature) {
+    return new Promise(function(resolve, reject) {
+
+      var t = timer("#loadMap");
+      var orientation = (feature.properties.width > feature.properties.height) ? "l" : "p";
+      var [width, height] = paperformat.dimensions(format);
+      if (orientation === "l") {
+        [width, height] = [height, width];
+      }
+
+      // Initialize container div
+      var container = initContainer(width, height);
+
+      // Prepare map
+      var map =  new mapboxgl.Map({
+        container: container,
+        center: bboxCenter(feature.bbox),
+        style: style,
+        interactive: false,
+        attributionControl: false,
+        renderWorldCopies: false
+      });
+      map.fitBounds(bboxBounds(feature.bbox));
+
+
+
+
+
+      map.once('load', function() {
+        let tt = timer("#getCanvas")
+        var mapImage = map.getCanvas().toDataURL('image/jpeg', 1.0);
+        container.parentNode.removeChild(container);
+        resolve({data: mapImage, orientation: orientation, width: width,
+          height: height, format: format});
+        tt.stop()
+        t.stop();
+        map.remove()  // XXX: does this even work?
+      });
+
+      map.on('error', function(e) {
+        map.remove()
+        container.parentNode.removeChild(container);
+        reject(Error(e.message));
+      });
+
+    });
+  }
+}
+
+function addMap(pdf) {
+  var count = 0;
+  return function(img) {
     pdf.addPage(img.format, img.orientation);
-
-    if (img.orientation === 'l') {
-      [img.height, img.width] = [img.width, img.height];
-    }
-
     pdf.addImage({
       imageData: img.data,
       w: img.width,
       h: img.height,
       compression: 'FAST',
-      alias: "mapImage" + nextItemIndex  // setting alias improves speed ~2x
+      alias: "map" + count++  // setting alias improves speed ~2x
     });
-
-    // are we done?
-    nextItemIndex++;
-    if (nextItemIndex === features.length) {
-      pdf.save("map.pdf");
-      // callback(result);
-      return;
-    } else {
-      // otherwise, call the iterator on the next item
-      iterator(features[nextItemIndex], report);
-    }
   }
-
-  // jump start first iteration
-  iterator(features[0], report);
 }
 
 module.exports = printmap;
