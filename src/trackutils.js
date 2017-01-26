@@ -1,6 +1,6 @@
 "use strict";
 const bbox = require("@turf/bbox");
-const lineDistance = require("@turf/line-distance");
+const cheapRuler = require("cheap-ruler");
 const tj = require("@mapbox/togeojson");
 const DOMParser = require("xmldom").DOMParser;
 
@@ -25,9 +25,9 @@ trackUtils.reduce = function(track) {
 
 // return total distance of track
 trackUtils.totalDistance = function(track) {
-  // TODO: replace with cheap-ruler or own code, see
-  // https://github.com/mapbox/cheap-ruler/blob/master/index.js#L138
-  return lineDistance(track).toFixed(2);
+  var line = track.features[0].geometry.coordinates;
+  var ruler = cheapRuler(line[Math.trunc(line.length/2)][1]);
+  return ruler.lineDistance(line).toFixed(3);
 };
 
 // convert data to geojson
