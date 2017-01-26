@@ -4,6 +4,7 @@ const trackUtils = require('./trackutils.js');
 const paperformat = require('./paperformat.js');
 const jspdf = require('jspdf');
 const mapboxgl = require('mapbox-gl');
+const layers = require('./layers.js');
 
 mapboxgl.accessToken = require('./mapboxtoken.js');
 
@@ -77,9 +78,13 @@ printmap.generatePDF = function(style, scale, format, track, progressfn) {
   });
 
   // add route
+  map.on('style.load', function() {
+    layers.addTrackLayer(map);
+    map.getSource("track").setData(track.data);
+  });
 
   // generate functions
-  // TODO: rename loadMap
+  // TODO: find better name loadMapImage and addMapImage
   var loadMapImage = loadMap(map, format, style);
   var addMapImage = addMap(pdf);
 

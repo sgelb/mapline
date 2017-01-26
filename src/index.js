@@ -4,6 +4,7 @@ const mapboxgl = require('mapbox-gl');
 const trackUtils = require('./trackutils.js');
 const mapcutter = require('./mapcutter.js');
 const printmap = require('./printmap.js');
+const layers = require('./layers.js');
 
 mapboxgl.accessToken = require('./mapboxtoken.js');
 
@@ -23,11 +24,6 @@ var track = {};
 form.trackFile.addEventListener('change', function() {
   loadTrack(this.files[0]);
 });
-
-var emptyData = {
-  "type": "FeatureCollection",
-  "features": []
-};
 
 
 function loadTrack(file) {
@@ -77,8 +73,8 @@ form.querySelector('#trackField .input-group-addon').style.cursor = 'pointer';
 form.querySelector('#trackField .input-group-addon').addEventListener('click', function() {
   toggleFileInputVisibility();
   // remove track data
-  map.getSource("track").setData(emptyData);
-  map.getSource("cutouts").setData(emptyData);
+  map.getSource("track").setData(layers.emptyData);
+  map.getSource("cutouts").setData(layers.emptyData);
   document.querySelector('#progressbar').classList.add('hidden');
 })
 
@@ -154,61 +150,6 @@ function initProgressbarUpdater() {
 }
 
 
-// Cutouts layer
-function addCutoutsLayer() {
-  map.addSource("cutouts", {
-    "type": "geojson",
-    "data": emptyData
-  });
-
-  map.addLayer({
-    "id": "cutouts-outline",
-    "type": "line",
-    "source": "cutouts",
-    "layout": {
-      "line-join": "round"
-    },
-    "paint": {
-      "line-color": "#ffcocb",
-      "line-width": 8,
-      "line-opacity": 0.6
-    }
-  });
-
-  map.addLayer({
-    "id": "cutouts-fill",
-    "type": "fill",
-    "source": "cutouts",
-    "paint": {
-      "fill-opacity": 0
-    }
-  });
-}
-
-// Track layer
-function addTrackLayer() {
-  map.addSource('track', {
-    type: 'geojson',
-    "data": emptyData
-  });
-
-  map.addLayer({
-    "id": "track",
-    "type": "line",
-    "source": "track",
-    "layout": {
-      "line-join": "round",
-      "line-cap": "round"
-    },
-    "paint": {
-      "line-color": "#888888",
-      "line-width": 8,
-      "line-opacity": 0.6,
-    },
-  });
-}
-
-
 //
 // Preview map
 //
@@ -217,9 +158,9 @@ var map;
 try {
   map = new mapboxgl.Map({
     container: 'map',
+    style: toStyleURI(form.style.value),
     center: [0, 0],
-    zoom: 0.5,
-    style: toStyleURI(form.style.value)
+    zoom: 1
   });
 } catch(e) {
   showAlertBox("Initiating MapboxGL failed. " + e);
@@ -229,11 +170,10 @@ try {
 map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 map.addControl(new mapboxgl.ScaleControl());
 
-
 map.on('style.load', function() {
   // (re-)load custom layers
-  addTrackLayer();
-  addCutoutsLayer();
+  layers.addTrackLayer(map);
+  layers.addCutoutsLayer(map);
 
   if (track.data) {
     map.getSource("track").setData(track.data);
