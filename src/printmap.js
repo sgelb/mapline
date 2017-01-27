@@ -133,16 +133,13 @@ function loadMap(map, format, style) {
       }
 
       resizeContainer(map.getContainer(), width, height);
-
+      map.resize();
       map.setCenter(bboxCenter(feature.bbox));
       map.fitBounds(bboxBounds(feature.bbox), {duration: 0});
-      map.resize();
 
       map.on('render', function listener() {
         if (map.loaded()) {
-          console.log("rendered & loaded for map " + feature.bbox);
           let tt = timer("#getCanvas")
-          // TODO: benchmark png vs jpg and compare quality diffs
           var mapImage = map.getCanvas().toDataURL('image/jpeg', 1.0);
           resolve({data: mapImage, orientation: orientation, width: width,
             height: height, format: format});
