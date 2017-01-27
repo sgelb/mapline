@@ -1,7 +1,7 @@
 "use strict";
 
-const cheapRuler = require("cheap-ruler");
-const paperformat = require("./paperformat.js");
+import cheapruler from 'cheap-ruler';
+import paperformat from './paperformat.js';
 
 function Bbox(lat) {
 
@@ -10,7 +10,7 @@ function Bbox(lat) {
   }
 
   this.lat = lat;
-  this.ruler = cheapRuler(lat, "meters");
+  this.ruler = cheapruler(lat, "meters");
 
   // new bbox [w, s, e, n]
   this.bbox = [ Infinity, Infinity, -Infinity, -Infinity ];
@@ -149,4 +149,4 @@ mapcutter.featurecollection = function(track, scale, format) {
   return featurecollection(bboxes);
 };
 
-module.exports = mapcutter;
+export default mapcutter;

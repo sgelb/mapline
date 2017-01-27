@@ -11,10 +11,10 @@ const paperformats = {
 };
 
 
-var paperformat = {};
-
-paperformat.dimensions = function(format) {
-  return paperformats[format];
+var paperformat = {
+  dimensions: function(format) {
+    return paperformats[format];
+  }
 }
 
-module.exports = paperformat;
+export default paperformat;

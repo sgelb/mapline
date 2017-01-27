@@ -1,12 +1,14 @@
 "use strict";
 
-const trackUtils = require('./trackutils.js');
-const paperformat = require('./paperformat.js');
-const jspdf = require('jspdf');
-const mapboxgl = require('mapbox-gl');
-const layers = require('./layers.js');
+import jspdf from 'jspdf';
+import mapboxgl from 'mapbox-gl';
 
-mapboxgl.accessToken = require('./mapboxtoken.js');
+import layers from './layers.js';
+import paperformat from './paperformat.js';
+import trackutils from './trackutils.js';
+import token from './mapboxtoken.js';
+
+mapboxgl.accessToken = token;
 
 function timer(name) {
   var start = performance.now();
@@ -79,8 +81,10 @@ printmap.generatePDF = function(style, scale, format, track, progressfn) {
 
   // add route
   map.on('style.load', function() {
-    layers.addTrackLayer(map);
+    layers.addTrack(map);
     map.getSource("track").setData(track.data);
+    layers.addCutouts(map);
+    map.getSource("cutouts").setData(track.cutouts);
   });
 
   // generate functions
@@ -169,5 +173,5 @@ function addMap(pdf) {
   };
 }
 
-module.exports = printmap;
+export default printmap;
 

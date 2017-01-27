@@ -1,12 +1,14 @@
 'use strict';
 
-const mapboxgl = require('mapbox-gl');
-const trackUtils = require('./trackutils.js');
-const mapcutter = require('./mapcutter.js');
-const printmap = require('./printmap.js');
-const layers = require('./layers.js');
+import mapboxgl from 'mapbox-gl';
 
-mapboxgl.accessToken = require('./mapboxtoken.js');
+import layers from './layers.js';
+import mapcutter from './mapcutter.js';
+import printmap from './printmap.js';
+import token from './mapboxtoken.js';
+import trackutils from './trackutils.js';
+
+mapboxgl.accessToken = token;
 
 if (!mapboxgl.supported()) {
   showAlertBox("Sorry, your browser does not support Mapbox GL JS.");
@@ -34,14 +36,14 @@ function loadTrack(file) {
 
   reader.onload = function() {
     try {
-      track.data = trackUtils.togeojson(ext, reader.result);
+      track.data = trackutils.togeojson(ext, reader.result);
     } catch (e) {
       showAlertBox("Converting " + filename + " failed. " + e);
       return;
     }
 
     // track
-    track.data = trackUtils.reduce(track.data)
+    track.data = trackutils.reduce(track.data)
     map.getSource("track").setData(track.data);
 
     // cutouts
@@ -50,13 +52,11 @@ function loadTrack(file) {
     map.getSource("cutouts").setData(track.cutouts);
 
     // bounds
-    if (!track.bounds) {
-      track.bounds = trackUtils.bounds(track.cutouts);
-    }
+    track.bounds = trackutils.bounds(track.cutouts);
     map.fitBounds(track.bounds, {padding: 10});
 
     // track info
-    track.totalDistance = trackUtils.totalDistance(track.data);
+    track.totalDistance = trackutils.totalDistance(track.data);
     console.log(track.totalDistance + "km");
 
     // UI change
@@ -72,7 +72,7 @@ function loadTrack(file) {
 form.querySelector('#trackField .input-group-addon').style.cursor = 'pointer';
 form.querySelector('#trackField .input-group-addon').addEventListener('click', function() {
   toggleFileInputVisibility();
-  // remove track data
+  delete track.data;
   map.getSource("track").setData(layers.emptyData);
   map.getSource("cutouts").setData(layers.emptyData);
   document.querySelector('#progressbar').classList.add('hidden');
@@ -89,13 +89,11 @@ function toggleFileInputVisibility() {
 }
 
 // map style
-
 form.style.addEventListener('change', function() {
   map.setStyle(toStyleURI(this.value));
 });
 
 // map scale
-
 form.scale.addEventListener('change', function() {
   if (track.data) {
     track.cutouts = mapcutter.featurecollection(track.data, form.scale.value,
@@ -105,7 +103,6 @@ form.scale.addEventListener('change', function() {
 });
 
 // paper format
-
 form.paperformat.addEventListener('change', function() {
   if (track.data) {
     track.cutouts = mapcutter.featurecollection(track.data, form.scale.value,
@@ -164,7 +161,6 @@ try {
   });
 } catch(e) {
   showAlertBox("Initiating MapboxGL failed. " + e);
-  return;
 }
 
 map.addControl(new mapboxgl.NavigationControl(), 'top-right');
@@ -172,8 +168,8 @@ map.addControl(new mapboxgl.ScaleControl());
 
 map.on('style.load', function() {
   // (re-)load custom layers
-  layers.addTrackLayer(map);
-  layers.addCutoutsLayer(map);
+  layers.addTrack(map);
+  layers.addCutouts(map);
 
   if (track.data) {
     map.getSource("track").setData(track.data);
