@@ -85,6 +85,8 @@ printmap.generatePDF = function(style, scale, format, track, progressfn) {
     map.getSource("track").setData(track.data);
     layers.addCutouts(map);
     map.getSource("cutouts").setData(track.cutouts);
+    layers.addMilemarkers(map);
+    map.getSource("milemarkers").setData(track.milemarkers);
   });
 
   // generate functions

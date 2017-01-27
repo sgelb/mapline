@@ -27,6 +27,10 @@ form.trackFile.addEventListener('change', function() {
   loadTrack(this.files[0]);
 });
 
+form.trackFile.addEventListener('click', function() {
+  this.value = null;
+});
+
 
 function loadTrack(file) {
   console.log("Load track");
@@ -59,6 +63,10 @@ function loadTrack(file) {
     track.totalDistance = trackutils.totalDistance(track.data);
     console.log(track.totalDistance + "km");
 
+    // milemarkers
+    track.milemarkers = trackutils.milemarkers(track.data, form.milemarkers.value);
+    map.getSource("milemarkers").setData(track.milemarkers);
+
     // UI change
     toggleFileInputVisibility();
     form.trackFileName.value = filename;
@@ -75,6 +83,7 @@ form.querySelector('#trackField .input-group-addon').addEventListener('click', f
   delete track.data;
   map.getSource("track").setData(layers.emptyData);
   map.getSource("cutouts").setData(layers.emptyData);
+  map.getSource("milemarkers").setData(layers.emptyData);
   document.querySelector('#progressbar').classList.add('hidden');
 })
 
@@ -108,6 +117,14 @@ form.paperformat.addEventListener('change', function() {
     track.cutouts = mapcutter.featurecollection(track.data, form.scale.value,
       form.paperformat.value);
     map.getSource("cutouts").setData(track.cutouts);
+  }
+});
+
+// milemarkers
+form.milemarkers.addEventListener('change', function() {
+  if (track.data) {
+    track.milemarkers = trackutils.milemarkers(track.data, form.milemarkers.value);
+    map.getSource("milemarkers").setData(track.milemarkers);
   }
 });
 
@@ -170,12 +187,16 @@ map.on('style.load', function() {
   // (re-)load custom layers
   layers.addTrack(map);
   layers.addCutouts(map);
+  layers.addMilemarkers(map);
 
   if (track.data) {
     map.getSource("track").setData(track.data);
   }
   if (track.cutouts) {
     map.getSource("cutouts").setData(track.cutouts);
+  }
+  if (track.milemarkers) {
+    map.getSource("milemarkers").setData(track.milemarkers);
   }
 });
 
