@@ -183,8 +183,7 @@ try {
 map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 map.addControl(new mapboxgl.ScaleControl());
 
-map.on('style.load', function() {
-  // (re-)load custom layers
+map.on('styledata', function() {
   layers.addTrack(map);
   layers.addCutouts(map);
   layers.addMilemarkers(map);

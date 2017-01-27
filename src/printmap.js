@@ -80,7 +80,7 @@ printmap.generatePDF = function(style, scale, format, track, progressfn) {
   });
 
   // add route
-  map.on('style.load', function() {
+  map.once('styledata', function() {
     layers.addTrack(map);
     map.getSource("track").setData(track.data);
     layers.addCutouts(map);

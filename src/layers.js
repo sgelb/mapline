@@ -1,5 +1,16 @@
 "use strict";
 
+function hasSource(map, id) {
+  return map.getSource(id);
+}
+
+function addSource(map, id) {
+  map.addSource(id, {
+    "type": 'geojson',
+    "data": layers.emptyData
+  });
+}
+
 var layers = {};
 
 layers.emptyData = {
@@ -7,17 +18,20 @@ layers.emptyData = {
   "features": []
 };
 
+
 // Cutouts layer
 layers.addCutouts = function(map) {
-  map.addSource("cutouts", {
-    "type": "geojson",
-    "data": layers.emptyData
-  });
+  var id = "cutouts";
+
+  if (hasSource(map, id)) {
+    return;
+  }
+  addSource(map, id);
 
   map.addLayer({
     "id": "cutouts-outline",
+    "source": id,
     "type": "line",
-    "source": "cutouts",
     "layout": {
       "line-join": "round"
     },
@@ -30,8 +44,8 @@ layers.addCutouts = function(map) {
 
   map.addLayer({
     "id": "cutouts-fill",
+    "source": id,
     "type": "fill",
-    "source": "cutouts",
     "paint": {
       "fill-opacity": 0
     }
@@ -40,15 +54,17 @@ layers.addCutouts = function(map) {
 
 // Track layer
 layers.addTrack = function(map) {
-  map.addSource('track', {
-    "type": 'geojson',
-    "data": layers.emptyData
-  });
+  var id = "track";
+
+  if (hasSource(map, id)) {
+    return;
+  }
+  addSource(map, id);
 
   map.addLayer({
-    "id": "track",
+    "id": id,
+    "source": id,
     "type": "line",
-    "source": "track",
     "layout": {
       "line-join": "round",
       "line-cap": "round"
@@ -59,19 +75,22 @@ layers.addTrack = function(map) {
       "line-opacity": 0.6,
     },
   });
+
 };
 
 // Milemarkers
 layers.addMilemarkers = function(map) {
-  map.addSource('milemarkers', {
-    "type": "geojson",
-    "data": layers.emptyData  
-  });
+  var id = "milemarkers";
+
+  if (hasSource(map, id)) {
+    return;
+  }
+  addSource(map, id);
 
 	map.addLayer({
-		"id": "milemarkers",
+		"id": id,
+    "source": id,
 		"type": "symbol",
-    "source": "milemarkers",
     "layout": {
       "icon-image": "marker-11",
 			"text-field": "{title}km",
