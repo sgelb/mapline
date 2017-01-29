@@ -6,28 +6,34 @@
     <title>Mapline</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no"/>
 
-    <link rel="stylesheet" href="css/mapbox-gl.css"/>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" 
+    <!-- <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v0.32.1/mapbox-gl.css" -->
+    <!--       integrity="sha384-hjSnA0YEkbZ6frS5H+wOLc7PwLqp+J1CPvToHRTzj1uEbZsamLfjT5OaUUA1/dO8" -->
+    <!--       crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
           integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
           crossorigin="anonymous">
+
+    <link rel="stylesheet" href="css/mapbox-gl.css"/>
     <link rel="stylesheet" href="css/style.css"/>
   </head>
 
   <body>
-    <div class="container">
 
-      <div class="page-header">
+    <div class="container-float">
+
+      <header class="page-header">
         <h1>Mapline.
           <small>Create maps along a track in print quality.</small>
         </h1>
-      </div>
+      </header>
 
       <noscript>
         <div class="alert alert-danger" role="alert">
-          This site requires JavaScript to function, but it seems to be disabled in your browser.
+          This site requires JavaScript, but it seems to be disabled in your browser.
         </div>
       </noscript>
 
+      <!-- alert/error box -->
       <div class="alert alert-danger alert-dismissible hidden" id="alertbox" role="alert">
         <button type="button" class="close" aria-hidden="true">
           <span class="glyphicon glyphicon-remove"></span>
@@ -36,31 +42,37 @@
       </div>
 
 
+      <!-- main content -->
       <div class="row">
-        <div class="col-sm-3">
+
+        <!-- user input -->
+        <section class="col-sm-3">
           <form id="config">
 
+            <!-- track file input -->
             <div class="row">
               <div class="col-sm-12">
                 <div class="form-group">
                   <label for="trackFile">Track</label>
+
+                  <!-- Show open file button -->
                   <label id="trackBtn" class="input-group" for="trackFile">
                     <!-- FIXME: focus button and open file dialog using keys -->
-                    <span class="btn btn-primary">
-                      Open local file 
-                      <input type="file" id="trackFile" style="display: none;" accept=".geojson,.gpx">
+                    <span class="btn btn-primary">Open local file
+                      <input type="file" class="hidden" id="trackFile" accept=".geojson,.gpx">
                     </span>
                   </label>
 
+                  <!-- or chosen track name and remove track button -->
                   <div id="trackField" class="hidden input-group">
                     <input type="text" id="trackFileName" class="form-control" readonly>
                     <span class="input-group-addon"><span class="glyphicon glyphicon-trash"</span></span>
                   </div>
-
                 </div>
               </div>
             </div>
 
+            <!-- map styles -->
             <div class="row">
               <div class="col-sm-12">
                 <div class="form-group">
@@ -71,13 +83,12 @@
                     <option value="dark">Dark</option>
                     <option value="light">Light</option>
                     <option value="streets">Streets</option>
-                    <option value="satellite">Satellite</option>
-                    <option value="satellite-streets">Satellite and Streets</option>
                   </select>
                 </div>
               </div>
             </div>
 
+            <!-- map scale -->
             <div class="row">
               <div class="col-sm-12">
                 <div class="form-group">
@@ -90,6 +101,7 @@
               </div>
             </div>
 
+            <!-- PDF format -->
             <div class="row">
               <div class="col-sm-12">
                 <div class="form-group">
@@ -103,37 +115,54 @@
               </div>
             </div>
 
+            <!-- milemaker interval -->
             <div class="row">
               <div class="col-sm-12">
                 <div class="form-group">
-                  <label for="milemarkers">Location signs</label>
+                  <label for="milemarkers">Milemarkers</label>
                   <div class="input-group">
-                    <input id="milemarkers" type="number" class="form-control" min="0" value="20">
+                    <input id="milemarkers" type="number" class="form-control" min="0" value="10">
                     <span class="input-group-addon">km</span>
                   </div>
                 </div>
               </div>
             </div>
-          </form>
 
+            <!-- map margin -->
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="form-group">
+                  <label for="margin">Margin</label>
+                  <div class="input-group">
+                    <input id="margin" type="number" class="form-control" min="0" value="10">
+                    <span class="input-group-addon">mm</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          <!-- generate button -->
           <div class="row">
-            <div class="col-sm-12" style="padding-bottom: 1em;">
+            <div class="col-sm-12">
               <button type="submit" class="btn btn-primary btn-block" id="generate-btn">Generate PDF</button>
               <!-- <button type="submit" class="btn btn-primary btn-block" id="generate-btn"><span class="glyphicon glyphicon-refresh spinning"></span> Generating PDF...</button> -->
             </div>
           </div>
 
-        </div>
+          </form>
+        </section>
 
-        <div class="col-sm-9">
+        <!-- map view -->
+        <section class="col-sm-9">
           <div id="map"></div>
-        </div>
+        </section>
 
       </div>
 
+      <!-- progress bar. TODO: replace with spinner and percentage in "Generate"-button -->
       <div class="row">
         <div class="progress hidden" id="progressbar">
-          <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+          <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
           </div>
         </div>
       </div>
@@ -143,10 +172,11 @@
         <div class="col-sm-2" id="info"></div>
       </div>
 
-      <div id="hidden-map"></div>
-
     </div>
 
-    <script type="text/javascript" src="dist/bundle.js"></script>
+    <!-- high-res map sheets are rendered here -->
+    <div id="hidden-map"></div>
+
+    <script type="text/javascript" src="build/bundle.min.js"></script>
   </body>
 </html>

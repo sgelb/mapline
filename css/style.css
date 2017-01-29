@@ -1,9 +1,14 @@
 body {
+  padding: 1em 2em;
+  height: 90%;
+}
+
+section {
   padding-bottom: 1em;
 }
 
 #map {
-  height: 50vh;
+  height: 80vh;
 }
 
 #hidden-map {
@@ -11,4 +16,8 @@ body {
   height: 0;
   width: 0;
   position: fixed;
+}
+
+.progress-bar {
+  width: 0%
 }
