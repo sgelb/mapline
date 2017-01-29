@@ -53,6 +53,9 @@ function createPoint(coords, title) {
 
 // return geojson with points in given interval along given line
 trackutils.milemarkers = function(track, interval) {
+  if (interval <= 0) {
+    return {"type": "FeatureCollection", "features": []};
+  }
 
   var line = track.features[0].geometry.coordinates;
   var ruler = cheapruler(line[Math.trunc(line.length/2)][1]);
