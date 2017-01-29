@@ -110,21 +110,23 @@ function featurecollection(features) {
 var mapcutter = {};
 
 // return array of sheet bboxes in specified scale and format along track
-mapcutter.featurecollection = function(track, scale, format) {
-  var format = paperformat.dimensions(format);
+mapcutter.featurecollection = function(track, options) {
 
-  // real world width and height of map sheet in meter
-  var rw = format[0] / 1000 * scale;
-  var rh = format[1] / 1000 * scale;
+  var [width, height] = paperformat.dimensions(options.format);
+  width -= 2 * options.margin;
+  height -= 2 * options.margin;
 
-  // padding around track in mm
+  // real world width and height of map on cutout in meter
+  var rw = width / 1000 * options.scale;
+  var rh = height / 1000 * options.scale;
+
+  // add padding around track in mm TODO: get as argument
   var padding = 10;
-  var rwp = (format[0] - padding) / 1000 * scale;
-  var rhp = (format[1] - padding) / 1000 * scale;
+  var rwp = (width - 2*padding) / 1000 * options.scale;
+  var rhp = (height - 2*padding) / 1000 * options.scale;
 
   var bboxes = [];
 
-  // calculate real world width and height of map sheet
   for (let feature of track.features) {
     let bbox = new Bbox(feature.geometry.coordinates[0][1]);
     for (let coord of feature.geometry.coordinates) {

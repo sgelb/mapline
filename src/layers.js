@@ -11,13 +11,13 @@ function addSource(map, id) {
   });
 }
 
+
 var layers = {};
 
 layers.emptyData = {
   "type": "FeatureCollection",
   "features": []
 };
-
 
 // Cutouts layer
 layers.addCutouts = function(map) {
@@ -82,13 +82,11 @@ layers.addMilemarkers = function(map) {
 		"type": "symbol",
     "layout": {
       "icon-image": "marker-11",
-			"text-field": "{title}km",
-			"text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
-			"text-offset": [0, 0],
+			"text-field": "{title} km",
+			// "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
 			"text-anchor": "bottom"
 		}
 	});
-
 };
 
 export default layers;

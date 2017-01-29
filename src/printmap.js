@@ -51,14 +51,12 @@ function bboxBounds(bbox) {
 
 var printmap = {};
 
-printmap.generatePDF = function(style, scale, format, track, progressfn) {
-  var dpi = 300;
-
+printmap.generatePDF = function(track, options, progressfn) {
   // Calculate pixel ratio
   var actualPixelRatio = window.devicePixelRatio;
   Object.defineProperty(window, 'devicePixelRatio', {
     get: function() {
-      return dpi / 96;
+      return options.dpi / 96;
     }
   });
 
@@ -73,7 +71,7 @@ printmap.generatePDF = function(style, scale, format, track, progressfn) {
   var map =  new mapboxgl.Map({
     container: container,
     center: [0,0],
-    style: style,
+    style: options.style,
     interactive: false,
     attributionControl: false,
     renderWorldCopies: false
@@ -91,7 +89,7 @@ printmap.generatePDF = function(style, scale, format, track, progressfn) {
 
   // generate functions
   // TODO: find better name loadMapImage and addMapImage
-  var loadMapImage = loadMap(map, format, style);
+  var loadMapImage = loadMap(map, options.format, options.margin);
   var addMapImage = addMap(pdf);
 
   var count = 1;
@@ -120,7 +118,7 @@ printmap.generatePDF = function(style, scale, format, track, progressfn) {
   });
 }
 
-function loadMap(map, format, style) {
+function loadMap(map, format, margin) {
   return function(feature) {
     return new Promise(function(resolve, reject) {
 
@@ -128,6 +126,8 @@ function loadMap(map, format, style) {
 
       var orientation = (feature.properties.width > feature.properties.height) ? "l" : "p";
       var [width, height] = paperformat.dimensions(format);
+      width -= 2 * margin;
+      height -= 2 * margin;
       if (orientation === "l") {
         [width, height] = [height, width];
       }
@@ -140,9 +140,9 @@ function loadMap(map, format, style) {
       map.on('render', function listener() {
         if (map.loaded()) {
           let tt = timer("#getCanvas")
-          var mapImage = map.getCanvas().toDataURL('image/jpeg', 1.0);
-          resolve({data: mapImage, orientation: orientation, width: width,
-            height: height, format: format});
+          var data = map.getCanvas().toDataURL('image/jpeg', 1.0);
+          resolve({format: format, orientation: orientation, data: data, 
+            margin: margin, width: width,  height: height, });
           tt.stop()
           t.stop();
           map.off('render', listener);
@@ -164,6 +164,8 @@ function addMap(pdf) {
     pdf.addPage(img.format, img.orientation);
     pdf.addImage({
       imageData: img.data,
+      x: img.margin,
+      y: img.margin,
       w: img.width,
       h: img.height,
       compression: 'FAST',

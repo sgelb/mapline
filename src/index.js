@@ -1,7 +1,6 @@
 'use strict';
 
 import mapboxgl from 'mapbox-gl';
-
 import layers from './layers.js';
 import mapcutter from './mapcutter.js';
 import printmap from './printmap.js';
@@ -15,10 +14,10 @@ if (!mapboxgl.supported()) {
 }
 
 //
-// Input forms
+// user input
 //
+
 var form = document.getElementById("config");
-var generatePdfBtn = document.getElementById("generate-btn");
 
 // Track
 
@@ -51,9 +50,14 @@ function loadTrack(file) {
     map.getSource("track").setData(track.data);
 
     // cutouts
-    track.cutouts = mapcutter.featurecollection(track.data, form.scale.value,
-      form.paperformat.value);
+    track.cutouts = mapcutter.featurecollection(track.data, {
+      scale: form.scale.value, format: form.paperformat.value,
+      margin: form.margin.value});
     map.getSource("cutouts").setData(track.cutouts);
+
+    // milemarkers
+    track.milemarkers = trackutils.milemarkers(track.data, form.milemarkers.value);
+    map.getSource("milemarkers").setData(track.milemarkers);
 
     // bounds
     track.bounds = trackutils.bounds(track.cutouts);
@@ -63,14 +67,9 @@ function loadTrack(file) {
     track.totalDistance = trackutils.totalDistance(track.data);
     console.log(track.totalDistance + "km");
 
-    // milemarkers
-    track.milemarkers = trackutils.milemarkers(track.data, form.milemarkers.value);
-    map.getSource("milemarkers").setData(track.milemarkers);
-
-    // UI change
+    // UI changes
     toggleFileInputVisibility();
-    form.trackFileName.value = filename;
-
+    form.trackFileName.value = track.data.features[0].properties.name || filename;
   };
 
   reader.readAsText(file);
@@ -104,20 +103,12 @@ form.style.addEventListener('change', function() {
 
 // map scale
 form.scale.addEventListener('change', function() {
-  if (track.data) {
-    track.cutouts = mapcutter.featurecollection(track.data, form.scale.value,
-      form.paperformat.value);
-    map.getSource("cutouts").setData(track.cutouts);
-  }
+  reloadCutouts();
 });
 
 // paper format
 form.paperformat.addEventListener('change', function() {
-  if (track.data) {
-    track.cutouts = mapcutter.featurecollection(track.data, form.scale.value,
-      form.paperformat.value);
-    map.getSource("cutouts").setData(track.cutouts);
-  }
+  reloadCutouts();
 });
 
 // milemarkers
@@ -128,19 +119,34 @@ form.milemarkers.addEventListener('change', function() {
   }
 });
 
+// margin
+form.margin.addEventListener('change', function() {
+  reloadCutouts();
+});
+
+function reloadCutouts() {
+  if (track.data) {
+    track.cutouts = mapcutter.featurecollection(track.data, {
+      scale: form.scale.value, format: form.paperformat.value,
+      margin: form.margin.value});
+    map.getSource("cutouts").setData(track.cutouts);
+  }
+}
+
 // generate button
+var generatePdfBtn = document.getElementById("generate-btn");
 generatePdfBtn.setAttribute("disabled", true);
 generatePdfBtn.addEventListener("click", generatePDF);
 
 function generatePDF() {
+  // TODO: validate if all neccessary inputs are valid
   var progressbarUpdater = initProgressbarUpdater();
-  printmap.generatePDF(
-    toStyleURI(form.style.value),
-    form.scale.value,
-    form.paperformat.value,
-    track,
-    progressbarUpdater
-  );
+  printmap.generatePDF(track,
+    { style: toStyleURI(form.style.value),
+      format: form.paperformat.value,
+      margin: parseInt(form.margin.value, 10),
+      dpi: 300
+    }, progressbarUpdater);
 };
 
 function initProgressbarUpdater() {
@@ -174,7 +180,7 @@ try {
     container: 'map',
     style: toStyleURI(form.style.value),
     center: [0, 0],
-    zoom: 1
+    zoom: 1.5
   });
 } catch(e) {
   showAlertBox("Initiating MapboxGL failed. " + e);
@@ -225,4 +231,3 @@ function showAlertBox(message) {
   alert.innerHTML = message;
   alertBox.classList.remove('hidden');
 }
-
