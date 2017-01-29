@@ -1,7 +1,6 @@
 "use strict";
-import bbox from '@turf/bbox';
 import cheapruler from 'cheap-ruler';
-
+import extent from '@mapbox/extent';
 import toGeoJSON from '@mapbox/togeojson';
 import {DOMParser} from 'xmldom';
 
@@ -9,9 +8,11 @@ var trackutils = {};
 
 // return bounds of track
 trackutils.bounds = function(track) {
-  // TODO: replace with s.th smaller: own implementation or @mapbox/extent
-  // http://geojson.org/geojson-spec.html#bounding-boxes
-  return bbox(track);
+  var bounds = extent();
+  track.features.forEach(function(feature) {
+    bounds.union(feature.bbox);
+  });
+  return bounds.bbox();
 };
 
 // return track reduced to LineString and and MultiLineString
