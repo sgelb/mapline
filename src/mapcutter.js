@@ -81,15 +81,15 @@ Bbox.prototype.linestring = function() {
   ];
 };
 
-// return bbox as Feature of type LineString
+// return bbox as Feature
 Bbox.prototype.feature = function() {
   var [width, height] = this.dimensions();
   return {"type": "Feature",
     // new bbox [w, s, e, n]
     "bbox": this.bbox,
     "geometry": {
-      "type": "LineString",
-      "coordinates": this.linestring()
+      "type": "Polygon",
+      "coordinates": [this.linestring()]
     },
     "properties": {
       "name": "cutout",

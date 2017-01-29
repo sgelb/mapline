@@ -29,27 +29,16 @@ layers.addCutouts = function(map) {
   addSource(map, id);
 
   map.addLayer({
-    "id": "cutouts-outline",
+    "id": "cutouts",
     "source": id,
     "type": "line",
-    "layout": {
-      "line-join": "round"
-    },
     "paint": {
-      "line-color": "#ffcocb",
-      "line-width": 8,
+      "line-color": "#222222",
+      "line-width": 4,
       "line-opacity": 0.6
     }
   });
 
-  map.addLayer({
-    "id": "cutouts-fill",
-    "source": id,
-    "type": "fill",
-    "paint": {
-      "fill-opacity": 0
-    }
-  });
 };
 
 // Track layer
