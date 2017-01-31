@@ -142,7 +142,7 @@ function loadMap(map, format, margin) {
           let tt = timer("#getCanvas")
           var data = map.getCanvas().toDataURL('image/jpeg', 1.0);
           resolve({format: format, orientation: orientation, data: data, 
-            margin: margin, width: width,  height: height, });
+            margin: margin, width: width, height: height});
           tt.stop()
           t.stop();
           map.off('render', listener);

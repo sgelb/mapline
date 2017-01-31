@@ -6,6 +6,7 @@ import mapcutter from './mapcutter.js';
 import printmap from './printmap.js';
 import token from './mapboxtoken.js';
 import trackutils from './trackutils.js';
+import paperformat from './paperformat.js';
 
 mapboxgl.accessToken = token;
 
@@ -18,6 +19,7 @@ if (!mapboxgl.supported()) {
 //
 
 var form = document.getElementById("config");
+
 
 // Track
 
@@ -111,6 +113,33 @@ form.paperformat.addEventListener('change', function() {
   reloadCutouts();
 });
 
+function setPaperformatOptions() {
+  const gl = map.getCanvas().getContext("webgl") ||
+    map.getCanvas().getContext('experimental-webgl');
+
+  // XXX: this seems to work and i think it's correct, but i do not know for sure
+  // maxSize in mm = (max renderbuffer in mm) / new devicePixelRatio
+  // http://webglstats.com/webgl/parameter/MAX_RENDERBUFFER_SIZE
+  const maxSize = ((gl.getParameter(gl.MAX_RENDERBUFFER_SIZE)) / 300 * 25.4) / (300 / 96);
+  const validFormats = paperformat.validFormats(maxSize);
+
+  if (validFormats.length < 2) {
+    showAlertBox(`Sorry, you can only create maps in ${capitalize(validFormats[0])}
+    format. Try a computer with a more powerful graphics card for more formats.`);
+  }
+
+  form.paperformat.remove(0);  // remove placeholder option
+  validFormats.forEach(function(format) {
+    const option = document.createElement("option");
+    option.text = capitalize(format);
+    option.value = format;
+    form.paperformat.add(option);
+  });
+  form.paperformat.value = validFormats.includes("a5") ? "a5" : 
+    validFormats[validFormats.length - 1];
+}
+
+
 // milemarkers
 form.milemarkers.addEventListener('change', function() {
   if (track.data) {
@@ -186,6 +215,8 @@ try {
   showAlertBox("Initiating MapboxGL failed. " + e);
 }
 
+setPaperformatOptions();
+
 map.addControl(new mapboxgl.NavigationControl(), 'top-right');
 map.addControl(new mapboxgl.ScaleControl());
 
@@ -230,4 +261,8 @@ function showAlertBox(message) {
   var alert = alertBox.querySelector('#alert-msg');
   alert.innerHTML = message;
   alertBox.classList.remove('hidden');
+}
+
+function capitalize(text) {
+  return text[0].toUpperCase() + text.slice(1);
 }
