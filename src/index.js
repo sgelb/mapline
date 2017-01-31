@@ -85,7 +85,6 @@ form.querySelector('#trackField .input-group-addon').addEventListener('click', f
   map.getSource("track").setData(layers.emptyData);
   map.getSource("cutouts").setData(layers.emptyData);
   map.getSource("milemarkers").setData(layers.emptyData);
-  document.querySelector('#progressbar').classList.add('hidden');
 })
 
 function toggleFileInputVisibility() {
@@ -179,22 +178,18 @@ function generatePDF() {
 };
 
 function initProgressbarUpdater() {
-  var progressbar = document.querySelector('#progressbar > div');
-  progressbar.parentNode.classList.remove('hidden');
-  progressbar.setAttribute("aria-valuenow", 0);
-  progressbar.style.width = "0%";
+  const progress = generatePdfBtn.querySelector('#progress');
+  const progresstext = generatePdfBtn.querySelector('#progress-text');
+  progress.classList.remove('hidden');
 
   return function(currentItem, maxItems) {
-    let percent = 100 / maxItems * currentItem;
-    progressbar.setAttribute("aria-valuenow", percent);
-    progressbar.style.width = percent + "%";
+    let text = "Generating ... " + Math.trunc(100 / maxItems * currentItem) + "%";
 
-    let text = "Generating map " + currentItem + " of " + maxItems;
     if (currentItem === maxItems) {
-      text = "Generation complete"
-      progressbar.classList.remove('active');
+      text = "Generate PDF"
+      progress.classList.add('hidden');
     }
-    progressbar.innerHTML = text;
+    progresstext.innerHTML = text;
   };
 }
 
@@ -236,16 +231,8 @@ map.on('styledata', function() {
   }
 });
 
-map.on("mousedown", function(e) {
-  var features = map.queryRenderedFeatures(e.point, {layers: ['cutouts-fill']});
-  if (features.length) {
-    document.getElementById("info").innerHTML =
-    JSON.stringify(features[0].geometry.coordinates, null, 2);
-  }
-});
-
 //
-// Helper
+// Helper functions
 //
 
 function toStyleURI(style) {

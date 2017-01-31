@@ -143,7 +143,10 @@
           <!-- generate button -->
           <div class="row">
             <div class="col-sm-12">
-              <button type="submit" class="btn btn-primary btn-block" id="generate-btn">Generate PDF</button>
+              <button type="submit" class="btn btn-primary btn-block" id="generate-btn">
+                <span id="progress" class="glyphicon glyphicon-refresh spinning hidden"></span>
+                <span id="progress-text">Generate PDF</span>
+              </button>
             </div>
           </div>
 
@@ -154,14 +157,6 @@
           <div id="map"></div>
         </section>
 
-      </div>
-
-      <!-- progress bar. TODO: replace with spinner and percentage in "Generate"-button -->
-      <div class="row">
-        <div class="progress hidden" id="progressbar">
-          <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-          </div>
-        </div>
       </div>
 
       <!-- TODO: remove in production build --> 

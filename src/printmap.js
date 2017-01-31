@@ -92,7 +92,7 @@ printmap.generatePDF = function(track, options, progressfn) {
   var loadMapImage = loadMap(map, options.format, options.margin);
   var addMapImage = addMap(pdf);
 
-  var count = 1;
+  var count = 0;
   var totalMaps = track.cutouts.features.length;
   progressfn(count, totalMaps);
 

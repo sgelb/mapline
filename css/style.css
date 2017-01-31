@@ -18,6 +18,12 @@ section {
   position: fixed;
 }
 
-.progress-bar {
-  width: 0%
+.spinning {
+  animation: spin 1.5s infinite linear;
 }
+
+@keyframes spin {
+  from { transform: scale(1) rotate(0deg); }
+  to { transform: scale(1) rotate(360deg); }
+}
+

@@ -34,11 +34,11 @@ layers.addCutouts = function(map) {
     "type": "line",
     "paint": {
       "line-color": "#222222",
-      "line-width": 4,
-      "line-opacity": 0.6
+      "line-width": 2,
+      "line-offset": -2,
+      "line-opacity": 0.6,
     }
   });
-
 };
 
 // Track layer
@@ -56,12 +56,13 @@ layers.addTrack = function(map) {
     "type": "line",
     "layout": {
       "line-join": "round",
-      "line-cap": "round"
+      "line-cap": "square"
     },
     "paint": {
-      "line-color": "#888888",
-      "line-width": 8,
+      "line-color": "#ff69b4",
+      "line-width": 4,
       "line-opacity": 0.6,
+      "line-dasharray": [2, 1]
     },
   });
 
@@ -83,7 +84,6 @@ layers.addMilemarkers = function(map) {
     "layout": {
       "icon-image": "marker-11",
 			"text-field": "{title} km",
-			// "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
 			"text-anchor": "bottom"
 		}
 	});
