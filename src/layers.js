@@ -1,5 +1,3 @@
-"use strict";
-
 function hasSource(map, id) {
   return map.getSource(id);
 }
@@ -7,86 +5,91 @@ function hasSource(map, id) {
 function addSource(map, id) {
   map.addSource(id, {
     "type": 'geojson',
-    "data": layers.emptyData
+    "data": emptyFeatureCollection()
   });
 }
 
+function emptyFeatureCollection() {
+  return {"type": "FeatureCollection", "features": []};
+}
 
-var layers = {};
+const layers = {
 
-layers.emptyData = {
-  "type": "FeatureCollection",
-  "features": []
-};
+  empty() {
+    return emptyFeatureCollection();
+  },
 
-// Cutouts layer
-layers.addCutouts = function(map) {
-  var id = "cutouts";
+  // Cutouts layer
+  addCutouts(map) {
+    const id = "cutouts";
 
-  if (hasSource(map, id)) {
-    return;
-  }
-  addSource(map, id);
-
-  map.addLayer({
-    "id": "cutouts",
-    "source": id,
-    "type": "line",
-    "paint": {
-      "line-color": "#222222",
-      "line-width": 2,
-      "line-offset": -2,
-      "line-opacity": 0.6,
+    if (hasSource(map, id)) {
+      return;
     }
-  });
-};
+    addSource(map, id);
 
-// Track layer
-layers.addTrack = function(map) {
-  var id = "track";
+    map.addLayer({
+      "id": "cutouts",
+      "source": id,
+      "type": "line",
+      "paint": {
+        "line-color": "#444444",
+        "line-width": 2,
+        "line-offset": -2,
+        "line-opacity": 0.6,
+        "line-dasharray": [3, 2]
+      }
+    }, "housenum-label");
+  },
 
-  if (hasSource(map, id)) {
-    return;
+  // Track layer
+  addTrack(map) {
+    const id = "track";
+
+    if (hasSource(map, id)) {
+      return;
+    }
+    addSource(map, id);
+
+    map.addLayer({
+      "id": id,
+      "source": id,
+      "type": "line",
+      "layout": {
+        "line-join": "round",
+        "line-cap": "square"
+      },
+      "paint": {
+        "line-color": "#ff69b4",
+        "line-width": 4,
+        "line-opacity": 0.6,
+        "line-dasharray": [2, 1]
+      },
+    }, "housenum-label");
+
+  },
+
+  // Milemarkers
+  addMilemarkers(map) {
+    const id = "milemarkers";
+
+    if (hasSource(map, id)) {
+      return;
+    }
+    addSource(map, id);
+
+    map.addLayer({
+      "id": id,
+      "source": id,
+      "type": "symbol",
+      "layout": {
+        "icon-image": "marker-11",
+        "text-field": "{title} km",
+        "text-anchor": "bottom",
+        "text-size": 11.25
+      }
+    });
   }
-  addSource(map, id);
-
-  map.addLayer({
-    "id": id,
-    "source": id,
-    "type": "line",
-    "layout": {
-      "line-join": "round",
-      "line-cap": "square"
-    },
-    "paint": {
-      "line-color": "#ff69b4",
-      "line-width": 4,
-      "line-opacity": 0.6,
-      "line-dasharray": [2, 1]
-    },
-  });
-
-};
-
-// Milemarkers
-layers.addMilemarkers = function(map) {
-  var id = "milemarkers";
-
-  if (hasSource(map, id)) {
-    return;
-  }
-  addSource(map, id);
-
-	map.addLayer({
-		"id": id,
-    "source": id,
-		"type": "symbol",
-    "layout": {
-      "icon-image": "marker-11",
-			"text-field": "{title} km",
-			"text-anchor": "bottom"
-		}
-	});
 };
 
 export default layers;

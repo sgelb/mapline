@@ -1,6 +1,7 @@
 'use strict';
 
 import mapboxgl from 'mapbox-gl';
+
 import layers from './layers.js';
 import mapcutter from './mapcutter.js';
 import printmap from './printmap.js';
@@ -15,15 +16,49 @@ if (!mapboxgl.supported()) {
 }
 
 //
+// Preview map
+//
+
+let map;
+
+try {
+  map = new mapboxgl.Map({
+    container: 'map',
+    style: toStyleURI("outdoors"),
+    center: [0, 0],
+    zoom: 1.5
+  });
+} catch(e) {
+  showAlertBox("Initiating MapboxGL failed. " + e);
+}
+
+map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+map.addControl(new mapboxgl.ScaleControl());
+map.on('styledata', () => {
+  layers.addTrack(map);
+  layers.addCutouts(map);
+  layers.addMilemarkers(map);
+
+  if (track.data) {
+    map.getSource("track").setData(track.data);
+  }
+  if (track.cutouts) {
+    map.getSource("cutouts").setData(track.cutouts);
+  }
+  if (track.milemarkers) {
+    map.getSource("milemarkers").setData(track.milemarkers);
+  }
+});
+
+//
 // user input
 //
 
-var form = document.getElementById("config");
-
+let form = document.getElementById("config");
+let track = {};
 
 // Track
 
-var track = {};
 form.trackFile.addEventListener('change', function() {
   loadTrack(this.files[0]);
 });
@@ -35,12 +70,12 @@ form.trackFile.addEventListener('click', function() {
 
 function loadTrack(file) {
   console.log("Load track");
-  var reader = new FileReader();
-  var filename = file.name;
-  var ext = filename.split('.').pop().toLowerCase();
+  const filename = file.name;
+  const reader = new FileReader();
 
   reader.onload = function() {
     try {
+      let ext = filename.split('.').pop().toLowerCase();
       track.data = trackutils.togeojson(ext, reader.result);
     } catch (e) {
       showAlertBox("Converting " + filename + " failed. " + e);
@@ -48,7 +83,7 @@ function loadTrack(file) {
     }
 
     // track
-    track.data = trackutils.reduce(track.data)
+    track.data = trackutils.reduce(track.data);
     map.getSource("track").setData(track.data);
 
     // cutouts
@@ -75,17 +110,16 @@ function loadTrack(file) {
   };
 
   reader.readAsText(file);
-
 }
 
-form.querySelector('#trackField .input-group-addon').style.cursor = 'pointer';
-form.querySelector('#trackField .input-group-addon').addEventListener('click', function() {
-  toggleFileInputVisibility();
-  delete track.data;
-  map.getSource("track").setData(layers.emptyData);
-  map.getSource("cutouts").setData(layers.emptyData);
-  map.getSource("milemarkers").setData(layers.emptyData);
-})
+form.querySelector('#trackField .input-group-addon').addEventListener('click',
+  () => {
+    toggleFileInputVisibility();
+    delete track.data;
+    map.getSource("track").setData(layers.empty());
+    map.getSource("cutouts").setData(layers.empty());
+    map.getSource("milemarkers").setData(layers.empty());
+  });
 
 function toggleFileInputVisibility() {
   form.querySelector('#trackBtn').classList.toggle('hidden');
@@ -103,22 +137,20 @@ form.style.addEventListener('change', function() {
 });
 
 // map scale
-form.scale.addEventListener('change', function() {
-  reloadCutouts();
-});
+form.scale.addEventListener('change', () => reloadCutouts());
 
 // paper format
-form.paperformat.addEventListener('change', function() {
-  reloadCutouts();
-});
+form.paperformat.addEventListener('change', () => reloadCutouts());
+
+setPaperformatOptions();
 
 function setPaperformatOptions() {
-  const gl = map.getCanvas().getContext("webgl") ||
-    map.getCanvas().getContext('experimental-webgl');
-
   // XXX: this seems to work and i think it's correct, but i do not know for sure
-  // maxSize in mm = (max renderbuffer in mm) / new devicePixelRatio
   // http://webglstats.com/webgl/parameter/MAX_RENDERBUFFER_SIZE
+
+  const gl = document.createElement("canvas").getContext("webgl") ||
+    document.createElement("canvas").getContext('experimental-webgl');
+  // maxSize in mm = (max renderbuffer in mm) / new devicePixelRatio
   const maxSize = ((gl.getParameter(gl.MAX_RENDERBUFFER_SIZE)) / 300 * 25.4) / (300 / 96);
   const validFormats = paperformat.validFormats(maxSize);
 
@@ -140,7 +172,7 @@ function setPaperformatOptions() {
 
 
 // milemarkers
-form.milemarkers.addEventListener('change', function() {
+form.milemarkers.addEventListener('change', () => {
   if (track.data) {
     track.milemarkers = trackutils.milemarkers(track.data, form.milemarkers.value);
     map.getSource("milemarkers").setData(track.milemarkers);
@@ -148,9 +180,7 @@ form.milemarkers.addEventListener('change', function() {
 });
 
 // margin
-form.margin.addEventListener('change', function() {
-  reloadCutouts();
-});
+form.margin.addEventListener('change', () => reloadCutouts());
 
 function reloadCutouts() {
   if (track.data) {
@@ -162,20 +192,20 @@ function reloadCutouts() {
 }
 
 // generate button
-var generatePdfBtn = document.getElementById("generate-btn");
+let generatePdfBtn = document.getElementById("generate-btn");
 generatePdfBtn.setAttribute("disabled", true);
 generatePdfBtn.addEventListener("click", generatePDF);
 
 function generatePDF() {
   // TODO: validate if all neccessary inputs are valid
-  var progressbarUpdater = initProgressbarUpdater();
+  const progressbarUpdater = initProgressbarUpdater();
   printmap.generatePDF(track,
     { style: toStyleURI(form.style.value),
       format: form.paperformat.value,
       margin: parseInt(form.margin.value, 10),
       dpi: 300
     }, progressbarUpdater);
-};
+}
 
 function initProgressbarUpdater() {
   const progress = generatePdfBtn.querySelector('#progress');
@@ -184,52 +214,13 @@ function initProgressbarUpdater() {
 
   return function(currentItem, maxItems) {
     let text = "Generating ... " + Math.trunc(100 / maxItems * currentItem) + "%";
-
     if (currentItem === maxItems) {
-      text = "Generate PDF"
+      text = "Generate PDF";
       progress.classList.add('hidden');
     }
     progresstext.innerHTML = text;
   };
 }
-
-
-//
-// Preview map
-//
-
-var map;
-try {
-  map = new mapboxgl.Map({
-    container: 'map',
-    style: toStyleURI(form.style.value),
-    center: [0, 0],
-    zoom: 1.5
-  });
-} catch(e) {
-  showAlertBox("Initiating MapboxGL failed. " + e);
-}
-
-setPaperformatOptions();
-
-map.addControl(new mapboxgl.NavigationControl(), 'top-right');
-map.addControl(new mapboxgl.ScaleControl());
-
-map.on('styledata', function() {
-  layers.addTrack(map);
-  layers.addCutouts(map);
-  layers.addMilemarkers(map);
-
-  if (track.data) {
-    map.getSource("track").setData(track.data);
-  }
-  if (track.cutouts) {
-    map.getSource("cutouts").setData(track.cutouts);
-  }
-  if (track.milemarkers) {
-    map.getSource("milemarkers").setData(track.milemarkers);
-  }
-});
 
 //
 // Helper functions
@@ -240,12 +231,12 @@ function toStyleURI(style) {
 }
 
 function showAlertBox(message) {
-  var alertBox = document.getElementById('alertbox');
+  const alertBox = document.getElementById('alertbox');
   alertBox.querySelector('.close').addEventListener('click', function() {
     alertBox.classList.add('hidden');
   });
 
-  var alert = alertBox.querySelector('#alert-msg');
+  const alert = alertBox.querySelector('#alert-msg');
   alert.innerHTML = message;
   alertBox.classList.remove('hidden');
 }
@@ -253,3 +244,4 @@ function showAlertBox(message) {
 function capitalize(text) {
   return text[0].toUpperCase() + text.slice(1);
 }
+

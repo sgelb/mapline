@@ -1,26 +1,23 @@
-"use strict";
-
 import jspdf from 'jspdf';
 import mapboxgl from 'mapbox-gl';
 
 import layers from './layers.js';
 import paperformat from './paperformat.js';
-import trackutils from './trackutils.js';
 import token from './mapboxtoken.js';
 
 mapboxgl.accessToken = token;
 
 function timer(name) {
-  var start = performance.now();
+  const start = performance.now();
   return {
-    stop: function() {
-      var end  = performance.now()
+    stop() {
+      const end  = performance.now();
       console.log(
         (name + " ".repeat(15)).slice(0, 15),
         (" ".repeat(6) + Math.trunc(end - start)).slice(-6), 'ms');
     }
-  }
-};
+  };
+}
 
 function toPixels(length) {
   // 96 dpi / 25.4mm/in = dots per mm
@@ -29,7 +26,7 @@ function toPixels(length) {
 
 function initContainer(width, height) {
   // Create map container
-  var container = document.createElement('div');
+  const container = document.createElement('div');
   container.style.width = toPixels(width);
   container.style.height = toPixels(height);
   document.querySelector('#hidden-map').appendChild(container);
@@ -49,83 +46,14 @@ function bboxBounds(bbox) {
   return new mapboxgl.LngLatBounds([bbox[0], bbox[1]], [bbox[2], bbox[3]]);
 }
 
-var printmap = {};
-
-printmap.generatePDF = function(track, options, progressfn) {
-  // Calculate pixel ratio
-  var actualPixelRatio = window.devicePixelRatio;
-  Object.defineProperty(window, 'devicePixelRatio', {
-    get: function() {
-      return options.dpi / 96;
-    }
-  });
-
-  var t = timer("PDF generation");
-
-  // initialise pdf. delete first page to simplify addImage-loop
-  var pdf = new jspdf({compress: true});
-  pdf.deletePage(1);
-
-  // initialise container div and map. both will be reused for every map cutout
-  var container = initContainer(0, 0);
-  var map =  new mapboxgl.Map({
-    container: container,
-    center: [0,0],
-    style: options.style,
-    interactive: false,
-    attributionControl: false,
-    renderWorldCopies: false
-  });
-
-  // add route
-  map.once('styledata', function() {
-    layers.addTrack(map);
-    map.getSource("track").setData(track.data);
-    layers.addCutouts(map);
-    map.getSource("cutouts").setData(track.cutouts);
-    layers.addMilemarkers(map);
-    map.getSource("milemarkers").setData(track.milemarkers);
-  });
-
-  // generate functions
-  // TODO: find better name loadMapImage and addMapImage
-  var loadMapImage = loadMap(map, options.format, options.margin);
-  var addMapImage = addMap(pdf);
-
-  var count = 0;
-  var totalMaps = track.cutouts.features.length;
-  progressfn(count, totalMaps);
-
-  track.cutouts.features.reduce(
-    function(sequence, feature) {
-      return sequence.then(function() {
-        return loadMapImage(feature);
-      }).then(function(image) {
-        let t = timer("#addMapImage");
-        addMapImage(image);
-        t.stop();
-        progressfn(count++, totalMaps);
-      });
-    }, Promise.resolve()
-  ).then(function() {
-    pdf.save()
-    progressfn(totalMaps, totalMaps);
-    map.remove()
-    t.stop();
-    Object.defineProperty(window, 'devicePixelRatio', {
-      get: () => actualPixelRatio
-    });
-  });
-}
-
 function loadMap(map, format, margin) {
   return function(feature) {
     return new Promise(function(resolve, reject) {
 
       var t = timer("#loadMap");
 
-      var orientation = (feature.properties.width > feature.properties.height) ? "l" : "p";
-      var [width, height] = paperformat.dimensions(format);
+      const orientation = (feature.properties.width > feature.properties.height) ? "l" : "p";
+      let [width, height] = paperformat.dimensions(format);
       width -= 2 * margin;
       height -= 2 * margin;
       if (orientation === "l") {
@@ -139,11 +67,10 @@ function loadMap(map, format, margin) {
 
       map.on('render', function listener() {
         if (map.loaded()) {
-          let tt = timer("#getCanvas")
-          var data = map.getCanvas().toDataURL('image/jpeg', 1.0);
-          resolve({format: format, orientation: orientation, data: data, 
-            margin: margin, width: width, height: height});
-          tt.stop()
+          let tt = timer("#getCanvas");
+          const data = map.getCanvas().toDataURL('image/jpeg', 1.0);
+          resolve({format, orientation, data, margin, width, height});
+          tt.stop();
           t.stop();
           map.off('render', listener);
         }
@@ -155,12 +82,12 @@ function loadMap(map, format, margin) {
       });
 
     });
-  }
+  };
 }
 
 function addMap(pdf) {
   var count = 0;
-  return function(img) {
+  return (img) => {
     pdf.addPage(img.format, img.orientation);
     pdf.addImage({
       imageData: img.data,
@@ -173,6 +100,81 @@ function addMap(pdf) {
     });
   };
 }
+
+const printmap = {
+
+  setPixelRatio(dpi) {
+    this.actualPixelRatio = window.devicePixelRatio;
+    Object.defineProperty(window, 'devicePixelRatio', {
+      get: () => dpi / 96
+    });
+  },
+
+  resetPixelRatio() {
+    Object.defineProperty(window, 'devicePixelRatio', {
+      get: () => this.actualPixelRatio
+    });
+  },
+
+  generatePDF(track, options, progressfn) {
+    // Calculate pixel ratio
+    this.setPixelRatio(options.dpi);
+
+    var t = timer("PDF generation");
+
+    // initialise pdf. delete first page to simplify addImage-loop
+    const pdf = new jspdf({compress: true});
+    pdf.deletePage(1);
+
+    // initialise container div and map. both will be reused for every map cutout
+    const container = initContainer(0, 0);
+    const map =  new mapboxgl.Map({
+      container: container,
+      center: [0,0],
+      style: options.style,
+      interactive: false,
+      attributionControl: false,
+      renderWorldCopies: false
+    });
+
+    // add route
+    map.once('styledata', function() {
+      layers.addTrack(map);
+      map.getSource("track").setData(track.data);
+      layers.addCutouts(map);
+      map.getSource("cutouts").setData(track.cutouts);
+      layers.addMilemarkers(map);
+      map.getSource("milemarkers").setData(track.milemarkers);
+    });
+
+    // generate functions
+    // TODO: find better name loadMapImage and addMapImage
+    const loadMapImage = loadMap(map, options.format, options.margin);
+    const addMapImage = addMap(pdf);
+
+    let count = 0;
+    const totalMaps = track.cutouts.features.length;
+    progressfn(count, totalMaps);
+
+    track.cutouts.features.reduce(
+      (sequence, feature) => {
+        return sequence.then(() => loadMapImage(feature))
+          .then((image) => {
+          let t = timer("#addMapImage");
+          addMapImage(image);
+          t.stop();
+          progressfn(count++, totalMaps);
+        });
+      }, Promise.resolve())
+      .then(() => {
+        pdf.save();
+        progressfn(totalMaps, totalMaps);
+        map.remove();
+        t.stop();
+        this.resetPixelRatio();
+      });
+  }
+};
 
 export default printmap;
 

@@ -1,5 +1,3 @@
-"use strict";
-
 const pageformats = new Map();
 pageformats.set('a0', [841, 1189])
   .set('a1', [594, 841])
@@ -31,6 +29,6 @@ const paperformat = {
     }
     return formats;
   }
-}
+};
 
 export default paperformat;

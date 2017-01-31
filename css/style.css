@@ -7,6 +7,10 @@ section {
   padding-bottom: 1em;
 }
 
+#trackField > span.input-group-addon {
+  cursor: pointer;
+}
+
 #map {
   height: 80vh;
 }
