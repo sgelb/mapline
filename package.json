@@ -4,8 +4,8 @@
   "description": "Create a pdf of maps along a track in printable quality",
   "main": "src/index.js",
   "scripts": {
-    "start": "budo src/index.js:dist/bundle.js --live -t babelify",
-    "build": "browserify src/index.js | uglifyjs - -cm > dist/bundle.js"
+    "start": "budo src/index.js:build/bundle.min.js --live -t babelify",
+    "build": "browserify src/index.js | uglifyjs - -cm > build/bundle.min.js"
   },
   "browserify": {
     "transform": [
@@ -35,7 +35,7 @@
     "babel-preset-es2015": "^6.22.0",
     "babelify": "^7.3.0",
     "browserify": "^14.0.0",
-    "budo": "^9.4.5",
+    "budo": "^9.4.7",
     "uglify-js": "^2.7.5"
   }
 }
