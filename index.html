@@ -66,7 +66,7 @@
                   <!-- or chosen track name and remove track button -->
                   <div id="trackField" class="hidden input-group">
                     <input type="text" id="trackFileName" class="form-control" readonly>
-                    <span class="input-group-addon"><span class="glyphicon glyphicon-trash"</span></span>
+                    <span id="remove-track" class="input-group-addon"><span class="glyphicon glyphicon-trash"</span></span>
                   </div>
                 </div>
               </div>
@@ -113,19 +113,6 @@
               </div>
             </div>
 
-            <!-- milemaker interval -->
-            <div class="row">
-              <div class="col-sm-12">
-                <div class="form-group">
-                  <label for="milemarkers">Milemarkers</label>
-                  <div class="input-group">
-                    <input id="milemarkers" type="number" class="form-control" min="0" value="10">
-                    <span class="input-group-addon">km</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
             <!-- map margin -->
             <div class="row">
               <div class="col-sm-12">
@@ -134,6 +121,19 @@
                   <div class="input-group">
                     <input id="margin" type="number" class="form-control" min="0" value="10">
                     <span class="input-group-addon">mm</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- milemaker interval -->
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="form-group">
+                  <label for="milemarkers">Milemarkers</label>
+                  <div class="input-group">
+                    <input id="milemarkers" type="number" class="form-control" min="0" value="10">
+                    <span class="input-group-addon">km</span>
                   </div>
                 </div>
               </div>
