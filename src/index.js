@@ -1,28 +1,18 @@
-'use strict';
-
-import mapboxgl from 'mapbox-gl';
-
-import layers from './layers.js';
-import mapcutter from './mapcutter.js';
 import printmap from './printmap.js';
-import token from './mapboxtoken.js';
 import trackutils from './trackutils.js';
 import paperformat from './paperformat.js';
-
-mapboxgl.accessToken = token;
-
-if (!mapboxgl.supported()) {
-  showAlertBox("Sorry, your browser does not support Mapbox GL JS.");
-}
-
-//
-// Preview map
-//
+import Map from './map.js';
 
 let map;
+const form = document.getElementById("config");
+const generatePdfBtn = document.getElementById("generate-btn");
 
+// UI options
+setPaperformatOptions();
+
+// Preview map
 try {
-  map = new mapboxgl.Map({
+  map = new Map({
     container: 'map',
     style: toStyleURI("outdoors"),
     center: [0, 0],
@@ -32,94 +22,79 @@ try {
   showAlertBox("Initiating MapboxGL failed. " + e);
 }
 
-map.addControl(new mapboxgl.NavigationControl(), 'top-right');
-map.addControl(new mapboxgl.ScaleControl());
-map.on('styledata', () => {
-  layers.addTrack(map);
-  layers.addCutouts(map);
-  layers.addMilemarkers(map);
+// UI
 
-  if (track.data) {
-    map.getSource("track").setData(track.data);
-  }
-  if (track.cutouts) {
-    map.getSource("cutouts").setData(track.cutouts);
-  }
-  if (track.milemarkers) {
-    map.getSource("milemarkers").setData(track.milemarkers);
-  }
-});
-
-//
-// user input
-//
-
-let form = document.getElementById("config");
-let track = {};
-
-// Track
-
+// track input button
 form.trackFile.addEventListener('change', function() {
   loadTrack(this.files[0]);
-});
-
-form.trackFile.addEventListener('click', function() {
+  // reset value. otherwise, this listener is not triggered when the same track
+  // file is chosen immediately again after removing it
   this.value = null;
 });
 
+// "remove track"-button. visible after chosing a track
+form.querySelector('#remove-track').addEventListener('click', () => {
+  toggleFileInputVisibility();
+  map.reset();
+});
+
+// map style
+form.style.addEventListener('change', function() {
+  map.style(toStyleURI(this.value));
+});
+
+// map scale
+form.scale.addEventListener('change', () => reloadCutouts());
+
+// paper format
+form.paperformat.addEventListener('change', () => reloadCutouts());
+
+// margin
+form.margin.addEventListener('change', () => reloadCutouts());
+
+// milemarkers
+form.milemarkers.addEventListener('change', () => map.updateMilemarkers(form.milemarkers.value));
+
+// generate button
+generatePdfBtn.setAttribute("disabled", true);
+generatePdfBtn.addEventListener("click", generatePDF);
+
 
 function loadTrack(file) {
-  console.log("Load track");
   const filename = file.name;
   const reader = new FileReader();
 
   reader.onload = function() {
+    let route = {};
     try {
       let ext = filename.split('.').pop().toLowerCase();
-      track.data = trackutils.togeojson(ext, reader.result);
+      map.loadRoute(reader.result, ext);
     } catch (e) {
       showAlertBox("Converting " + filename + " failed. " + e);
       return;
     }
 
-    // track
-    track.data = trackutils.reduce(track.data);
-    map.getSource("track").setData(track.data);
-
     // cutouts
-    track.cutouts = mapcutter.featurecollection(track.data, {
-      scale: form.scale.value, format: form.paperformat.value,
+    map.updateCutouts({scale: form.scale.value, format: form.paperformat.value,
       margin: form.margin.value});
-    map.getSource("cutouts").setData(track.cutouts);
 
     // milemarkers
-    track.milemarkers = trackutils.milemarkers(track.data, form.milemarkers.value);
-    map.getSource("milemarkers").setData(track.milemarkers);
+    map.updateMilemarkers(form.milemarkers.value);
 
     // bounds
-    track.bounds = trackutils.bounds(track.cutouts);
-    map.fitBounds(track.bounds, {padding: 10});
+    map.updateBounds({padding: 10});
 
     // track info
-    track.totalDistance = trackutils.totalDistance(track.data);
-    console.log(track.totalDistance + "km");
+    // track.totalDistance = trackutils.totalDistance(track.data);
+    // console.log(track.totalDistance + "km");
 
     // UI changes
     toggleFileInputVisibility();
-    form.trackFileName.value = track.data.features[0].properties.name || filename;
+    form.trackFileName.value = map.routeName() || filename;
   };
 
   reader.readAsText(file);
 }
-
-form.querySelector('#trackField .input-group-addon').addEventListener('click',
-  () => {
-    toggleFileInputVisibility();
-    delete track.data;
-    map.getSource("track").setData(layers.empty());
-    map.getSource("cutouts").setData(layers.empty());
-    map.getSource("milemarkers").setData(layers.empty());
-  });
 
 function toggleFileInputVisibility() {
   form.querySelector('#trackBtn').classList.toggle('hidden');
@@ -131,70 +106,10 @@ function toggleFileInputVisibility() {
   }
 }
 
-// map style
-form.style.addEventListener('change', function() {
-  map.setStyle(toStyleURI(this.value));
-});
-
-// map scale
-form.scale.addEventListener('change', () => reloadCutouts());
-
-// paper format
-form.paperformat.addEventListener('change', () => reloadCutouts());
-
-setPaperformatOptions();
-
-function setPaperformatOptions() {
-  // XXX: this seems to work and i think it's correct, but i do not know for sure
-  // http://webglstats.com/webgl/parameter/MAX_RENDERBUFFER_SIZE
-
-  const gl = document.createElement("canvas").getContext("webgl") ||
-    document.createElement("canvas").getContext('experimental-webgl');
-  // maxSize in mm = (max renderbuffer in mm) / new devicePixelRatio
-  const maxSize = ((gl.getParameter(gl.MAX_RENDERBUFFER_SIZE)) / 300 * 25.4) / (300 / 96);
-  const validFormats = paperformat.validFormats(maxSize);
-
-  if (validFormats.length < 2) {
-    showAlertBox(`Sorry, you can only create maps in ${capitalize(validFormats[0])}
-    format. Try a computer with a more powerful graphics card for more formats.`);
-  }
-
-  form.paperformat.remove(0);  // remove placeholder option
-  validFormats.forEach(function(format) {
-    const option = document.createElement("option");
-    option.text = capitalize(format);
-    option.value = format;
-    form.paperformat.add(option);
-  });
-  form.paperformat.value = validFormats.includes("a5") ? "a5" : 
-    validFormats[validFormats.length - 1];
-}
-
-
-// milemarkers
-form.milemarkers.addEventListener('change', () => {
-  if (track.data) {
-    track.milemarkers = trackutils.milemarkers(track.data, form.milemarkers.value);
-    map.getSource("milemarkers").setData(track.milemarkers);
-  }
-});
-
-// margin
-form.margin.addEventListener('change', () => reloadCutouts());
-
 function reloadCutouts() {
-  if (track.data) {
-    track.cutouts = mapcutter.featurecollection(track.data, {
-      scale: form.scale.value, format: form.paperformat.value,
-      margin: form.margin.value});
-    map.getSource("cutouts").setData(track.cutouts);
-  }
+  map.updateCutouts({scale: form.scale.value, format: form.paperformat.value,
+    margin: form.margin.value});
 }
-
-// generate button
-let generatePdfBtn = document.getElementById("generate-btn");
-generatePdfBtn.setAttribute("disabled", true);
-generatePdfBtn.addEventListener("click", generatePDF);
 
 function generatePDF() {
   // TODO: validate if all neccessary inputs are valid
@@ -222,9 +137,35 @@ function initProgressbarUpdater() {
   };
 }
 
-//
+function setPaperformatOptions() {
+  // XXX: this seems to work and i think it's correct, but i do not know for sure
+  // http://webglstats.com/webgl/parameter/MAX_RENDERBUFFER_SIZE
+
+  const canvas = document.createElement("canvas");
+  const gl = canvas.getContext("webgl") || canvas.getContext('experimental-webgl');
+  // maxSize in mm = (max renderbuffer in mm) / new devicePixelRatio
+  const maxSize = (25.4 * (gl.getParameter(gl.MAX_RENDERBUFFER_SIZE)) / 300 ) / (300 / 96);
+  const validFormats = paperformat.validFormats(maxSize);
+
+  if (validFormats.length < 2) {
+    showAlertBox(`Sorry, you can only create maps in ${capitalize(validFormats[0])}
+    format. Try a computer with a more powerful graphics card for more formats.`);
+  }
+
+  const paperform = form.paperformat;
+  paperform.remove(0);  // remove placeholder option
+  validFormats.forEach(function(format) {
+    let option = document.createElement("option");
+    option.text = capitalize(format);
+    option.value = format;
+    paperform.add(option);
+  });
+  // if available, set a5 as default. otherwise, use last (smallest) entry
+  paperform.value = validFormats.includes("a5") ? "a5" :
+    validFormats[validFormats.length - 1];
+}
+
 // Helper functions
-//
 
 function toStyleURI(style) {
   return 'mapbox://styles/mapbox/' + style + '-v9?optimize=true';
@@ -244,4 +185,3 @@ function showAlertBox(message) {
 function capitalize(text) {
   return text[0].toUpperCase() + text.slice(1);
 }
-

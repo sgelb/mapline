@@ -42,9 +42,9 @@ const layers = {
     }, "housenum-label");
   },
 
-  // Track layer
-  addTrack(map) {
-    const id = "track";
+  // Route layer
+  addRoute(map) {
+    const id = "route";
 
     if (hasSource(map, id)) {
       return;

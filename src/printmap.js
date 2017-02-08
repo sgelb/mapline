@@ -1,6 +1,7 @@
 import jspdf from 'jspdf';
 import mapboxgl from 'mapbox-gl';
 
+import Map from './map.js';
 import layers from './layers.js';
 import paperformat from './paperformat.js';
 import token from './mapboxtoken.js';
