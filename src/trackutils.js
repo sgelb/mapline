@@ -1,5 +1,5 @@
 import cheapruler from 'cheap-ruler';
-import extent from '@mapbox/extent';
+import mapboxgl from 'mapbox-gl';
 import toGeoJSON from '@mapbox/togeojson';
 import {DOMParser} from 'xmldom';
 
@@ -26,11 +26,9 @@ const trackutils = {
 
   // return bounds of track
   bounds(track) {
-    const bounds = extent();
-    track.features.forEach(function(feature) {
-      bounds.union(feature.bbox);
-    });
-    return bounds.bbox();
+    const bounds = new mapboxgl.LngLatBounds();
+    track.features.forEach(feature => bounds.extend(feature.bbox));
+    return bounds;
   },
 
   // return track reduced to collection of (Multi)LineString features
