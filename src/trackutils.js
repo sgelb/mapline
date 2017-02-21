@@ -55,8 +55,9 @@ const trackutils = {
     const line = track.features[0].geometry.coordinates;
     const ruler = cheapruler(line[Math.trunc(line.length/2)][1]);
     const points = [];
-    let count = 1;
+    let count = 0;
     let totalDistance = 0;
+    points.push(createPoint(line[0], interval * count++));
 
     for (let i = 0; i < line.length - 1; i++) {
       let currentPoint = line[i];
@@ -74,7 +75,7 @@ const trackutils = {
         totalDistance -= interval - ruler.distance(intermediatePoint, nextPoint);
       }
     }
-
+    points.push(createPoint(line[line.length - 1], Math.trunc(this.totalDistance(track))));
     return {"type": "FeatureCollection", "features": points};
   },
 
