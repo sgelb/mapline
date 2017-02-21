@@ -60,7 +60,7 @@ class Mapbox {
   }
 
   updateBounds(options) {
-    this._map.fitBounds(trackutils.bounds(this._tracks.get("cutouts").data, options));
+    this._map.fitBounds(trackutils.bounds(this._tracks.get("cutouts").data), options);
   }
 
   routeName() {
