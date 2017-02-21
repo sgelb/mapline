@@ -126,11 +126,11 @@
               </div>
             </div>
 
-            <!-- milemaker interval -->
+            <!-- distance marker interval -->
             <div class="row">
               <div class="col-sm-12">
                 <div class="form-group">
-                  <label for="milemarkers">Milemarkers</label>
+                  <label for="milemarkers">Distance markers</label>
                   <div class="input-group">
                     <input id="milemarkers" type="number" class="form-control" min="0" value="10">
                     <span class="input-group-addon">km</span>
@@ -152,22 +152,18 @@
 
         </section>
 
-        <!-- map view -->
+        <!-- preview map view -->
         <section class="col-sm-9">
           <div id="map"></div>
         </section>
 
       </div>
-
-      <!-- TODO: remove in production build --> 
-      <div class="row">
-        <div class="col-sm-2" id="info"></div>
-      </div>
-
     </div>
 
     <!-- high-res map sheets are rendered here -->
-    <div id="hidden-map"></div>
+    <div id="hidden-map-container">
+      <div id="hidden-map"></div>
+    </div>
 
     <script type="text/javascript" src="build/bundle.min.js"></script>
   </body>
