@@ -75,7 +75,7 @@ function loadTrack(file) {
 
     // cutouts
     map.updateCutouts({scale: form.scale.value, format: form.paperformat.value,
-      margin: form.margin.value});
+      margin: form.margin.value, padding: 10});
 
     // milemarkers
     map.updateMilemarkers(form.milemarkers.value);
@@ -103,7 +103,7 @@ function toggleFileInputVisibility() {
 
 function reloadCutouts() {
   map.updateCutouts({scale: form.scale.value, format: form.paperformat.value,
-    margin: form.margin.value});
+    margin: form.margin.value, padding: 10});
 }
 
 function generatePDF() {

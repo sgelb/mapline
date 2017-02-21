@@ -3,9 +3,6 @@ import BoundingBox from './boundingbox.js';
 
 // return array of sheet bounds in specified scale and format along route
 var mapcutter = function(route, options) {
-  // TODO: get padding in options
-  options.padding = 10;
-
   let [width, height] = paperformat.dimensions(options.format);
   width -= 2 * options.margin;
   height -= 2 * options.margin;
