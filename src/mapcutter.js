@@ -1,57 +1,50 @@
 import paperformat from './paperformat.js';
-import Bbox from './bbox.js';
+import BoundingBox from './boundingbox.js';
 
-function featurecollection(features) {
-  return {
-    "type": "FeatureCollection",
-    "features": features
-  };
-}
+// return array of sheet bounds in specified scale and format along route
+var mapcutter = function(route, options) {
+  // TODO: get padding in options
+  options.padding = 10;
 
-var mapcutter = {
+  let [width, height] = paperformat.dimensions(options.format);
+  width -= 2 * options.margin;
+  height -= 2 * options.margin;
 
-  // return array of sheet bboxes in specified scale and format along track
-  featurecollection(track, options) {
+  // real world width and height of map on cutout in meter
+  const rw = width / 1000 * options.scale;
+  const rh = height / 1000 * options.scale;
 
-    let [width, height] = paperformat.dimensions(options.format);
-    width -= 2 * options.margin;
-    height -= 2 * options.margin;
+  // add padding around route in mm
+  const rwp = (width - 2*options.padding) / 1000 * options.scale;
+  const rhp = (height - 2*options.padding) / 1000 * options.scale;
 
-    // real world width and height of map on cutout in meter
-    const rw = width / 1000 * options.scale;
-    const rh = height / 1000 * options.scale;
+  var bounds = [];
 
-    // add padding around track in mm TODO: get as argument
-    const padding = 10;
-    const rwp = (width - 2*padding) / 1000 * options.scale;
-    const rhp = (height - 2*padding) / 1000 * options.scale;
+  for (let feature of route.features) {
+    let bbox = new BoundingBox(feature.geometry.coordinates[0][1]);
+    for (let coord of feature.geometry.coordinates) {
+      let oldBbox= bbox.bounds;
+      bbox.extend(coord);
+      if (bbox.largerThan(rwp, rhp)) {
+        // FIXME: edge case of distance between coords > max(rwp, rhp)?
+        bbox.revertTo(oldBbox);
+        bbox.resize(rw, rh);
 
-    var bboxes = [];
+        bounds.push(bbox.toFeature());
 
-    for (let feature of track.features) {
-      let bbox = new Bbox(feature.geometry.coordinates[0][1]);
-      for (let coord of feature.geometry.coordinates) {
-        let oldBbox = bbox.bbox;
-        bbox.include(coord);
-        if (bbox.largerThan(rwp, rhp)) {
-          // FIXME: edge case of distance between coords > max(rwp, rhp)?
-          bbox.revertTo(oldBbox);
-          bbox.resize(rw, rh);
-
-          bboxes.push(bbox.toFeature());
-
-          bbox = new Bbox(coord[1]);
-          bbox.include(coord);
-        }
+        bbox = new BoundingBox(coord[1]);
+        bbox.extend(coord);
       }
-
-      bbox.resize(rw, rh);
-      bboxes.push(bbox.toFeature());
     }
 
-    return featurecollection(bboxes);
+    bbox.resize(rw, rh);
+    bounds.push(bbox.toFeature());
   }
 
+  return {
+    "type": "FeatureCollection",
+    "features": bounds
+  };
 };
 
 export default mapcutter;

@@ -17,8 +17,12 @@ pageformats.set('a0', [841, 1189])
 // 16384 -> 443
 
 const paperformat = {
-  dimensions(format) {
-    return pageformats.get(format);
+  dimensions(format, margin=0, orientation="p") {
+    let [w, h] = pageformats.get(format).map(x => x -= 2*margin);
+    if (orientation === "l") {
+      [w, h] = [h, w];
+    }
+    return [w, h];
   },
   validFormats(maxSize) {
     const formats = [];

@@ -1,7 +1,6 @@
 import printmap from './printmap.js';
-import trackutils from './trackutils.js';
 import paperformat from './paperformat.js';
-import Map from './map.js';
+import Mapbox from './mapbox.js';
 
 let map;
 const form = document.getElementById("config");
@@ -12,7 +11,7 @@ setPaperformatOptions();
 
 // Preview map
 try {
-  map = new Map({
+  map = new Mapbox({
     container: 'map',
     style: toStyleURI("outdoors"),
     center: [0, 0],
@@ -35,12 +34,12 @@ form.trackFile.addEventListener('change', function() {
 // "remove track"-button. visible after chosing a track
 form.querySelector('#remove-track').addEventListener('click', () => {
   toggleFileInputVisibility();
-  map.reset();
+  map.clearTracks();
 });
 
 // map style
 form.style.addEventListener('change', function() {
-  map.style(toStyleURI(this.value));
+  map.style = toStyleURI(this.value);
 });
 
 // map scale
@@ -84,10 +83,6 @@ function loadTrack(file) {
     // bounds
     map.updateBounds({padding: 10});
 
-    // track info
-    // track.totalDistance = trackutils.totalDistance(track.data);
-    // console.log(track.totalDistance + "km");
-
     // UI changes
     toggleFileInputVisibility();
     form.trackFileName.value = map.routeName() || filename;
@@ -114,9 +109,9 @@ function reloadCutouts() {
 function generatePDF() {
   // TODO: validate if all neccessary inputs are valid
   const progressbarUpdater = initProgressbarUpdater();
-  printmap.generatePDF(track,
-    { style: toStyleURI(form.style.value),
-      format: form.paperformat.value,
+  printmap.generatePDF(
+    map.copyTo('hidden-map'),
+    { format: form.paperformat.value,
       margin: parseInt(form.margin.value, 10),
       dpi: 300
     }, progressbarUpdater);
