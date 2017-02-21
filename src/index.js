@@ -14,8 +14,8 @@ try {
   map = new Mapbox({
     container: 'map',
     style: toStyleURI("outdoors"),
-    center: [0, 0],
-    zoom: 1.5
+    center: [13.463, 47.386],
+    zoom: 11
   });
 } catch(e) {
   showAlertBox("Initiating MapboxGL failed. " + e);
