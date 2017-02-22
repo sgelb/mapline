@@ -3,6 +3,10 @@ body {
   height: 90%;
 }
 
+.page-header {
+  padding-bottom: 0;
+}
+
 section {
   padding-bottom: 1em;
 }
@@ -11,15 +15,12 @@ section {
   cursor: pointer;
 }
 
-#map {
-  height: 80vh;
+.table {
+  margin-bottom: 15px;
 }
 
-#hidden-map-container {
-  overflow: hidden;
-  height: 0;
-  width: 0;
-  position: fixed;
+#map {
+  height: 80vh;
 }
 
 .spinning {
@@ -29,5 +30,12 @@ section {
 @keyframes spin {
   from { transform: scale(1) rotate(0deg); }
   to { transform: scale(1) rotate(360deg); }
+}
+
+#hidden-map-container {
+  overflow: hidden;
+  height: 0;
+  width: 0;
+  position: fixed;
 }
 

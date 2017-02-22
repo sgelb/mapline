@@ -43,7 +43,29 @@ const trackutils = {
   totalDistance(track) {
     const line = track.features[0].geometry.coordinates;
     const ruler = cheapruler(line[Math.trunc(line.length/2)][1]);
-    return ruler.lineDistance(line).toFixed(3);
+    return ruler.lineDistance(line).toFixed(2);
+  },
+
+  elevation(track) {
+    const line = track.features[0].geometry.coordinates;
+    if (line[0].length < 3) {
+      return;
+    }
+
+    let climb = 0;
+    let descent = 0;
+    let last = line[0][2];
+    line.forEach(coord => {
+      let diff = coord[2] - last;
+      if (diff > 0) {
+        climb += diff;
+      } else {
+        descent -= diff;
+      }
+      last = coord[2];
+    });
+
+    return [Math.trunc(climb), Math.trunc(descent)];
   },
 
   // return FeatureCollection with Points in given interval along given line

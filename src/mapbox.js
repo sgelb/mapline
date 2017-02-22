@@ -14,6 +14,8 @@ class Mapbox {
       throw Error("Your browser does not support MapboxGL.");
     }
 
+    this._details = {};
+
     this._tracks = tracks || new Map();
     this._map = new mapboxgl.Map(args);
     this._map.on('styledata', () => this._updateAllTracks());
@@ -47,11 +49,31 @@ class Mapbox {
     data = trackutils.reduce(data);
     this.addTrack(new Route("route", data));
     this.updateTrack(this._tracks.get("route"));
+
+    this._details.distance= trackutils.totalDistance(this._tracks.get("route").data);
+    [this._details.climb, this._details.descent] = trackutils.elevation(this._tracks.get("route").data);
+  }
+
+  _addUnit(value, unit) {
+    if (value !== undefined) {
+      return `${value}&thinsp;${unit}`;
+    }
+    return "unknown";
+  }
+
+  getDetails() {
+    let details = new Map();
+    details.set("Length", this._addUnit(this._details.distance, "km"));
+    details.set("Climb", this._addUnit(this._details.climb, "hm"));
+    details.set("Descent", this._addUnit(this._details.descent, "hm"));
+    details.set("Map sheets", this._details.mapCount);
+    return details;
   }
 
   updateCutouts(options) {
     this.addTrack(new Cutouts("cutouts", mapcutter(this._tracks.get("route").data, options)));
     this.updateTrack(this._tracks.get("cutouts"));
+    this._details.mapCount = this._tracks.get("cutouts").features.length;
   }
 
   updateMilemarkers(interval) {

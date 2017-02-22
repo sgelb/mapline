@@ -85,15 +85,18 @@ function loadTrack(file) {
 
     // UI changes
     toggleFileInputVisibility();
+    updateTrackDetails();
     form.trackFileName.value = map.routeName() || filename;
   };
 
   reader.readAsText(file);
 }
 
+// TODO: rename function
 function toggleFileInputVisibility() {
   form.querySelector('#trackBtn').classList.toggle('hidden');
   form.querySelector('#trackField').classList.toggle('hidden');
+  form.querySelector('#trackDetails').classList.toggle('hidden');
   if (generatePdfBtn.hasAttribute("disabled")) {
     generatePdfBtn.removeAttribute("disabled");
   } else {
@@ -101,9 +104,20 @@ function toggleFileInputVisibility() {
   }
 }
 
+function updateTrackDetails(details) {
+  let table = form.querySelector('#trackDetailsTable');
+  table.innerHTML = "";
+  for (let [k, v] of map.getDetails()) {
+    let row = table.insertRow();
+    row.insertCell(0).innerHTML = k;
+    row.insertCell(1).innerHTML = v;
+  }
+}
+
 function reloadCutouts() {
   map.updateCutouts({scale: form.scale.value, format: form.paperformat.value,
     margin: form.margin.value, padding: 10});
+  updateTrackDetails();
 }
 
 function generatePDF() {
