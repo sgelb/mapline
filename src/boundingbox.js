@@ -52,7 +52,7 @@ class BoundingBox {
     let wDiff = 0.5 * (newWidth - width);
     let hDiff = 0.5 * (newHeight - height);
 
-    if (height <= newWidth && width <= newHeight) {
+    if (height < width) {
       wDiff = 0.5 * (newHeight - width);
       hDiff = 0.5 * (newWidth- height);
     }
