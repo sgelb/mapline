@@ -78,23 +78,23 @@ const trackutils = {
     const ruler = cheapruler(line[Math.trunc(line.length/2)][1]);
     const points = [];
     let count = 0;
-    let totalDistance = 0;
+    let intermediateDistance = 0;
     points.push(createPoint(line[0], interval * count++));
 
     for (let i = 0; i < line.length - 1; i++) {
       let currentPoint = line[i];
       let nextPoint = line[i + 1];
       let distance = ruler.distance(currentPoint, nextPoint);
-      totalDistance += distance;
+      intermediateDistance += distance;
 
-      if (totalDistance > interval) {
+      if (intermediateDistance > interval) {
         let intermediatePoint = interpolate(
           currentPoint,
           nextPoint,
-          (interval - totalDistance + distance) / distance
+          (interval - (intermediateDistance - distance)) / distance
         );
         points.push(createPoint(intermediatePoint, interval * count++));
-        totalDistance -= interval - ruler.distance(intermediatePoint, nextPoint);
+        intermediateDistance = ruler.distance(intermediatePoint, nextPoint);
       }
     }
     points.push(createPoint(line[line.length - 1], Math.trunc(this.totalDistance(track))));
