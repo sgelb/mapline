@@ -81,7 +81,9 @@ class BoundingBox {
     const [width, height] = this._dimensions();
     return {
       "type": "Feature",
-      "bbox": this.bounds,  // bbox is not a valid geojson bbox!
+      // FIXME: bbox is not a valid geojson bbox!
+      // http://geojson.org/geojson-spec.html#bounding-boxes
+      "bbox": this.bounds,
       "geometry": {
         "type": "Polygon",
         "coordinates": [this._linestring()]

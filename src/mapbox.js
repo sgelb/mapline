@@ -42,15 +42,13 @@ class Mapbox {
     this._map.getSource(track.id).setData(track.data);
   }
 
-
   loadRoute(rawdata, ext) {
     let data = trackutils.togeojson(ext, rawdata);
     data = trackutils.reduce(data);
     this.addTrack(new Route("route", data));
     this.updateTrack(this._tracks.get("route"));
-
-    this._details.distance= trackutils.totalDistance(this._tracks.get("route").data);
     [this._details.climb, this._details.descent] = trackutils.elevation(this._tracks.get("route").data);
+    this._details.distance = trackutils.totalDistance(this._tracks.get("route").data);
   }
 
   _addUnit(value, unit) {
@@ -63,8 +61,8 @@ class Mapbox {
   getDetails() {
     let details = new Map();
     details.set("Length", this._addUnit(this._details.distance, "km"));
-    details.set("Climb", this._addUnit(this._details.climb, "hm"));
-    details.set("Descent", this._addUnit(this._details.descent, "hm"));
+    details.set("Climb", this._addUnit(this._details.climb, "m"));
+    details.set("Descent", this._addUnit(this._details.descent, "m"));
     details.set("Map sheets", this._details.mapCount);
     return details;
   }
@@ -72,7 +70,7 @@ class Mapbox {
   getPrintDetails() {
     let details = this.getDetails();
     let cutouts = this.cutouts.features;
-    let route = this._tracks.get("route").features[0];
+    let route = this._tracks.get("route").data;
     let totalMapCount = details.get("Map sheets");
 
     return function(mapCount) {
@@ -81,7 +79,8 @@ class Mapbox {
 
       // Map 3 of 7 · 36.7km · 123.4 of 2156.5km total
       let text = `Map ${mapCount} of ${totalMapCount}`;
-      text += ` · ${localLength.toFixed(2) + "km"} · ${intermediateLength.toFixed(2)} of ${details.get("Length")} total`;
+      text += ` · ${localLength.toFixed(2) + "km"}`;
+      text += ` · ${intermediateLength.toFixed(2)} of ${details.get("Length")} total`;
 
       return text;
     };
