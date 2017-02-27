@@ -10,8 +10,8 @@ class BoundingBox {
 
   // return unprojected dimensions of bounds in meters
   _dimensions() {
-    // distance between nw and ne corner of bounds
     // TODO: replace distance() with own squaredDistance() and benchmark?
+    // distance between nw and ne corner of bounds
     const w = this._ruler.distance(
       [ this.bounds.getWest(), this.bounds.getNorth() ],
       [ this.bounds.getEast(), this.bounds.getNorth() ]);
@@ -87,7 +87,6 @@ class BoundingBox {
         "coordinates": [this._linestring()]
       },
       "properties": {
-        "name": "cutout",
         "width": width,
         "height": height
       }

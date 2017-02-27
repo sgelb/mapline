@@ -7,16 +7,15 @@ import paperformat from './paperformat.js';
 import {Route, Cutouts, Milemarkers} from './track.js';
 
 class Mapbox {
-  constructor(args, tracks) {
+  constructor(args, tracks, details) {
     mapboxgl.accessToken = token;
 
     if (!mapboxgl.supported()) {
       throw Error("Your browser does not support MapboxGL.");
     }
 
-    this._details = {};
-
     this._tracks = tracks || new Map();
+    this._details = details || {};
     this._map = new mapboxgl.Map(args);
     this._map.on('styledata', () => this._updateAllTracks());
     this._addControls();
@@ -56,7 +55,7 @@ class Mapbox {
 
   _addUnit(value, unit) {
     if (value !== undefined) {
-      return `${value}&thinsp;${unit}`;
+      return `${value}${unit}`;
     }
     return "unknown";
   }
@@ -68,6 +67,24 @@ class Mapbox {
     details.set("Descent", this._addUnit(this._details.descent, "hm"));
     details.set("Map sheets", this._details.mapCount);
     return details;
+  }
+
+  getPrintDetails() {
+    let details = this.getDetails();
+    let cutouts = this.cutouts.features;
+    let route = this._tracks.get("route").features[0];
+    let totalMapCount = details.get("Map sheets");
+
+    return function(mapCount) {
+      let [localLength, intermediateLength] = trackutils.distanceInBounds(
+        cutouts[mapCount-1], route);
+
+      // Map 3 of 7 · 36.7km · 123.4 of 2156.5km total
+      let text = `Map ${mapCount} of ${totalMapCount}`;
+      text += ` · ${localLength.toFixed(2) + "km"} · ${intermediateLength.toFixed(2)} of ${details.get("Length")} total`;
+
+      return text;
+    };
   }
 
   updateCutouts(options) {
@@ -107,7 +124,7 @@ class Mapbox {
       style: this._map.getStyle(),
       interactive: false,
       renderWorldCopies: false
-    }, this._tracks);
+    }, this._tracks, this._details);
   }
 
   remove() {
@@ -117,6 +134,10 @@ class Mapbox {
   cutoutMap(feature, format, margin) {
     let orientation = (feature.properties.width > feature.properties.height) ? "l" : "p";
     let [width, height] = paperformat.dimensions(format, margin, orientation);
+
+    // Details
+    // create printDetails: use symbols, inline, etc
+    let details = this.getPrintDetails();
 
     const map = this._map;
     return new Promise(function(resolve, reject) {
@@ -128,7 +149,7 @@ class Mapbox {
       map.on('render', function listener() {
         if (map.loaded()) {
           let data = map.getCanvas().toDataURL('image/jpeg', 1.0);
-          resolve({format, orientation, data, margin, width, height});
+          resolve({format, orientation, data, margin, width, height, details});
           map.off('render', listener);
         }
       });

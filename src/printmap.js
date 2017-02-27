@@ -1,18 +1,6 @@
 import jspdf from 'jspdf';
 import layers from './layers.js';
 
-function timer(name) {
-  const start = performance.now();
-  return {
-    stop() {
-      const end  = performance.now();
-      console.log(
-        (name + " ".repeat(15)).slice(0, 15),
-        (" ".repeat(6) + Math.trunc(end - start)).slice(-6), 'ms');
-    }
-  };
-}
-
 const printmap = {
 
   setPixelRatio(dpi) {
@@ -32,10 +20,11 @@ const printmap = {
     // Calculate pixel ratio
     this.setPixelRatio(options.dpi);
 
-    let totalTime = timer("PDF generation");
+    console.time("PDF generation");
 
     // initialise pdf. delete first page to simplify addImage-loop
     const pdf = new jspdf({compress: true});
+    pdf.setFontSize(9);
     pdf.deletePage(1);
 
     // generate functions
@@ -51,19 +40,17 @@ const printmap = {
         return sequence
           .then(() => loadMapImage(feature))
           .then((image) => {
-          let t = timer("Load map image");
+          console.time("Load map image " + count);
           addMapImage(image);
-          t.stop();
+          console.timeEnd("Load map image " + count);
           progressfn(count++, totalMaps);
         });
       }, Promise.resolve())
       .then(() => {
-        let t = timer("Save PDF");
         pdf.save();
         progressfn(totalMaps, totalMaps);
         map.remove();
-        t.stop();
-        totalTime.stop();
+        console.timeEnd("PDF generation");
         this.resetPixelRatio();
       });
   }
@@ -75,6 +62,7 @@ function loadMap(map, format, margin) {
 
 function addMap(pdf) {
   var count = 0;
+  const factor = pdf.internal.getFontSize() / pdf.internal.scaleFactor;
   return (img) => {
     pdf.addPage(img.format, img.orientation);
     pdf.addImage({
@@ -86,6 +74,7 @@ function addMap(pdf) {
       compression: 'FAST',
       alias: "map" + count++  // setting alias improves speed ~2x
     });
+    pdf.text(img.details(count), img.margin, img.margin + img.height + factor);
   };
 }
 

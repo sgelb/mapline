@@ -28,10 +28,6 @@ class Track {
     return this._data.features;
   }
 
-  hasData() {
-    return this._data.length > 0;
-  }
-
   addLayer(map) {
     layers.add(map, track);
   }
