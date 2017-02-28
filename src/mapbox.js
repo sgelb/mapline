@@ -39,16 +39,16 @@ class Mapbox {
   }
 
   updateTrack(track) {
-    this._map.getSource(track.id).setData(track.data);
+    this._map.getSource(track.id).setData(track.geojson);
   }
 
-  loadRoute(rawdata, ext) {
-    let data = trackutils.togeojson(ext, rawdata);
-    data = trackutils.reduce(data);
-    this.addTrack(new Route("route", data));
+  loadRoute(data, ext) {
+    let geojson = trackutils.togeojson(ext, data);
+    geojson = trackutils.reduce(geojson);
+    this.addTrack(new Route("route", geojson));
     this.updateTrack(this._tracks.get("route"));
-    [this._details.climb, this._details.descent] = trackutils.elevation(this._tracks.get("route").data);
-    this._details.distance = trackutils.totalDistance(this._tracks.get("route").data);
+    [this._details.climb, this._details.descent] = trackutils.elevation(geojson);
+    this._details.distance = trackutils.totalDistance(geojson);
   }
 
   _addUnit(value, unit) {
@@ -70,7 +70,7 @@ class Mapbox {
   getPrintDetails() {
     let details = this.getDetails();
     let cutouts = this.cutouts.features;
-    let route = this._tracks.get("route").data;
+    let route = this._tracks.get("route").geojson;
     let totalMapCount = details.get("Map sheets");
 
     return function(mapCount) {
@@ -87,22 +87,22 @@ class Mapbox {
   }
 
   updateCutouts(options) {
-    this.addTrack(new Cutouts("cutouts", mapcutter(this._tracks.get("route").data, options)));
+    this.addTrack(new Cutouts("cutouts", mapcutter(this._tracks.get("route").geojson, options)));
     this.updateTrack(this._tracks.get("cutouts"));
     this._details.mapCount = this._tracks.get("cutouts").features.length;
   }
 
   updateMilemarkers(interval) {
-    this.addTrack(new Milemarkers("milemarkers", trackutils.milemarkers(this._tracks.get("route").data, interval)));
+    this.addTrack(new Milemarkers("milemarkers", trackutils.milemarkers(this._tracks.get("route").geojson, interval)));
     this.updateTrack(this._tracks.get("milemarkers"));
   }
 
   updateBounds(options) {
-    this._map.fitBounds(trackutils.bounds(this._tracks.get("cutouts").data), options);
+    this._map.fitBounds(trackutils.bounds(this._tracks.get("cutouts").geojson), options);
   }
 
   routeName() {
-    return this._tracks.get("route").data.features[0].properties.name;
+    return this._tracks.get("route").geojson.features[0].properties.name;
   }
 
   get cutouts() {

@@ -3,9 +3,9 @@ import trackutils from './trackutils.js';
 import layers from './layers.js';
 
 class Track {
-  constructor(id, data) {
+  constructor(id, geojson) {
     this._id = id;
-    this._data = data || {};
+    this._geojson = geojson || {};
   }
 
   get id() {
@@ -16,16 +16,20 @@ class Track {
     this._id = id;
   }
 
-  get data() {
-    return this._data;
+  get minzoom() {
+    return 0;
   }
 
-  set data(data) {
-    this._data = data;
+  get geojson() {
+    return this._geojson;
+  }
+
+  set geojson(geojson) {
+    this._geojson = geojson;
   }
 
   get features() {
-    return this._data.features;
+    return this._geojson.features;
   }
 
   addLayer(map) {
@@ -33,7 +37,7 @@ class Track {
   }
 
   updateLayerData(map) {
-    map.getSource(this._id).setData(this._data);
+    map.getSource(this._id).setData(this._geojson);
   }
 
   clearLayerData(map) {
@@ -63,9 +67,19 @@ class Route extends Track {
       },
       "paint": {
         "line-color": "#ff69b4",
-        "line-width": 4,
+        "line-width": {
+          "stops": [
+            [0, 4],
+            [12, 3]
+          ]
+        },
         "line-opacity": 0.6,
-        "line-dasharray": [2, 1]
+        "line-dasharray": {
+          "stops": [
+            [0, [1000, 0]],
+            [12, [2, 1]]
+          ]
+        }
       },
     };
   }
@@ -82,10 +96,16 @@ class Cutouts extends Track {
         "line-width": 2,
         "line-offset": -3,
         "line-opacity": 0.6,
-        "line-dasharray": [3, 2]
+        "line-dasharray": {
+          "stops": [
+            [0, [1000, 0]],
+            [12, [3, 2]]
+          ]
+        }
       }
     };
   }
+
 }
 
 class Milemarkers extends Track {
@@ -100,10 +120,11 @@ class Milemarkers extends Track {
         "text-anchor": "bottom",
         "text-size": 11.25,
         "icon-ignore-placement": true,
-        "text-optional": true
+        "text-optional": true,
       }
     };
   }
+
 }
 
 class Poi extends Track {
