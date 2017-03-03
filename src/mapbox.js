@@ -42,7 +42,9 @@ class Mapbox {
     this._map.getSource(track.id).setData(track.geojson);
   }
 
-  loadRoute(data, ext) {
+  loadRoute(data, filename) {
+    let ext = filename.split('.').pop().toLowerCase();
+    this._details.filename = filename.substring(0, filename.lastIndexOf('.'));
     let geojson = trackutils.togeojson(ext, data);
     geojson = trackutils.reduce(geojson);
     this.addTrack(new Route("route", geojson));
@@ -101,8 +103,12 @@ class Mapbox {
     this._map.fitBounds(trackutils.bounds(this._tracks.get("cutouts").geojson), options);
   }
 
+  get name() {
+    return this._details.filename;
+  }
+
   routeName() {
-    return this._tracks.get("route").geojson.features[0].properties.name;
+    return this._tracks.get("route").geojson.features[0].properties.name || this.name;
   }
 
   get cutouts() {

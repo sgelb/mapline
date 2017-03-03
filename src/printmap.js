@@ -47,7 +47,7 @@ const printmap = {
         });
       }, Promise.resolve())
       .then(() => {
-        pdf.save();
+        pdf.save(map.name + ".pdf");
         progressfn(totalMaps, totalMaps);
         map.remove();
         console.timeEnd("PDF generation");

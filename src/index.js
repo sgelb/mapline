@@ -66,8 +66,7 @@ function loadTrack(file) {
   reader.onload = function() {
     let route = {};
     try {
-      let ext = filename.split('.').pop().toLowerCase();
-      map.loadRoute(reader.result, ext);
+      map.loadRoute(reader.result, filename);
     } catch (e) {
       showAlertBox("Converting " + filename + " failed. " + e);
       return;
