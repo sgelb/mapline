@@ -33,7 +33,7 @@ form.trackFile.addEventListener('change', function() {
 
 // "remove track"-button. visible after chosing a track
 form.querySelector('#remove-track').addEventListener('click', () => {
-  toggleFileInputVisibility();
+  toggleFormFields();
   map.clearTracks();
 });
 
@@ -55,7 +55,6 @@ form.margin.addEventListener('change', () => reloadCutouts());
 form.milemarkers.addEventListener('change', () => map.updateMilemarkers(form.milemarkers.value));
 
 // generate button
-generatePdfBtn.setAttribute("disabled", true);
 generatePdfBtn.addEventListener("click", generatePDF);
 
 
@@ -83,7 +82,7 @@ function loadTrack(file) {
     map.updateBounds({padding: 10});
 
     // UI changes
-    toggleFileInputVisibility();
+    toggleFormFields();
     updateTrackDetails();
     form.trackFileName.value = map.routeName() || filename;
   };
@@ -91,15 +90,23 @@ function loadTrack(file) {
   reader.readAsText(file);
 }
 
-// TODO: rename function
-function toggleFileInputVisibility() {
-  form.querySelector('#trackBtn').classList.toggle('hidden');
-  form.querySelector('#trackField').classList.toggle('hidden');
-  form.querySelector('#trackDetails').classList.toggle('hidden');
-  if (generatePdfBtn.hasAttribute("disabled")) {
-    generatePdfBtn.removeAttribute("disabled");
+function toggleFormFields() {
+  // hide/unhide everything with class 'hidable'
+  document.querySelectorAll('.hidable').forEach(field =>
+    field.classList.toggle('hidden')
+  );
+
+  // disable/enable everything with class 'disableable'
+  document.querySelectorAll('.disableable').forEach(field =>
+    toggleField(field)
+  );
+}
+
+function toggleField(field) {
+  if (field.hasAttribute("disabled")) {
+    field.removeAttribute("disabled");
   } else {
-    generatePdfBtn.setAttribute("disabled", true);
+    field.setAttribute("disabled", true);
   }
 }
 
@@ -131,15 +138,16 @@ function generatePDF() {
 }
 
 function initProgressbarUpdater() {
-  const progress = generatePdfBtn.querySelector('#progress');
+  // const progress = generatePdfBtn.querySelector('#progress');
   const progresstext = generatePdfBtn.querySelector('#progress-text');
-  progress.classList.remove('hidden');
+  // progress.classList.remove('hidden');
 
   return function(currentItem, maxItems) {
-    let text = "Generating ... " + Math.trunc(100 / maxItems * currentItem) + "%";
+    // let text = "Generating ... " + Math.trunc(100 / maxItems * currentItem) + "%";
+    let text = `Generating ${currentItem + 1} of ${maxItems}`;
     if (currentItem === maxItems) {
       text = "Generate PDF";
-      progress.classList.add('hidden');
+      // progress.classList.add('hidden');
     }
     progresstext.innerHTML = text;
   };

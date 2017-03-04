@@ -116,9 +116,11 @@ class Milemarkers extends Track {
       "type": "symbol",
       "layout": {
         "icon-image": "marker-11",
+        "icon-offset": [0, -5],
         "text-field": "{title} km",
         "text-anchor": "bottom",
-        "text-size": 11.25,
+        "text-offset": [0, -0.5],
+        "text-size": 11,
         "icon-ignore-placement": true,
         "text-optional": true,
       }
