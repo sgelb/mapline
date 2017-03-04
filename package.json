@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "budo src/index.js:build/bundle.min.js --live -t babelify",
-    "build": "browserify src/index.js | uglifyjs - -cm > build/bundle.min.js"
+    "build": "browserify src/index.js | uglifyjs - -cm -o build/bundle.min.js"
   },
   "browserify": {
     "transform": [
@@ -36,6 +36,6 @@
     "babelify": "^7.3.0",
     "browserify": "^14.1.0",
     "budo": "^9.4.7",
-    "uglify-js": "^2.7.5"
+    "uglify-js": "^2.8.5"
   }
 }
