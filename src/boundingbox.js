@@ -1,4 +1,3 @@
-import mapboxgl from 'mapbox-gl';
 import cheapruler from 'cheap-ruler';
 
 class BoundingBox {

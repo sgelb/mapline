@@ -1,4 +1,3 @@
-import jspdf from 'jspdf';
 import layers from './layers.js';
 
 const printmap = {

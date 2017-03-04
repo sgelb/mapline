@@ -1,5 +1,4 @@
 import cheapruler from 'cheap-ruler';
-import mapboxgl from 'mapbox-gl';
 import normalize from '@mapbox/geojson-normalize';
 import toGeoJSON from '@mapbox/togeojson';
 import {DOMParser} from 'xmldom';

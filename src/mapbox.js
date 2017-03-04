@@ -1,4 +1,3 @@
-import mapboxgl from 'mapbox-gl';
 import mapcutter from './mapcutter.js';
 import token from './mapboxtoken.js';
 import layers from './layers.js';
