@@ -1,4 +1,4 @@
-import printmap from './printmap.js';
+import Printmap from './printmap.js';
 import paperformat from './paperformat.js';
 import Mapbox from './mapbox.js';
 
@@ -128,27 +128,49 @@ function reloadCutouts() {
 
 function generatePDF() {
   // TODO: validate if all neccessary inputs are valid
-  const progressbarUpdater = initProgressbarUpdater();
+  const printmap = new Printmap();
+  const progressbarUpdater = initProgressbarUpdater(printmap);
+
   printmap.generatePDF(
     map.copyTo('hidden-map'),
     { format: form.paperformat.value,
       margin: parseInt(form.margin.value, 10),
       dpi: 300
-    }, progressbarUpdater);
+    }, progressbarUpdater
+  );
 }
 
-function initProgressbarUpdater() {
-  // const progress = generatePdfBtn.querySelector('#progress');
-  const progresstext = generatePdfBtn.querySelector('#progress-text');
-  // progress.classList.remove('hidden');
+function initProgressbarUpdater(printmap) {
+  const progresstext = document.querySelector('#progress-text');
+  const progressbar = document.querySelector('#progress-bar');
+  const modal = document.querySelector("#modal");
+  const modalOverlay = document.querySelector("#modal-overlay");
+  const closeButton = document.querySelector("#cancel-button");
 
-  return function(currentItem, maxItems) {
-    // let text = "Generating ... " + Math.trunc(100 / maxItems * currentItem) + "%";
-    let text = `Generating ${currentItem + 1} of ${maxItems}`;
-    if (currentItem === maxItems) {
-      text = "Generate PDF";
-      // progress.classList.add('hidden');
+  modal.classList.remove("hidden");
+  modalOverlay.classList.remove("hidden");
+
+  closeButton.addEventListener("click", function() {
+    printmap.cancel();
+  });
+  toggleField(generatePdfBtn);
+
+  return function(currentItem, maxItems, isCanceled) {
+    let percent = Math.trunc(100 / maxItems * (currentItem+1)) + "%";
+    progressbar.style.width = percent;
+    progressbar.innerHTML = percent;
+    let text = `Map ${currentItem + 1} of ${maxItems}`;
+
+    if (isCanceled) {
+      text = "Canceling";
     }
+
+    if (currentItem === maxItems) {
+      toggleField(generatePdfBtn);
+      modal.classList.add("hidden");
+      modalOverlay.classList.add("hidden");
+    }
+
     progresstext.innerHTML = text;
   };
 }
@@ -201,3 +223,4 @@ function showAlertBox(message) {
 function capitalize(text) {
   return text[0].toUpperCase() + text.slice(1);
 }
+

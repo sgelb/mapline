@@ -165,7 +165,6 @@ class Mapbox {
 
     });
   }
-
 }
 
 function resizeContainer(container, width, height) {

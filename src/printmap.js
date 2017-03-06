@@ -1,19 +1,28 @@
 import layers from './layers.js';
 
-const printmap = {
+
+class Printmap {
+  constructor() {
+    this.actualPixelRatio = window.devicePixelRatio;
+    this.canceled = false;
+  }
 
   setPixelRatio(dpi) {
-    this.actualPixelRatio = window.devicePixelRatio;
     Object.defineProperty(window, 'devicePixelRatio', {
       get: () => dpi / 96
     });
-  },
+  }
 
   resetPixelRatio() {
     Object.defineProperty(window, 'devicePixelRatio', {
       get: () => this.actualPixelRatio
     });
-  },
+  }
+
+  cancel() {
+    console.log("Canceling");
+    this.canceled = true;
+  }
 
   generatePDF(map, options, progressfn) {
     // Calculate pixel ratio
@@ -37,23 +46,34 @@ const printmap = {
     map.cutouts.features.reduce(
       (sequence, feature) => {
         return sequence
-          .then(() => loadMapImage(feature))
-          .then((image) => {
-          console.time("Load map image " + count);
-          addMapImage(image);
-          console.timeEnd("Load map image " + count);
-          progressfn(count++, totalMaps);
-        });
+          .then(() => {
+            return (this.canceled) ? Promise.reject() : loadMapImage(feature);
+          })
+          .then(image => {
+            console.time("Load map image " + count);
+            progressfn(count++, totalMaps, this.canceled);
+            addMapImage(image);
+            console.timeEnd("Load map image " + count);
+          });
       }, Promise.resolve())
       .then(() => {
-        pdf.save(map.name + ".pdf");
-        progressfn(totalMaps, totalMaps);
-        map.remove();
+        if (!this.canceled) {
+          console.log("Saving pdf");
+          pdf.save(map.name + ".pdf");
+        }
+      })
+      .catch(() => {
+        console.log("Canceled pdf generation");
+      })
+      .then(() => {
         console.timeEnd("PDF generation");
-        this.resetPixelRatio();
+        console.log("Clean up");
+        progressfn(totalMaps, totalMaps, this.canceled);
+        map.remove();
       });
   }
-};
+}
+
 
 function loadMap(map, format, margin) {
   return (feature) => map.cutoutMap(feature, format, margin);
@@ -77,5 +97,5 @@ function addMap(pdf) {
   };
 }
 
-export default printmap;
+export default Printmap;
 
