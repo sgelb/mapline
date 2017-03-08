@@ -47,7 +47,7 @@ class Printmap {
       (sequence, feature) => {
         return sequence
           .then(() => {
-            return (this.canceled) ? Promise.reject() : loadMapImage(feature);
+            return (this.canceled) ? Promise.reject(new Error("canceled by user")) : loadMapImage(feature);
           })
           .then(image => {
             console.time("Load map image " + count);
@@ -62,8 +62,8 @@ class Printmap {
           pdf.save(map.name + ".pdf");
         }
       })
-      .catch(() => {
-        console.log("Canceled pdf generation");
+      .catch((e) => {
+        console.log("PDF generation failed: " + e);
       })
       .then(() => {
         console.timeEnd("PDF generation");

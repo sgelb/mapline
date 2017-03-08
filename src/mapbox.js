@@ -52,7 +52,7 @@ class Mapbox {
     this._details.distance = trackutils.totalDistance(geojson);
   }
 
-  _addUnit(value, unit) {
+  _formatDetail(value, decimal, unit) {
     if (value !== undefined) {
       return `${value}${unit}`;
     }
@@ -73,6 +73,7 @@ class Mapbox {
     let cutouts = this.cutouts.features;
     let route = this._tracks.get("route").geojson;
     let totalMapCount = details.get("Map sheets");
+    let formatDetail = this._formatDetail;
 
     return function(mapCount) {
       let [localLength, intermediateLength] = trackutils.distanceInBounds(
@@ -80,8 +81,8 @@ class Mapbox {
 
       // Map 3 of 7 · 36.7km · 123.4 of 2156.5km total
       let text = `Map ${mapCount} of ${totalMapCount}`;
-      text += ` · ${localLength.toFixed(2) + "km"}`;
-      text += ` · ${intermediateLength.toFixed(2)} of ${details.get("Length")} total`;
+      text += ` · ${formatDetail(localLength, 2, "km")}`;
+      text += ` · ${formatDetail(intermediateLength, 2, "km")} of ${details.get("Length")} total`;
 
       return text;
     };

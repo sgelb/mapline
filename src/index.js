@@ -1,10 +1,13 @@
 import Printmap from './printmap.js';
 import paperformat from './paperformat.js';
 import Mapbox from './mapbox.js';
+import FormValidator from './formvalidator.js';
 
 let map;
 const form = document.getElementById("config");
 const generatePdfBtn = document.getElementById("generate-btn");
+const validator = new FormValidator();
+validator.enableWhenAllValid(generatePdfBtn);
 
 // UI options
 setPaperformatOptions();
@@ -44,19 +47,25 @@ form.style.addEventListener('change', function() {
 
 // map scale
 form.scale.addEventListener('change', () => reloadCutouts());
+validator.add({form: form.scale, validity: (v) => v >= 5000,
+  msg: "Scale must be 5000 or larger!"});
 
 // paper format
 form.paperformat.addEventListener('change', () => reloadCutouts());
 
 // margin
 form.margin.addEventListener('change', () => reloadCutouts());
+validator.add({form: form.margin, validity: (v) => v >= 0 && v <= 50,
+  msg: "Margin must be between 0 and 50!"});
 
 // milemarkers
-form.milemarkers.addEventListener('change', () => map.updateMilemarkers(form.milemarkers.value));
+form.milemarkers.addEventListener('change', () =>
+  map.updateMilemarkers(form.milemarkers.value));
+validator.add({form: form.milemarkers, validity: (v) => v >= 0,
+  msg: "Milemarkers must be 0 or larger!"});
 
 // generate button
 generatePdfBtn.addEventListener("click", generatePDF);
-
 
 function loadTrack(file) {
   const filename = file.name;
@@ -121,13 +130,14 @@ function updateTrackDetails(details) {
 }
 
 function reloadCutouts() {
-  map.updateCutouts({scale: form.scale.value, format: form.paperformat.value,
-    margin: form.margin.value, padding: 10});
-  updateTrackDetails();
+  if (validator.allValid()) {
+    map.updateCutouts({scale: form.scale.value, format: form.paperformat.value,
+      margin: form.margin.value, padding: 10});
+    updateTrackDetails();
+  }
 }
 
 function generatePDF() {
-  // TODO: validate if all neccessary inputs are valid
   const printmap = new Printmap();
   const progressbarUpdater = initProgressbarUpdater(printmap);
 

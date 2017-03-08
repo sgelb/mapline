@@ -65,7 +65,7 @@
                   <!-- or chosen track name and remove track button -->
                   <div id="trackField" class="hidable hidden input-group">
                     <input type="text" id="trackFileName" class="form-control" readonly>
-                    <span id="remove-track" class="input-group-addon">&times;</span>
+                    <span id="remove-track" class="input-group-addon close">&times;</span>
                   </div>
                 </div>
               </div>
@@ -105,6 +105,7 @@
                     <span class="input-group-addon">1:</span>
                     <input id="scale" type="number" class="form-control disableable" disabled min="5000" step="1000" value="75000">
                   </div>
+                  <div class="form-control-feedback small hidden"></div>
                 </div>
               </div>
             </div>
@@ -130,6 +131,7 @@
                     <input id="margin" type="number" class="form-control disableable" disabled min="0" value="10">
                     <span class="input-group-addon">mm</span>
                   </div>
+                  <div class="form-control-feedback small hidden">Margin must be greater 0 and lesser than 100!</div>
                 </div>
               </div>
             </div>
@@ -143,21 +145,22 @@
                     <input id="milemarkers" type="number" class="form-control disableable" disabled min="0" value="10">
                     <span class="input-group-addon">km</span>
                   </div>
+                  <div class="form-control-feedback small hidden">Distance markers must be 0 or greater!</div>
                 </div>
               </div>
             </div>
-          </form>
 
-          <!-- generate button -->
-          <div class="row">
-            <div class="col-md-12">
-              <button type="submit" class="btn btn-primary btn-block disableable" id="generate-btn" disabled>
-                Generate PDF
-              </button>
+            <!-- generate button -->
+            <div class="row">
+              <div class="col-md-12">
+                <button type="submit" class="btn btn-primary btn-block disableable" id="generate-btn" disabled>
+                  Generate PDF
+                </button>
 
+              </div>
             </div>
-          </div>
 
+          </form>
         </section>
 
         <!-- preview map view -->
@@ -171,11 +174,10 @@
 
     <!-- generate progress modal window -->
     <div class="modal-overlay hidden" id="modal-overlay"></div>
-
     <div class="modal row hidden" id="modal">
       <div class="modal-body col-md-12">
         <h3>Generating PDF</h3>
-        <div id="progress-text">Initializing</div>
+        <div id="progress-text">Initializing&hellip;</div>
         <div class="progress">
           <div class="progress-bar progress-bar-striped progress-bar-animated" id="progress-bar" style="width: 0%"></div>
         </div>
