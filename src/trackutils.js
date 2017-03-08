@@ -78,7 +78,7 @@ const trackutils = {
   totalDistance(track) {
     const line = track.features[0].geometry.coordinates;
     const ruler = cheapruler(line[Math.trunc(line.length/2)][1]);
-    return parseFloat(ruler.lineDistance(line).toFixed(2));
+    return parseFloat(ruler.lineDistance(line));
   },
 
   // return cumulated climb and descent of track in meter
@@ -110,24 +110,31 @@ const trackutils = {
     const ruler = cheapruler(bounds.bbox.getCenter().lat);
     let insideDistance = 0;
     let inBounds = insideBounds(line[0], bounds.bbox);
-    for (let i = 0; i < line.length - 1; i++) {
+    for (let i = 1; i < line.length - 1; i++) {
 
       // inside bounds
       if (insideBounds(line[i], bounds.bbox)) {
-        insideDistance += ruler.distance(line[i], line[i+1]);
-        inBounds = true;
+        if (inBounds) {
+          insideDistance += ruler.distance(line[i-1], line[i]);
+        } else {
+          // last point was outside bounds, add distance to intersection
+          inBounds = true;
+          const intersection = intersect(line[i-1], line[i], bounds.geometry.coordinates[0]);
+          const intersectionDistance = ruler.distance(line[i], intersection);
+          insideDistance += intersectionDistance;
+        }
         continue;
       }
 
       // outside bounds
       if (inBounds) {
-        // last point was inside this bounds, find intersection
-        const intersection = intersect(line[i], line[i-1], bounds.geometry.coordinates[0]);
-        const intersectionDistance = ruler.distance(line[i], intersection);
+        // last point was inside these bounds, find intersection
+        const intersection = intersect(line[i-1], line[i], bounds.geometry.coordinates[0]);
+        const intersectionDistance = ruler.distance(line[i-1], intersection);
         insideDistance += intersectionDistance;
-        const intermediateDistance = this.totalDistance(normalize(
-          {"type": "LineString", "coordinates": line.slice(0, i)})
-        ) + intersectionDistance;
+
+        const intermediateDistance = ruler.lineDistance(line.slice(0, i)) + intersectionDistance;
+
         return [insideDistance, intermediateDistance];
       }
     }
