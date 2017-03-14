@@ -77,7 +77,7 @@ function loadTrack(file) {
     try {
       map.loadRoute(reader.result, filename);
     } catch (e) {
-      showAlertBox("Converting " + filename + " failed. " + e);
+      showAlertBox("Loading " + filename + " failed. " + e.message);
       return;
     }
 

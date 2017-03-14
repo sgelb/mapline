@@ -71,6 +71,10 @@ const trackutils = {
         return feature.geometry.type.endsWith("LineString");
       }
     });
+    if (reducedFeatures.length === 0) {
+      console.log("No track or route found.");
+      throw new Error("No track or route found.");
+    }
     return featureCollection(reducedFeatures);
   },
 

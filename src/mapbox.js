@@ -54,16 +54,16 @@ class Mapbox {
 
   _formatDetail(value, decimal, unit) {
     if (value !== undefined) {
-      return `${value}${unit}`;
+      return `${value.toFixed(decimal)}${unit}`;
     }
     return "unknown";
   }
 
   getDetails() {
     let details = new Map();
-    details.set("Length", this._addUnit(this._details.distance, "km"));
-    details.set("Climb", this._addUnit(this._details.climb, "m"));
-    details.set("Descent", this._addUnit(this._details.descent, "m"));
+    details.set("Length", this._formatDetail(this._details.distance, 2, "km"));
+    // details.set("Climb", this._formatDetail(this._details.climb, 0, "m"));
+    // details.set("Descent", this._formatDetail(this._details.descent, 0, "m"));
     details.set("Map sheets", this._details.mapCount);
     return details;
   }
