@@ -207,9 +207,16 @@ function setPaperformatOptions() {
   const maxSize = (25.4 * (gl.getParameter(gl.MAX_RENDERBUFFER_SIZE)) / 300 ) / (300 / 96);
   const validFormats = paperformat.validFormats(maxSize);
 
+  if (validFormats.length < 1) {
+    showAlertBox(`Sorry, your device does not support rendering of high-res maps.
+    Please try again using a device with a more powerful graphics card.`);
+    document.querySelector("#main").classList.add("hidden");
+    return;
+  }
+
   if (validFormats.length < 2) {
     showAlertBox(`Sorry, you can only create maps in ${capitalize(validFormats[0])}
-    format. Try a computer with a more powerful graphics card for more formats.`);
+    format. Please try again using a device with a more powerful graphics card.`);
   }
 
   const paperform = form.paperformat;
