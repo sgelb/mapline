@@ -63,7 +63,7 @@ class Printmap {
         }
       })
       .catch((e) => {
-        console.log("PDF generation failed: " + e);
+        console.log("PDF generation failed: " + e.name);
       })
       .then(() => {
         console.timeEnd("PDF generation");
@@ -81,7 +81,10 @@ function loadMap(map, format, margin) {
 
 function addMap(pdf) {
   var count = 0;
+  const copyright = "© Mapbox © OpenStreetMap";
   const factor = pdf.internal.getFontSize() / pdf.internal.scaleFactor;
+  const copyrightWidth = pdf.getStringUnitWidth(copyright) * factor;
+
   return (img) => {
     pdf.addPage(img.format, img.orientation);
     pdf.addImage({
@@ -93,7 +96,11 @@ function addMap(pdf) {
       compression: 'FAST',
       alias: "map" + count++  // setting alias improves speed ~2x
     });
-    pdf.text(img.details(count), img.margin, img.margin + img.height + factor);
+    let y = img.margin + img.height + factor;
+    pdf.setTextColor(0, 0, 0);
+    pdf.text(img.details(count), img.margin, y);
+    pdf.setTextColor(105, 105, 105);
+    pdf.text(copyright, img.margin + img.width - copyrightWidth, y);
   };
 }
 
