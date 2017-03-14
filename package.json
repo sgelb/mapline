@@ -21,7 +21,7 @@
   },
   "keywords": [],
   "author": "sgelb",
-  "license": "ISC",
+  "license": "GPLv3",
   "dependencies": {
     "@mapbox/geojson-normalize": "0.0.1",
     "cheap-ruler": "^2.5.0",
