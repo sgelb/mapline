@@ -36,6 +36,7 @@ form.trackFile.addEventListener('change', function() {
 
 // "remove track"-button. visible after chosing a track
 form.querySelector('#remove-track').addEventListener('click', () => {
+  validator.resetInvalidForms();
   toggleFormFields();
   map.clearTracks();
 });
@@ -47,7 +48,7 @@ form.style.addEventListener('change', function() {
 
 // map scale
 form.scale.addEventListener('change', () => reloadCutouts());
-validator.add({form: form.scale, validity: (v) => v >= 5000,
+validator.add({form: form.scale, validity: v => v >= 5000,
   msg: "Scale must be 5000 or larger!"});
 
 // paper format
@@ -55,13 +56,13 @@ form.paperformat.addEventListener('change', () => reloadCutouts());
 
 // margin
 form.margin.addEventListener('change', () => reloadCutouts());
-validator.add({form: form.margin, validity: (v) => v >= 0 && v <= 50,
+validator.add({form: form.margin, validity: v => v >= 0 && v <= 50,
   msg: "Margin must be between 0 and 50!"});
 
 // milemarkers
 form.milemarkers.addEventListener('change', () =>
   map.updateMilemarkers(form.milemarkers.value));
-validator.add({form: form.milemarkers, validity: (v) => v >= 0,
+validator.add({form: form.milemarkers, validity: v => v >= 0,
   msg: "Milemarkers must be 0 or larger!"});
 
 // generate button
@@ -101,14 +102,27 @@ function loadTrack(file) {
 
 function toggleFormFields() {
   // hide/unhide everything with class 'hidable'
-  document.querySelectorAll('.hidable').forEach(field =>
+  form.querySelectorAll('.hidable').forEach(field =>
     field.classList.toggle('hidden')
   );
 
   // disable/enable everything with class 'disableable'
-  document.querySelectorAll('.disableable').forEach(field =>
+  form.querySelectorAll('.disableable').forEach(field =>
     toggleField(field)
   );
+
+  // generatePdfBtn
+  toggleGenerateButtonField();
+}
+
+function toggleGenerateButtonField() {
+  if (generatePdfBtn.hasAttribute("disabled")) {
+    if (validator.allValid()) {
+      generatePdfBtn.removeAttribute("disabled");
+    }
+  } else {
+    generatePdfBtn.setAttribute("disabled", true);
+  }
 }
 
 function toggleField(field) {
@@ -163,7 +177,6 @@ function initProgressbarUpdater(printmap) {
   closeButton.addEventListener("click", function() {
     printmap.cancel();
   });
-  toggleField(generatePdfBtn);
 
   return function(currentItem, maxItems, isCanceled) {
     let percent = Math.trunc(100 / maxItems * (currentItem+1)) + "%";
@@ -176,7 +189,6 @@ function initProgressbarUpdater(printmap) {
     }
 
     if (currentItem === maxItems) {
-      toggleField(generatePdfBtn);
       modal.classList.add("hidden");
       modalOverlay.classList.add("hidden");
     }

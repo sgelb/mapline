@@ -24,6 +24,20 @@ class FormValidator {
     return true;
   }
 
+  resetInvalidForms() {
+    if (this.allValid()) {
+      return;
+    }
+
+    for (let [form, validity] of this._validity) {
+      if (validity === false) {
+        let field = document.getElementById(form);
+        field.value = field.defaultValue;
+        this._validation(true, field);
+      }
+    }
+  }
+
   _addEventListener(subject) {
     subject.form.addEventListener('input', () => {
       this._validation(subject.validity(subject.form.value), subject.form);
@@ -54,6 +68,7 @@ class FormValidator {
   _lock() {
     this._enablees.forEach(node => node.setAttribute("disabled", "true"));
   }
+
 }
 
 
