@@ -102,12 +102,12 @@ function loadTrack(file) {
 
 function toggleFormFields() {
   // hide/unhide everything with class 'hidable'
-  form.querySelectorAll('.hidable').forEach(field =>
+  Array.from(form.querySelectorAll('.hidable')).forEach(field =>
     field.classList.toggle('hidden')
   );
 
   // disable/enable everything with class 'disableable'
-  form.querySelectorAll('.disableable').forEach(field =>
+  Array.from(form.querySelectorAll('.disableable')).forEach(field =>
     toggleField(field)
   );
 
