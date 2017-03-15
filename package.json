@@ -3,22 +3,6 @@
   "version": "0.2.0",
   "description": "Create a pdf of maps along a track in printable quality",
   "main": "src/index.js",
-  "scripts": {
-    "start": "budo src/index.js:js/bundle.min.js --live -t babelify",
-    "build": "browserify -g uglifyify src/index.js | uglifyjs - -cm -o js/bundle.min.js"
-  },
-  "browserify": {
-    "transform": [
-      [
-        "babelify",
-        {
-          "presets": [
-            "es2015"
-          ]
-        }
-      ]
-    ]
-  },
   "keywords": [],
   "author": "sgelb",
   "license": "GPLv3",
@@ -33,7 +17,14 @@
     "babelify": "^7.3.0",
     "browserify": "^14.1.0",
     "budo": "^9.4.7",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-clean": "^0.3.2",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^2.1.0",
+    "run-sequence": "^1.2.2",
     "uglify-js": "^2.8.12",
-    "uglifyify": "^3.0.4"
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0"
   }
 }
