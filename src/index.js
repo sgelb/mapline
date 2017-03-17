@@ -3,70 +3,76 @@ import paperformat from './paperformat.js';
 import Mapbox from './mapbox.js';
 import FormValidator from './formvalidator.js';
 
+const dpi = 300;
 let map;
 const form = document.getElementById("config");
 const generatePdfBtn = document.getElementById("generate-btn");
 const validator = new FormValidator();
-validator.enableWhenAllValid(generatePdfBtn);
 
-// UI options
-setPaperformatOptions();
+(function() {
+  // Preview map
+  try {
+    map = new Mapbox({
+      container: 'map',
+      style: toStyleURI("outdoors"),
+      center: [13.463, 47.386],
+      zoom: 11
+    });
+  } catch(e) {
+    showAlertBox("Initiating MapboxGL failed. " + e.message);
+    return;
+  }
 
-// Preview map
-try {
-  map = new Mapbox({
-    container: 'map',
-    style: toStyleURI("outdoors"),
-    center: [13.463, 47.386],
-    zoom: 11
+  validator.enableWhenAllValid(generatePdfBtn);
+  initUI();
+})();
+
+function initUI() {
+  // UI options
+  setPaperformatOptions();
+
+  // track input button
+  form.trackFile.addEventListener('change', function() {
+    loadTrack(this.files[0]);
+    // reset value. otherwise, this listener is not triggered when the same track
+    // file is chosen immediately again after removing it
+    this.value = null;
   });
-} catch(e) {
-  showAlertBox("Initiating MapboxGL failed. " + e);
+
+  // "remove track"-button. visible after chosing a track
+  form.querySelector('#remove-track').addEventListener('click', () => {
+    validator.resetInvalidForms();
+    toggleFormFields();
+    map.clearTracks();
+  });
+
+  // map style
+  form.style.addEventListener('change', function() {
+    map.style = toStyleURI(this.value);
+  });
+
+  // map scale
+  form.scale.addEventListener('change', () => reloadCutouts());
+  validator.add({form: form.scale, validity: v => v >= 5000,
+    msg: "Scale must be 5000 or larger!"});
+
+  // paper format
+  form.paperformat.addEventListener('change', () => reloadCutouts());
+
+  // margin
+  form.margin.addEventListener('change', () => reloadCutouts());
+  validator.add({form: form.margin, validity: v => v >= 0 && v <= 50,
+    msg: "Margin must be between 0 and 50!"});
+
+  // milemarkers
+  form.milemarkers.addEventListener('change', () =>
+    map.updateMilemarkers(form.milemarkers.value));
+  validator.add({form: form.milemarkers, validity: v => v >= 0,
+    msg: "Milemarkers must be 0 or larger!"});
+
+  // generate button
+  generatePdfBtn.addEventListener("click", generatePDF);
 }
-
-// UI
-
-// track input button
-form.trackFile.addEventListener('change', function() {
-  loadTrack(this.files[0]);
-  // reset value. otherwise, this listener is not triggered when the same track
-  // file is chosen immediately again after removing it
-  this.value = null;
-});
-
-// "remove track"-button. visible after chosing a track
-form.querySelector('#remove-track').addEventListener('click', () => {
-  validator.resetInvalidForms();
-  toggleFormFields();
-  map.clearTracks();
-});
-
-// map style
-form.style.addEventListener('change', function() {
-  map.style = toStyleURI(this.value);
-});
-
-// map scale
-form.scale.addEventListener('change', () => reloadCutouts());
-validator.add({form: form.scale, validity: v => v >= 5000,
-  msg: "Scale must be 5000 or larger!"});
-
-// paper format
-form.paperformat.addEventListener('change', () => reloadCutouts());
-
-// margin
-form.margin.addEventListener('change', () => reloadCutouts());
-validator.add({form: form.margin, validity: v => v >= 0 && v <= 50,
-  msg: "Margin must be between 0 and 50!"});
-
-// milemarkers
-form.milemarkers.addEventListener('change', () =>
-  map.updateMilemarkers(form.milemarkers.value));
-validator.add({form: form.milemarkers, validity: v => v >= 0,
-  msg: "Milemarkers must be 0 or larger!"});
-
-// generate button
-generatePdfBtn.addEventListener("click", generatePDF);
 
 function loadTrack(file) {
   const filename = file.name;
@@ -159,7 +165,7 @@ function generatePDF() {
     map.copyTo('hidden-map'),
     { format: form.paperformat.value,
       margin: parseInt(form.margin.value, 10),
-      dpi: 300
+      dpi: dpi
     }, progressbarUpdater
   );
 }

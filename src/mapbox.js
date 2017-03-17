@@ -15,7 +15,11 @@ class Mapbox {
 
     this._tracks = tracks || new Map();
     this._details = details || {};
-    this._map = new mapboxgl.Map(args);
+    try {
+      this._map = new mapboxgl.Map(args);
+    } catch(e) {
+      throw Error(`Your browser does not support MapboxGL.`);
+    }
     this._map.on('styledata', () => this._updateAllTracks());
     this._addControls();
   }
