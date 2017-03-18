@@ -8,6 +8,8 @@ const rename = require('gulp-rename');
 const source = require('vinyl-source-stream');
 const uglify = require('gulp-uglify');
 const runSequence = require('run-sequence');
+const gitRevision = require('git-revision');
+const replace = require('gulp-replace');
 
 const config = {
   dist: "./www/*",
@@ -30,7 +32,7 @@ const config = {
 gulp.task('watch', function(cb) {
   //dev server
   budo(config.js.src, {
-    serve: 'bundle.min.js',
+    serve: 'js/bundle.min.js',
     stream: process.stdout,
     live: true,
     browserify: {
@@ -50,7 +52,11 @@ gulp.task('css', () => {
 });
 
 gulp.task('html', () => {
+  const date = new Date().toLocaleDateString();
+  const version = `Build: ${gitRevision("tag")} (${date})`;
+
   return gulp.src(config.html.src)
+    .pipe(replace('__VERSION__', version))
     .pipe(gulp.dest(config.html.dest));
 });
 

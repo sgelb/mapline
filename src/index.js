@@ -18,8 +18,10 @@ const validator = new FormValidator();
       center: [13.463, 47.386],
       zoom: 11
     });
+    setPaperformatOptions();
   } catch(e) {
-    showAlertBox("Initiating MapboxGL failed. " + e.message);
+    document.getElementById("main").classList.add("hidden");
+    showAlertBox(e.message);
     return;
   }
 
@@ -28,9 +30,6 @@ const validator = new FormValidator();
 })();
 
 function initUI() {
-  // UI options
-  setPaperformatOptions();
-
   // track input button
   form.trackFile.addEventListener('change', function() {
     loadTrack(this.files[0]);
