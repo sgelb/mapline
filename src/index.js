@@ -203,36 +203,36 @@ function initProgressbarUpdater(printmap) {
 }
 
 function setPaperformatOptions() {
-  // XXX: this seems to work and i think it's correct, but i do not know for sure
-  // http://webglstats.com/webgl/parameter/MAX_RENDERBUFFER_SIZE
-
   const canvas = document.createElement("canvas");
   const gl = canvas.getContext("webgl") || canvas.getContext('experimental-webgl');
-  // maxSize in mm = (max renderbuffer in mm) / new devicePixelRatio
-  const maxSize = (25.4 * (gl.getParameter(gl.MAX_RENDERBUFFER_SIZE)) / 300 ) / (300 / 96);
-  const validFormats = paperformat.validFormats(maxSize);
+
+  // Engines may set limits to maximum size of canvas dimensions are area, e.g.
+  // - WebKit limits length of width and height to 4096
+  // - Blink limits to area of 4096*4096, allowing lengths larger than 4096
+  // - Gecko and EdgeHTML?
+
+  // For now, we go with Blink's limit, see
+  // src.chromium.org/viewvc/blink/trunk/Source/modules/webgl/WebGLRenderingContextBase.cpp?pathrev=202517#l1286
+  // This may break WebKit based browsers.
+  // TODO: factor paper margins into calculation of maxSize
+
+  const maxSize = 25.4 * Math.min(gl.getParameter(gl.MAX_RENDERBUFFER_SIZE), 4096) / dpi;
+  const validFormats = paperformat.validFormats(maxSize * maxSize);
 
   if (validFormats.length < 1) {
-    showAlertBox(`Sorry, your device does not support rendering of high-res maps.
-    Please try again using a device with a more powerful graphics card.`);
-    document.querySelector("#main").classList.add("hidden");
-    return;
-  }
-
-  if (validFormats.length < 2) {
-    showAlertBox(`Sorry, you can only create maps in ${capitalize(validFormats[0])}
-    format. Please try again using a device with a more powerful graphics card.`);
+    throw new Error(`Sorry, your device can't render high-res maps.
+    Please try a device with a better graphics card.`);
   }
 
   const paperform = form.paperformat;
   paperform.remove(0);  // remove placeholder option
-  validFormats.forEach(function(format) {
+  validFormats.forEach((format) => {
     let option = document.createElement("option");
     option.text = capitalize(format);
     option.value = format;
     paperform.add(option);
   });
-  // if available, set a5 as default. otherwise, use last (smallest) entry
+  // if available, set a5 as default. otherwise, use last entry
   paperform.value = validFormats.includes("a5") ? "a5" :
     validFormats[validFormats.length - 1];
 }
