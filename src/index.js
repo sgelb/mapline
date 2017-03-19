@@ -213,16 +213,21 @@ function setPaperformatOptions() {
 
   // For now, we go with Blink's limit, see
   // src.chromium.org/viewvc/blink/trunk/Source/modules/webgl/WebGLRenderingContextBase.cpp?pathrev=202517#l1286
-  // This may break WebKit based browsers.
-  // TODO: factor paper margins into calculation of maxSize
+  // TODO: factor paper margins into calculation of maxSize. this may enable a3 for sufficient margins.
 
-  const maxSize = 25.4 * Math.min(gl.getParameter(gl.MAX_RENDERBUFFER_SIZE), 4096) / dpi;
-  const validFormats = paperformat.validFormats(maxSize * maxSize);
+  const maxBuffer = gl.getParameter(gl.MAX_RENDERBUFFER_SIZE);
 
-  if (validFormats.length < 1) {
+  if (maxBuffer < 2048) {
     throw new Error(`Sorry, your device can't render high-res maps.
     Please try a device with a better graphics card.`);
   }
+
+  if (maxBuffer === 2048) {
+    showAlertBox("Your device can only render PDFs in A6. For larger formats, try a device with a better graphics card.");
+  }
+
+  const maxSize = 25.4 * Math.min(maxBuffer, 4096) / dpi;
+  const validFormats = paperformat.validFormats(maxSize * maxSize);
 
   const paperform = form.paperformat;
   paperform.remove(0);  // remove placeholder option
@@ -232,6 +237,7 @@ function setPaperformatOptions() {
     option.value = format;
     paperform.add(option);
   });
+
   // if available, set a5 as default. otherwise, use last entry
   paperform.value = validFormats.includes("a5") ? "a5" :
     validFormats[validFormats.length - 1];
