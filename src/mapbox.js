@@ -52,7 +52,7 @@ class Mapbox {
     geojson = trackutils.reduce(geojson);
     this.addTrack(new Route("route", geojson));
     this.updateTrack(this._tracks.get("route"));
-    [this._details.climb, this._details.descent] = trackutils.elevation(geojson);
+    // [this._details.climb, this._details.descent] = trackutils.elevation(geojson);
     this._details.distance = trackutils.totalDistance(geojson);
   }
 
@@ -143,9 +143,6 @@ class Mapbox {
   cutoutMap(feature, format, margin) {
     let orientation = (feature.properties.width > feature.properties.height) ? "l" : "p";
     let [width, height] = paperformat.dimensions(format, margin, orientation);
-
-    // Details
-    // create printDetails: use symbols, inline, etc
     let details = this.getPrintDetails();
 
     const map = this._map;

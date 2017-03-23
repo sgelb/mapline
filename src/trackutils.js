@@ -89,7 +89,7 @@ const trackutils = {
   elevation(track) {
     const line = track.features[0].geometry.coordinates;
     if (line[0].length < 3) {
-      return;
+      return [NaN, NaN];
     }
 
     let climb = 0;
