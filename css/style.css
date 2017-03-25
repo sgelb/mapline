@@ -3,8 +3,26 @@ body {
   height: 90%;
 }
 
-.page-header {
-  padding-bottom: 0;
+header {
+  border-bottom: 1px solid rgba(0,0,0,.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-top: 2em;
+  margin-bottom: 1.5em;
+}
+
+header h1 small {
+  font-size: 60%;
+}
+
+label {
+  margin-bottom: 0.1rem;
+}
+
+table {
+  font-size: 80%;
+  margin-bottom: 3rem;
 }
 
 section {
@@ -15,18 +33,38 @@ section {
   cursor: pointer;
 }
 
+#advanced-options {
+  margin-top: -0.4rem;
+  margin-bottom: 0.4rem;
+}
+
+#map {
+  height: 80vh;
+}
+
+#hidden-map-container {
+  overflow: hidden;
+  height: 0;
+  width: 0;
+  position: fixed;
+}
+
+/* Modal */
+
 .modal {
-	display: block;
-	width: 50vw;
-	position: fixed;
+  overflow-y:auto;
+  display: block;
+  width: 50vw;
+  max-height: 90vh;
+  position: fixed;
   top: 50%;
   left: 50%;
   right: auto;
   bottom: auto;
   transform: translate(-50%, -50%);
-	background: white;
+  background: white;
   border-radius: 1rem;
-	z-index: 1050;
+  z-index: 1050;
 }
 
 .modal-overlay {
@@ -49,48 +87,16 @@ section {
   margin-top: 1rem;
 }
 
-.table {
-  margin-bottom: 1rem;
-}
-
-#map {
-  height: 80vh;
-}
-
-header {
-  margin-top: 2em;
-  margin-bottom: 1.5em;
-}
-
 .hidden {
   display: none;
 }
 
-label {
-  margin-bottom: 0.1rem;
+
 }
 
-table {
-  font-size: 80%;
 }
 
-header h1 small {
-  font-size: 60%;
 }
 
-.spinning {
-  animation: spin 1.5s infinite linear;
-}
-
-@keyframes spin {
-  from { transform: scale(1) rotate(0deg); }
-  to { transform: scale(1) rotate(360deg); }
-}
-
-#hidden-map-container {
-  overflow: hidden;
-  height: 0;
-  width: 0;
-  position: fixed;
 }
 

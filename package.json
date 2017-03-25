@@ -1,6 +1,6 @@
 {
   "name": "mapline",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Create a pdf of maps along a track in printable quality",
   "main": "src/index.js",
   "keywords": [],
