@@ -72,7 +72,7 @@ function initUI() {
   // example gpx file
   document.getElementById('example-gpx').addEventListener('click', () => {
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', '/assets/vercors.gpx', true);
+    xhr.open('GET', './assets/vercors.gpx', true);
     xhr.onload = function(e) {
       if (this.status == 200) {
         loadTrack(new File([this.response], 'vercors.gpx'));
