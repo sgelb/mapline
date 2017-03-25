@@ -25,8 +25,11 @@ const config = {
   html: {
     src: "./index.html",
     dest: "./www/",
+  },
+  assets: {
+    src: "./assets/*",
+    dest: "./www/assets/",
   }
-
 };
 
 gulp.task('watch', function(cb) {
@@ -60,8 +63,13 @@ gulp.task('html', () => {
     .pipe(gulp.dest(config.html.dest));
 });
 
+gulp.task('assets', () => {
+  return gulp.src(config.assets.src)
+    .pipe(gulp.dest(config.assets.dest));
+});
+
 gulp.task('copy', () => {
-  runSequence('clean', ['css', 'html']);
+  runSequence('clean', ['css', 'html', 'assets']);
 });
 
 gulp.task('bundle', ['copy'], () => {

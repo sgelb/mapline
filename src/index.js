@@ -69,6 +69,18 @@ function initUI() {
   validator.add({form: form.milemarkers, validity: v => v >= 0,
     msg: "Milemarkers must be 0 or larger!"});
 
+  // example gpx file
+  document.getElementById('example-gpx').addEventListener('click', () => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', '/assets/vercors.gpx', true);
+    xhr.onload = function(e) {
+      if (this.status == 200) {
+        loadTrack(new File([this.response], 'vercors.gpx'));
+      }
+    };
+    xhr.send();
+  });
+
   // generate button
   generatePdfBtn.addEventListener("click", generatePDF);
 }
