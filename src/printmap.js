@@ -50,16 +50,16 @@ class Printmap {
             return (this.canceled) ? Promise.reject(new Error("canceled by user")) : loadMapImage(feature);
           })
           .then(image => {
-            console.time("Load map image " + count);
             progressfn(count++, totalMaps, this.canceled);
             addMapImage(image);
-            console.timeEnd("Load map image " + count);
+            console.log(`Generated map #${count}/${totalMaps}`);
           });
       }, Promise.resolve())
       .then(() => {
         if (!this.canceled) {
-          console.log("Saving pdf");
-          pdf.save(map.name + ".pdf");
+          const pdfname = `${map.name}.pdf`;
+          console.log(`Saving ${pdfname}`);
+          pdf.save(pdfname);
         }
       })
       .catch((e) => {
@@ -73,7 +73,6 @@ class Printmap {
       });
   }
 }
-
 
 function loadMap(map, format, margin) {
   return (feature) => map.cutoutMap(feature, format, margin);

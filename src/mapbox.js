@@ -52,6 +52,7 @@ class Mapbox {
     geojson = trackutils.reduce(geojson);
     this.addTrack(new Route("route", geojson));
     this.updateTrack(this._tracks.get("route"));
+
     // [this._details.climb, this._details.descent] = trackutils.elevation(geojson);
     this._details.distance = trackutils.totalDistance(geojson);
   }
@@ -154,7 +155,7 @@ class Mapbox {
 
       map.on('render', function listener() {
         if (map.loaded()) {
-          let data = map.getCanvas().toDataURL('image/jpeg', 1.0);
+          let data = map.getCanvas().toDataURL('image/jpeg', 0.9);
           resolve({format, orientation, data, margin, width, height, details});
           map.off('render', listener);
         }
