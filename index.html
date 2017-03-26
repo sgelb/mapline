@@ -141,7 +141,7 @@
                     <input id="milemarkers" type="number" class="form-control disableable" disabled min="0" value="10">
                     <span class="input-group-addon">km</span>
                   </div>
-                  <div class="form-control-feedback small hidden">Distance markers must be 0 or greater!</div>
+                  <div class="form-control-feedback small hidden"></div>
                 </div>
               </div>
             </div>
@@ -155,11 +155,12 @@
                     <input id="margin" type="number" class="form-control disableable" disabled min="0" value="10">
                     <span class="input-group-addon">mm</span>
                   </div>
-                  <div class="form-control-feedback small hidden">Margin must be between 0 and 100!</div>
+                  <div class="form-control-feedback small hidden"></div>
                 </div>
               </div>
             </div>
 
+            <!-- pdf resolution -->
             <div class="row advanced-option hidden">
               <div class="col-md-12">
                 <div class="form-group">
@@ -168,11 +169,24 @@
                     <input id="dpi" type="number" class="form-control disableable" disabled min="0" value="300">
                     <span class="input-group-addon">dpi</span>
                   </div>
-                  <div class="form-control-feedback small hidden">Resolution must be  greater!</div>
+                  <div class="form-control-feedback small hidden"></div>
                 </div>
               </div>
             </div>
 
+            <!-- track width -->
+            <div class="row advanced-option hidden">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="trackWidth">Track width</label>
+                  <div class="input-group">
+                    <input id="trackWidth" type="number" class="form-control disableable" disabled min="1" value="3">
+                    <span class="input-group-addon">px</span>
+                  </div>
+                  <div class="form-control-feedback small hidden"></div>
+                </div>
+              </div>
+            </div>
 
           </form>
 

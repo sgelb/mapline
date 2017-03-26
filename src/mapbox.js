@@ -45,6 +45,11 @@ class Mapbox {
     this._map.getSource(track.id).setData(track.geojson);
   }
 
+  changeTrackStyle(option) {
+    // option = {property: "line-color", value: "#ff0000"};
+    this._map.setPaintProperty("route", option.property, option.value);
+  }
+
   loadRoute(data, filename) {
     let ext = filename.split('.').pop().toLowerCase();
     this._details.filename = filename.substring(0, filename.lastIndexOf('.'));

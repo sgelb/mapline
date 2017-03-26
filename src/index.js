@@ -91,6 +91,16 @@ function initUI() {
   validator.add({form: form.dpi, validity: v => v > 0,
     msg: "dpi must be larger than 0!"});
 
+  // track width
+  form.trackWidth.addEventListener('change', () =>
+    map.changeTrackStyle({
+      property: "line-width",
+      value: parseInt(form.trackWidth.value, 10)
+    })
+  );
+  validator.add({form: form.trackWidth, validity: v => v > 0,
+    msg: "Track width must be larger than 0!"});
+
   // generate button
   generatePdfBtn.addEventListener("click", generatePDF);
 }

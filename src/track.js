@@ -67,19 +67,8 @@ class Route extends Track {
       },
       "paint": {
         "line-color": "#ff69b4",
-        "line-width": {
-          "stops": [
-            [0, 4],
-            [12, 3]
-          ]
-        },
+        "line-width": 3,
         "line-opacity": 0.6,
-        "line-dasharray": {
-          "stops": [
-            [0, [1000, 0]],
-            [12, [2, 1]]
-          ]
-        }
       },
     };
   }
