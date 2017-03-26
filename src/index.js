@@ -101,6 +101,14 @@ function initUI() {
   validator.add({form: form.trackWidth, validity: v => v > 0,
     msg: "Track width must be larger than 0!"});
 
+  // track color
+  form.trackColor.addEventListener('change', () =>
+    map.changeTrackStyle({
+      property: "line-color",
+      value: form.trackColor.value
+    })
+  );
+
   // generate button
   generatePdfBtn.addEventListener("click", generatePDF);
 }
