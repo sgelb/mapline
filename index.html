@@ -121,22 +121,19 @@
               </div>
             </div>
 
-            <!-- map margin -->
+            <!-- Toggle Advanced options -->
             <div class="row">
               <div class="col-md-12">
                 <div class="form-group">
-                  <label title="Margin around maps on pages" for="margin">Margin</label>
-                  <div class="input-group">
-                    <input id="margin" type="number" class="form-control disableable" disabled min="0" value="10">
-                    <span class="input-group-addon">mm</span>
-                  </div>
-                  <div class="form-control-feedback small hidden">Margin must be greater 0 and lesser than 100!</div>
+                  <button id="toggleAdvancedOptions" class="btn btn-secondary btn-block btn-sm" type="button">
+                    Advanced options
+                  </button>
                 </div>
               </div>
             </div>
 
             <!-- distance marker interval -->
-            <div class="row">
+            <div class="row advanced-option hidden">
               <div class="col-md-12">
                 <div class="form-group">
                   <label title="Show distance markers in this interval. Value of 0 disables markers." for="milemarkers">Distance markers</label>
@@ -148,16 +145,45 @@
                 </div>
               </div>
             </div>
-          </form>
 
-            <!-- generate button -->
-            <div class="row">
+            <!-- map margin -->
+            <div class="row advanced-option hidden">
               <div class="col-md-12">
-                <button type="submit" class="btn btn-primary btn-block disableable" id="generate-btn" disabled>
-                  Generate PDF
-                </button>
+                <div class="form-group">
+                  <label title="Margin around maps on pages" for="margin">Margin</label>
+                  <div class="input-group">
+                    <input id="margin" type="number" class="form-control disableable" disabled min="0" value="10">
+                    <span class="input-group-addon">mm</span>
+                  </div>
+                  <div class="form-control-feedback small hidden">Margin must be between 0 and 100!</div>
+                </div>
               </div>
             </div>
+
+            <div class="row advanced-option hidden">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="dpi">Resolution</label>
+                  <div class="input-group">
+                    <input id="dpi" type="number" class="form-control disableable" disabled min="0" value="300">
+                    <span class="input-group-addon">dpi</span>
+                  </div>
+                  <div class="form-control-feedback small hidden">Resolution must be  greater!</div>
+                </div>
+              </div>
+            </div>
+
+
+          </form>
+
+          <!-- generate button -->
+          <div class="row">
+            <div class="col-md-12">
+              <button type="submit" class="btn btn-primary btn-block disableable" id="generate-btn" disabled>
+                Generate PDF
+              </button>
+            </div>
+          </div>
 
         </section>
 

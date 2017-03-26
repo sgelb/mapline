@@ -1,6 +1,7 @@
 body {
   padding: 0 2em;
   height: 90%;
+  line-height: 1rem;
 }
 
 header {
@@ -31,11 +32,6 @@ section {
 
 #trackField > span.input-group-addon {
   cursor: pointer;
-}
-
-#advanced-options {
-  margin-top: -0.4rem;
-  margin-bottom: 0.4rem;
 }
 
 #map {

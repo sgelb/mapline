@@ -1,5 +1,9 @@
 const pageformats = new Map();
 pageformats
+  .set('a0', [841, 1189])
+  .set('a1', [594, 841])
+  .set('a2', [420, 594])
+  .set('a3', [297, 420])
   .set('a4', [210, 297])
   .set('a5', [148, 210])
   .set('a6', [105, 148])

@@ -3,7 +3,6 @@ import paperformat from './paperformat.js';
 import Mapbox from './mapbox.js';
 import FormValidator from './formvalidator.js';
 
-const dpi = 300;
 let map;
 const form = document.getElementById("config");
 const generatePdfBtn = document.getElementById("generate-btn");
@@ -30,6 +29,18 @@ const validator = new FormValidator();
 })();
 
 function initUI() {
+  // load example gpx file
+  document.getElementById('example-gpx').addEventListener('click', () => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', './assets/vercors.gpx', true);
+    xhr.onload = function(e) {
+      if (this.status == 200) {
+        loadTrack(new File([this.response], 'vercors.gpx'));
+      }
+    };
+    xhr.send();
+  });
+
   // track input button
   form.trackFile.addEventListener('change', function() {
     loadTrack(this.files[0]);
@@ -58,28 +69,27 @@ function initUI() {
   // paper format
   form.paperformat.addEventListener('change', () => reloadCutouts());
 
-  // margin
-  form.margin.addEventListener('change', () => reloadCutouts());
-  validator.add({form: form.margin, validity: v => v >= 0 && v <= 50,
-    msg: "Margin must be between 0 and 50!"});
-
   // milemarkers
   form.milemarkers.addEventListener('change', () =>
     map.updateMilemarkers(form.milemarkers.value));
   validator.add({form: form.milemarkers, validity: v => v >= 0,
     msg: "Milemarkers must be 0 or larger!"});
 
-  // example gpx file
-  document.getElementById('example-gpx').addEventListener('click', () => {
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', './assets/vercors.gpx', true);
-    xhr.onload = function(e) {
-      if (this.status == 200) {
-        loadTrack(new File([this.response], 'vercors.gpx'));
-      }
-    };
-    xhr.send();
+  // toggle advanced options
+  form.toggleAdvancedOptions.addEventListener('click', () => toggleAdvancedOptions());
+
+  // margin
+  form.margin.addEventListener('change', () => reloadCutouts());
+  validator.add({form: form.margin, validity: v => v >= 0 && v <= 50,
+    msg: "Margin must be between 0 and 50!"});
+
+  // dpi
+  form.dpi.addEventListener('change', () => {
+    setPaperformatOptions();
+    reloadCutouts();
   });
+  validator.add({form: form.dpi, validity: v => v > 0,
+    msg: "dpi must be larger than 0!"});
 
   // generate button
   generatePdfBtn.addEventListener("click", generatePDF);
@@ -119,9 +129,7 @@ function loadTrack(file) {
 
 function toggleFormFields() {
   // hide/unhide everything with class 'hidable'
-  Array.from(form.querySelectorAll('.hidable')).forEach(field =>
-    field.classList.toggle('hidden')
-  );
+  toggleHiddenForm('.hidable');
 
   // disable/enable everything with class 'disableable'
   Array.from(form.querySelectorAll('.disableable')).forEach(field =>
@@ -130,6 +138,16 @@ function toggleFormFields() {
 
   // generatePdfBtn
   toggleGenerateButtonField();
+}
+
+function toggleAdvancedOptions() {
+  // hide/unhide everything with class 'advanced-option'
+  toggleHiddenForm('.advanced-option');
+}
+
+function toggleHiddenForm(id) {
+  Array.from(form.querySelectorAll(id)).forEach(
+    field => field.classList.toggle('hidden'));
 }
 
 function toggleGenerateButtonField() {
@@ -176,7 +194,7 @@ function generatePDF() {
     map.copyTo('hidden-map'),
     { format: form.paperformat.value,
       margin: parseInt(form.margin.value, 10),
-      dpi: dpi
+      dpi: parseInt(form.dpi.value, 10)
     }, progressbarUpdater
   );
 }
@@ -238,11 +256,11 @@ function setPaperformatOptions() {
     showAlertBox("Your device can only render PDFs in A6. For larger formats, try a device with a better graphics card.");
   }
 
-  const maxSize = 25.4 * Math.min(maxBuffer, 4096) / dpi;
+  const maxSize = 25.4 * Math.min(maxBuffer, 4096) / parseInt(form.dpi.value, 10);
   const validFormats = paperformat.validFormats(maxSize * maxSize);
 
   const paperform = form.paperformat;
-  paperform.remove(0);  // remove placeholder option
+  paperform.options.length = 0;  // remove placeholder option
   validFormats.forEach((format) => {
     let option = document.createElement("option");
     option.text = capitalize(format);
