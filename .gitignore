@@ -1,3 +1,4 @@
-node_modules
-bundle.js
-mapboxtoken.js
+node_modules/
+www/
+src/mapboxtoken.js
+TODO.md
