@@ -6,6 +6,7 @@ your scale, your format and the infos you need.
 
 [Demo page](https://sgelb.github.io/demo/mapline/)
 
+
 ### Features
 - Accurate scale throughout the whole route
 - Printable quality of 300dpi
@@ -19,6 +20,24 @@ need. Vector tiles enable rendering in 300dpi, high enough for printing. There
 are different styles available. Paper format, page margins and distance markers
 are customizable. You want a map in 1:85.000 on A5 paper along that winding
 river? No problem.
+
+
+### Development
+
+Logic and PDF generation of `mapline` are performed client-side. Main external
+libraries are [Mapbox GL JS](https://www.mapbox.com/mapbox-gl-js/) for map
+creation and [jsPDF](https://github.com/MrRio/jsPDF) for PDF generation.
+
+Before you can use `mapline`, you have to get your own [Mapbox access
+token](https://www.mapbox.com/help/create-api-access-token/). Save it in
+`src/mapboxtoken.js`:
+
+    export default '<your access token here';
+
+- `npm install` installs all needed dependencies
+- `gulp watch` starts a development server on localhost:9966
+- `gulp bundle` bundles everything in www/, ready to deploy
+
 
 ### Limitations
 
@@ -34,5 +53,5 @@ Before this javascript implementation using vector tiles, I wrote a Python progr
 - possibility to show points of views like drinking water or camping places
 - a scale bar
 - elevation stats and marking of steep slopes
-- support for additional gpx features besides tracks and routes
+- support for additional/multiple gpx features besides tracks and routes
 
