@@ -1,7 +1,7 @@
-import cheapruler from 'cheap-ruler';
-import normalize from '@mapbox/geojson-normalize';
-import {DOMParser} from 'xmldom';
-import toGeoJSON from './togeojson.js';
+import cheapruler from "cheap-ruler";
+import normalize from "@mapbox/geojson-normalize";
+import { DOMParser } from "xmldom";
+import toGeoJSON from "./togeojson.js";
 
 // copied from https://github.com/mapbox/cheap-ruler
 function interpolate(a, b, t) {
@@ -12,39 +12,43 @@ function interpolate(a, b, t) {
 
 function createPoint(coords, title) {
   return {
-    "type": "Feature",
-    "geometry": {
-      "type": "Point",
-      "coordinates": coords,
+    type: "Feature",
+    geometry: {
+      type: "Point",
+      coordinates: coords
     },
-    "properties": {"title": title}
+    properties: { title: title }
   };
 }
 
 function featureCollection(features) {
-  return { "type": "FeatureCollection", "features": features };
+  return { type: "FeatureCollection", features: features };
 }
 
 function insideBounds(point, bbox) {
-  return  point[0] >= bbox.getWest() &&
+  return (
+    point[0] >= bbox.getWest() &&
     point[0] <= bbox.getEast() &&
     point[1] >= bbox.getSouth() &&
-    point[1] <= bbox.getNorth();
+    point[1] <= bbox.getNorth()
+  );
 }
 
 function intersect(coord1, coord2, bounds) {
   // adapted from github.com/maxogden/geojson-js-utils/blob/master/geojson-utils.js
-  const a1 = {x: coord1[0], y: coord1[1]};
-  const a2 = {x: coord2[0], y: coord2[1]};
+  const a1 = { x: coord1[0], y: coord1[1] };
+  const a2 = { x: coord2[0], y: coord2[1] };
 
   for (let i = 0; i < bounds.length - 1; i++) {
-    let b1 = {x: bounds[i][0], y: bounds[i][1]};
-    let b2 = {x: bounds[i+1][0], y: bounds[i+1][1]};
+    let b1 = { x: bounds[i][0], y: bounds[i][1] };
+    let b2 = { x: bounds[i + 1][0], y: bounds[i + 1][1] };
 
     let u_b = (b2.y - b1.y) * (a2.x - a1.x) - (b2.x - b1.x) * (a2.y - a1.y);
     if (u_b !== 0) {
-      let ua = ((b2.x - b1.x) * (a1.y - b1.y) - (b2.y - b1.y) * (a1.x - b1.x)) / u_b;
-      let ub = ((a2.x - a1.x) * (a1.y - b1.y) - (a2.y - a1.y) * (a1.x - b1.x)) / u_b;
+      let ua =
+        ((b2.x - b1.x) * (a1.y - b1.y) - (b2.y - b1.y) * (a1.x - b1.x)) / u_b;
+      let ub =
+        ((a2.x - a1.x) * (a1.y - b1.y) - (a2.y - a1.y) * (a1.x - b1.x)) / u_b;
 
       if (0 <= ua && ua <= 1 && 0 <= ub && ub <= 1) {
         return [a1.x + ua * (a2.x - a1.x), a1.y + ua * (a2.y - a1.y)];
@@ -53,7 +57,6 @@ function intersect(coord1, coord2, bounds) {
   }
   return false;
 }
-
 
 const trackutils = {
   // return bounds of track
@@ -81,7 +84,7 @@ const trackutils = {
   // return total distance of track in kilometer
   totalDistance(track) {
     const line = track.features[0].geometry.coordinates;
-    const ruler = cheapruler(line[Math.trunc(line.length/2)][1]);
+    const ruler = cheapruler(line[Math.trunc(line.length / 2)][1]);
     return parseFloat(ruler.lineDistance(line));
   },
 
@@ -115,15 +118,18 @@ const trackutils = {
     let insideDistance = 0;
     let inBounds = insideBounds(line[0], bounds.bbox);
     for (let i = 1; i < line.length - 1; i++) {
-
       // inside bounds
       if (insideBounds(line[i], bounds.bbox)) {
         if (inBounds) {
-          insideDistance += ruler.distance(line[i-1], line[i]);
+          insideDistance += ruler.distance(line[i - 1], line[i]);
         } else {
           // last point was outside bounds, add distance to intersection
           inBounds = true;
-          const intersection = intersect(line[i-1], line[i], bounds.geometry.coordinates[0]);
+          const intersection = intersect(
+            line[i - 1],
+            line[i],
+            bounds.geometry.coordinates[0]
+          );
           const intersectionDistance = ruler.distance(line[i], intersection);
           insideDistance += intersectionDistance;
         }
@@ -133,11 +139,16 @@ const trackutils = {
       // outside bounds
       if (inBounds) {
         // last point was inside these bounds, find intersection
-        const intersection = intersect(line[i-1], line[i], bounds.geometry.coordinates[0]);
-        const intersectionDistance = ruler.distance(line[i-1], intersection);
+        const intersection = intersect(
+          line[i - 1],
+          line[i],
+          bounds.geometry.coordinates[0]
+        );
+        const intersectionDistance = ruler.distance(line[i - 1], intersection);
         insideDistance += intersectionDistance;
 
-        const intermediateDistance = ruler.lineDistance(line.slice(0, i)) + intersectionDistance;
+        const intermediateDistance =
+          ruler.lineDistance(line.slice(0, i)) + intersectionDistance;
 
         return [insideDistance, intermediateDistance];
       }
@@ -159,7 +170,7 @@ const trackutils = {
     }
 
     const line = track.features[0].geometry.coordinates;
-    const ruler = cheapruler(line[Math.trunc(line.length/2)][1]);
+    const ruler = cheapruler(line[Math.trunc(line.length / 2)][1]);
     const points = [];
     let count = 0;
     let intermediateDistance = 0;
@@ -181,7 +192,9 @@ const trackutils = {
         intermediateDistance = ruler.distance(intermediatePoint, nextPoint);
       }
     }
-    points.push(createPoint(line[line.length - 1], Math.trunc(this.totalDistance(track))));
+    points.push(
+      createPoint(line[line.length - 1], Math.trunc(this.totalDistance(track)))
+    );
     return featureCollection(points);
   },
 
@@ -192,7 +205,7 @@ const trackutils = {
     }
 
     if (format === "gpx") {
-      data = (new DOMParser()).parseFromString(data, "text/xml");
+      data = new DOMParser().parseFromString(data, "text/xml");
       return toGeoJSON[format](data);
     }
 

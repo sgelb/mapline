@@ -43,8 +43,10 @@ class BoundingBox {
   // return if bounds width and height are larger than arguments
   largerThan(maxWidth, maxHeight) {
     let [width, height] = this._dimensions();
-    return (width > maxWidth || height > maxHeight) &&
-      (height > maxWidth || width > maxHeight);
+    return (
+      (width > maxWidth || height > maxHeight) &&
+      (height > maxWidth || width > maxHeight)
+    );
   }
 
   // resize bounds to width and height

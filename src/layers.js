@@ -4,13 +4,13 @@ function hasSource(map, id) {
 
 function addSource(map, id) {
   map.addSource(id, {
-    "type": 'geojson',
-    "data": emptyFeatureCollection()
+    type: "geojson",
+    data: emptyFeatureCollection()
   });
 }
 
 function emptyFeatureCollection() {
-  return {"type": "FeatureCollection", "features": []};
+  return { type: "FeatureCollection", features: [] };
 }
 
 const layers = {

@@ -39,7 +39,7 @@ class FormValidator {
   }
 
   _addEventListener(subject) {
-    subject.form.addEventListener('input', () => {
+    subject.form.addEventListener("input", () => {
       this._validation(subject.validity(subject.form.value), subject.form);
     });
   }
@@ -68,8 +68,6 @@ class FormValidator {
   _lock() {
     this._enablees.forEach(node => node.setAttribute("disabled", "true"));
   }
-
 }
-
 
 export default FormValidator;
