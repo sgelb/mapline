@@ -32,7 +32,7 @@ Before you can use `mapline`, you have to get your own [Mapbox access
 token](https://www.mapbox.com/help/create-api-access-token/). Save it in
 `src/mapboxtoken.js`:
 
-    export default '<your access token here';
+    export default '<your access token here>';
 
 - `npm install` installs all needed dependencies
 - `gulp watch` starts a development server on localhost:9966
@@ -44,7 +44,7 @@ token](https://www.mapbox.com/help/create-api-access-token/). Save it in
 An application written in Javascript, using WebGL and running entirely in the
 browser has of course some limitations.
 - [canvas size](https://webglstats.com/webgl/parameter/MAX_RENDERBUFFER_SIZE) and hence the maximum page format depend on your graphics card
-- Javascript engines have a hardcoded maximum string size. This limits the size of the output PDF to [~268.44MB](https://github.com/atom/atom/issues/7210#issuecomment-160994222), ~100 pages of A5 format
+- Javascript engines have a hardcoded maximum string size. This limits the size of the output PDF to [~268.44MB](https://github.com/atom/atom/issues/7210#issuecomment-160994222)
 
 ### Missing features and nice-to-haves
 

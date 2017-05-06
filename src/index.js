@@ -1,7 +1,8 @@
-import Printmap from './printmap.js';
-import paperformat from './paperformat.js';
-import Mapbox from './mapbox.js';
-import FormValidator from './formvalidator.js';
+import "babel-polyfill";
+import Printmap from "./printmap.js";
+import paperformat from "./paperformat.js";
+import Mapbox from "./mapbox.js";
+import FormValidator from "./formvalidator.js";
 
 let map;
 const form = document.getElementById("config");
@@ -12,13 +13,13 @@ const validator = new FormValidator();
   // Preview map
   try {
     map = new Mapbox({
-      container: 'map',
+      container: "map",
       style: toStyleURI("outdoors"),
       center: [13.463, 47.386],
       zoom: 11
     });
     setPaperformatOptions();
-  } catch(e) {
+  } catch (e) {
     document.getElementById("main").classList.add("hidden");
     showAlertBox(e.message);
     return;
@@ -30,19 +31,24 @@ const validator = new FormValidator();
 
 function initUI() {
   // load example gpx file
-  document.getElementById('example-gpx').addEventListener('click', () => {
+  document.getElementById("example-gpx").addEventListener("click", () => {
+    if (map.name) {
+      validator.resetInvalidForms();
+      toggleFormFields();
+      map.clearTracks();
+    }
     const xhr = new XMLHttpRequest();
-    xhr.open('GET', './assets/vercors.gpx', true);
+    xhr.open("GET", "./assets/vercors.gpx", true);
     xhr.onload = function(e) {
       if (this.status == 200) {
-        loadTrack(new File([this.response], 'vercors.gpx'));
+        loadTrack(new Blob([this.response]), "vercors.gpx");
       }
     };
     xhr.send();
   });
 
   // track input button
-  form.trackFile.addEventListener('change', function() {
+  form.trackFile.addEventListener("change", function() {
     loadTrack(this.files[0]);
     // reset value. otherwise, this listener is not triggered when the same track
     // file is chosen immediately again after removing it
@@ -50,59 +56,77 @@ function initUI() {
   });
 
   // "remove track"-button. visible after chosing a track
-  form.querySelector('#remove-track').addEventListener('click', () => {
+  form.querySelector("#remove-track").addEventListener("click", () => {
     validator.resetInvalidForms();
     toggleFormFields();
     map.clearTracks();
   });
 
   // map style
-  form.style.addEventListener('change', function() {
+  form.style.addEventListener("change", function() {
     map.style = toStyleURI(this.value);
   });
 
   // map scale
-  form.scale.addEventListener('change', () => reloadCutouts());
-  validator.add({form: form.scale, validity: v => v >= 5000,
-    msg: "Scale must be 5000 or larger!"});
+  form.scale.addEventListener("change", () => reloadCutouts());
+  validator.add({
+    form: form.scale,
+    validity: v => v >= 5000,
+    msg: "Scale must be 5000 or larger!"
+  });
 
   // paper format
-  form.paperformat.addEventListener('change', () => reloadCutouts());
+  form.paperformat.addEventListener("change", () => reloadCutouts());
 
   // milemarkers
-  form.milemarkers.addEventListener('change', () =>
-    map.updateMilemarkers(form.milemarkers.value));
-  validator.add({form: form.milemarkers, validity: v => v >= 0,
-    msg: "Milemarkers must be 0 or larger!"});
+  form.milemarkers.addEventListener("change", () =>
+    map.updateMilemarkers(form.milemarkers.value)
+  );
+  validator.add({
+    form: form.milemarkers,
+    validity: v => v >= 0,
+    msg: "Milemarkers must be 0 or larger!"
+  });
 
   // toggle advanced options
-  form.toggleAdvancedOptions.addEventListener('click', () => toggleAdvancedOptions());
+  form.toggleAdvancedOptions.addEventListener("click", () =>
+    toggleAdvancedOptions()
+  );
 
   // margin
-  form.margin.addEventListener('change', () => reloadCutouts());
-  validator.add({form: form.margin, validity: v => v >= 0 && v <= 50,
-    msg: "Margin must be between 0 and 50!"});
+  form.margin.addEventListener("change", () => reloadCutouts());
+  validator.add({
+    form: form.margin,
+    validity: v => v >= 0 && v <= 50,
+    msg: "Margin must be between 0 and 50!"
+  });
 
   // dpi
-  form.dpi.addEventListener('change', () => {
+  form.dpi.addEventListener("change", () => {
     setPaperformatOptions();
     reloadCutouts();
   });
-  validator.add({form: form.dpi, validity: v => v > 0,
-    msg: "dpi must be larger than 0!"});
+  validator.add({
+    form: form.dpi,
+    validity: v => v > 0,
+    msg: "dpi must be larger than 0!"
+  });
 
   // track width
-  form.trackWidth.addEventListener('change', () =>
+  form.trackWidth.addEventListener("change", () =>
     map.changeTrackStyle({
       property: "line-width",
       value: parseInt(form.trackWidth.value, 10)
     })
   );
-  validator.add({form: form.trackWidth, validity: v => v > 0,
-    msg: "Track width must be larger than 0!"});
+  validator.add({
+    form: form.trackWidth,
+    validity: v => v > 0,
+    msg: "Track width must be larger than 0!"
+  });
 
   // track color
-  form.trackColor.addEventListener('change', () =>
+  form.trackColor.addEventListener("change", () =>
     map.changeTrackStyle({
       property: "line-color",
       value: form.trackColor.value
@@ -113,8 +137,8 @@ function initUI() {
   generatePdfBtn.addEventListener("click", generatePDF);
 }
 
-function loadTrack(file) {
-  const filename = file.name;
+function loadTrack(file, fname) {
+  const filename = fname || file.name;
   const reader = new FileReader();
 
   reader.onload = function() {
@@ -127,14 +151,20 @@ function loadTrack(file) {
     }
 
     // cutouts
-    map.updateCutouts({scale: form.scale.value, format: form.paperformat.value,
-      margin: form.margin.value, padding: 10});
+    map.updateCutouts({
+      scale: form.scale.value,
+      format: form.paperformat.value,
+      margin: form.margin.value,
+      padding: 10
+    });
 
     // milemarkers
     map.updateMilemarkers(form.milemarkers.value);
 
     // bounds
-    map.updateBounds({padding: 10});
+    map.updateBounds({
+      padding: 10
+    });
 
     // UI changes
     toggleFormFields();
@@ -147,10 +177,10 @@ function loadTrack(file) {
 
 function toggleFormFields() {
   // hide/unhide everything with class 'hidable'
-  toggleHiddenForm('.hidable');
+  toggleHiddenForm(".hidable");
 
   // disable/enable everything with class 'disableable'
-  Array.from(form.querySelectorAll('.disableable')).forEach(field =>
+  Array.from(form.querySelectorAll(".disableable")).forEach(field =>
     toggleField(field)
   );
 
@@ -160,12 +190,13 @@ function toggleFormFields() {
 
 function toggleAdvancedOptions() {
   // hide/unhide everything with class 'advanced-option'
-  toggleHiddenForm('.advanced-option');
+  toggleHiddenForm(".advanced-option");
 }
 
 function toggleHiddenForm(id) {
-  Array.from(form.querySelectorAll(id)).forEach(
-    field => field.classList.toggle('hidden'));
+  Array.from(form.querySelectorAll(id)).forEach(field =>
+    field.classList.toggle("hidden")
+  );
 }
 
 function toggleGenerateButtonField() {
@@ -187,7 +218,7 @@ function toggleField(field) {
 }
 
 function updateTrackDetails(details) {
-  let table = form.querySelector('#trackDetailsTable');
+  let table = form.querySelector("#trackDetailsTable");
   table.innerHTML = "";
   for (let [k, v] of map.getDetails()) {
     let row = table.insertRow();
@@ -198,8 +229,12 @@ function updateTrackDetails(details) {
 
 function reloadCutouts() {
   if (validator.allValid()) {
-    map.updateCutouts({scale: form.scale.value, format: form.paperformat.value,
-      margin: form.margin.value, padding: 10});
+    map.updateCutouts({
+      scale: form.scale.value,
+      format: form.paperformat.value,
+      margin: form.margin.value,
+      padding: 10
+    });
     updateTrackDetails();
   }
 }
@@ -209,17 +244,19 @@ function generatePDF() {
   const progressbarUpdater = initProgressbarUpdater(printmap);
 
   printmap.generatePDF(
-    map.copyTo('hidden-map'),
-    { format: form.paperformat.value,
+    map.copyTo("hidden-map"),
+    {
+      format: form.paperformat.value,
       margin: parseInt(form.margin.value, 10),
       dpi: parseInt(form.dpi.value, 10)
-    }, progressbarUpdater
+    },
+    progressbarUpdater
   );
 }
 
 function initProgressbarUpdater(printmap) {
-  const progresstext = document.querySelector('#progress-text');
-  const progressbar = document.querySelector('#progress-bar');
+  const progresstext = document.querySelector("#progress-text");
+  const progressbar = document.querySelector("#progress-bar");
   const modal = document.querySelector("#modal");
   const modalOverlay = document.querySelector("#modal-overlay");
   const closeButton = document.querySelector("#cancel-button");
@@ -232,7 +269,7 @@ function initProgressbarUpdater(printmap) {
   });
 
   return function(currentItem, maxItems, isCanceled) {
-    let percent = Math.trunc(100 / maxItems * (currentItem+1)) + "%";
+    let percent = Math.trunc(100 / maxItems * (currentItem + 1)) + "%";
     progressbar.style.width = percent;
     progressbar.innerHTML = percent;
     let text = `Map ${currentItem + 1} of ${maxItems}`;
@@ -252,7 +289,8 @@ function initProgressbarUpdater(printmap) {
 
 function setPaperformatOptions() {
   const canvas = document.createElement("canvas");
-  const gl = canvas.getContext("webgl") || canvas.getContext('experimental-webgl');
+  const gl =
+    canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
 
   // Engines may set limits to maximum size of canvas dimensions are area, e.g.
   // - WebKit limits length of width and height to 4096
@@ -266,20 +304,25 @@ function setPaperformatOptions() {
   const maxBuffer = gl.getParameter(gl.MAX_RENDERBUFFER_SIZE);
 
   if (maxBuffer < 2048) {
-    throw new Error(`Sorry, your device can't render high-res maps.
-    Please try a device with a better graphics card.`);
+    throw new Error(
+      `Sorry, your device can't render high-res maps.
+    Please try a device with a better graphics card.`
+    );
   }
 
   if (maxBuffer === 2048) {
-    showAlertBox("Your device can only render PDFs in A6. For larger formats, try a device with a better graphics card.");
+    showAlertBox(
+      "Your device can only render PDFs in A6. For larger formats, try a device with a better graphics card."
+    );
   }
 
-  const maxSize = 25.4 * Math.min(maxBuffer, 4096) / parseInt(form.dpi.value, 10);
+  const maxSize =
+    25.4 * Math.min(maxBuffer, 4096) / parseInt(form.dpi.value, 10);
   const validFormats = paperformat.validFormats(maxSize * maxSize);
 
   const paperform = form.paperformat;
-  paperform.options.length = 0;  // remove placeholder option
-  validFormats.forEach((format) => {
+  paperform.options.length = 0; // remove placeholder option
+  validFormats.forEach(format => {
     let option = document.createElement("option");
     option.text = capitalize(format);
     option.value = format;
@@ -287,28 +330,28 @@ function setPaperformatOptions() {
   });
 
   // if available, set a5 as default. otherwise, use last entry
-  paperform.value = validFormats.includes("a5") ? "a5" :
-    validFormats[validFormats.length - 1];
+  paperform.value = validFormats.indexOf("a5") >= 0
+    ? "a5"
+    : validFormats[validFormats.length - 1];
 }
 
 // Helper functions
 
 function toStyleURI(style) {
-  return 'mapbox://styles/mapbox/' + style + '-v9?optimize=true';
+  return "mapbox://styles/mapbox/" + style + "-v9?optimize=true";
 }
 
 function showAlertBox(message) {
-  const alertBox = document.getElementById('alertbox');
-  alertBox.querySelector('.close').addEventListener('click', function() {
-    alertBox.classList.add('hidden');
+  const alertBox = document.getElementById("alertbox");
+  alertBox.querySelector(".close").addEventListener("click", function() {
+    alertBox.classList.add("hidden");
   });
 
-  const alert = alertBox.querySelector('#alert-msg');
+  const alert = alertBox.querySelector("#alert-msg");
   alert.innerHTML = message;
-  alertBox.classList.remove('hidden');
+  alertBox.classList.remove("hidden");
 }
 
 function capitalize(text) {
   return text[0].toUpperCase() + text.slice(1);
 }
-
