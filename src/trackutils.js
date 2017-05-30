@@ -10,15 +10,30 @@ function interpolate(a, b, t) {
   return [a[0] + dx * t, a[1] + dy * t];
 }
 
-function createPoint(coords, title) {
-  return {
+function createFeature(type, coords, title) {
+  let feature = {
     type: "Feature",
     geometry: {
-      type: "Point",
+      type: type,
       coordinates: coords
-    },
-    properties: { title: title }
+    }
   };
+
+  if (title !== undefined) {
+    feature.properties = { title: title };
+  } else {
+    feature.properties = {};
+  }
+
+  return feature;
+}
+
+function createPoint(coords, title) {
+  return createFeature("Point", coords, title);
+}
+
+function createLineString(coords) {
+  return createFeature("LineString", coords);
 }
 
 function featureCollection(features) {
@@ -56,6 +71,44 @@ function intersect(coord1, coord2, bounds) {
     }
   }
   return false;
+}
+
+function prepare(geojson) {
+  geojson = normalize(geojson);
+  geojson = complexify(geojson, 1);
+  return geojson;
+}
+
+// return FeatureCollection with maximum distance between points
+function complexify(track, interval) {
+  let coordinates = track.features[0].geometry.coordinates.slice();
+  const ruler = cheapruler(coordinates[Math.trunc(coordinates.length / 2)][1]);
+  let result = [];
+
+  while (coordinates.length > 1) {
+    let endpt = ruler.along(coordinates, interval);
+    let tempcoords = [];
+
+    for (let i = 0; i < coordinates.length; i++) {
+      tempcoords.push(coordinates[i]);
+
+      if (ruler.lineDistance(tempcoords) >= interval) {
+        tempcoords.pop();
+        tempcoords.push(endpt);
+        coordinates = coordinates.slice(i);
+        coordinates.unshift(endpt);
+        result.push(tempcoords);
+        break;
+      }
+
+      if (i == coordinates.length - 1) {
+        coordinates = [];
+        result.push(tempcoords);
+      }
+    }
+  }
+
+  return normalize(createFeature("LineString", [].concat(...result), "Japan"));
 }
 
 const trackutils = {
@@ -201,12 +254,12 @@ const trackutils = {
   // convert data to geojson
   togeojson(format, data) {
     if (format === "geojson") {
-      return normalize(JSON.parse(data));
+      return prepare(JSON.parse(data));
     }
 
     if (format === "gpx") {
       data = new DOMParser().parseFromString(data, "text/xml");
-      return toGeoJSON[format](data);
+      return prepare(toGeoJSON[format](data));
     }
 
     throw "Unknown file format: " + format;
