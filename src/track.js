@@ -70,7 +70,22 @@ class Route extends Track {
         "line-width": 3,
         "line-opacity": 0.6,
       },
+      "filter": ["!=", "alternative", true]
     };
+  }
+}
+
+class Alternative extends Route {
+  constructor(id, source, geojson) {
+    super(id,geojson);
+    this._source = source;
+  }
+
+  get layer() {
+    let layer = super.layer;
+    layer.paint["line-dasharray"] = [3, 2];
+    layer.filter = ["==", "alternative", true];
+    return layer;  
   }
 }
 
@@ -132,4 +147,4 @@ class Poi extends Track {
   }
 }
 
-export {Route, Cutouts, Milemarkers, Poi};
+export {Route, Alternative, Cutouts, Milemarkers, Poi};

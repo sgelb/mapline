@@ -3,7 +3,7 @@ import token from './mapboxtoken.js';
 import layers from './layers.js';
 import trackutils from './trackutils.js';
 import paperformat from './paperformat.js';
-import {Route, Cutouts, Milemarkers} from './track.js';
+import {Route, Alternative, Cutouts, Milemarkers} from './track.js';
 
 class Mapbox {
   constructor(args, tracks, details) {
@@ -48,6 +48,7 @@ class Mapbox {
   changeTrackStyle(option) {
     // option = {property: "line-color", value: "#ff0000"};
     this._map.setPaintProperty("route", option.property, option.value);
+    this._map.setPaintProperty("alternative", option.property, option.value);
   }
 
   loadRoute(data, filename) {
@@ -55,11 +56,14 @@ class Mapbox {
     this._details.filename = filename.substring(0, filename.lastIndexOf('.'));
     let geojson = trackutils.togeojson(ext, data);
     geojson = trackutils.reduce(geojson);
-    this.addTrack(new Route("route", geojson));
-    this.updateTrack(this._tracks.get("route"));
-
-    // [this._details.climb, this._details.descent] = trackutils.elevation(geojson);
+    for (const feature of geojson.features) {
+	feature.properties.alternative = ("cmt" in feature.properties && feature.properties.cmt.toUpperCase().includes("ALTERNATIVE"))
+        // [this._details.climb, this._details.descent] = trackutils.elevation(geojson);
+    }
     this._details.distance = trackutils.totalDistance(geojson);
+    this.addTrack(new Route("route", geojson));
+    this.addTrack(new Alternative("alternative", "route", geojson));
+    this.updateTrack(this._tracks.get("route"));
   }
 
   _formatDetail(value, decimal, unit) {

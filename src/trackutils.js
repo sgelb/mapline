@@ -82,6 +82,9 @@ const trackutils = {
   totalDistance(track) {
     let totalDistance = 0;
     for (const feature of track.features) {
+      if(feature.properties.alternative) {
+	continue;
+      }
       const line = feature.geometry.coordinates;
       const ruler = cheapruler(line[Math.trunc(line.length/2)][1]);
       totalDistance += parseFloat(ruler.lineDistance(line));
@@ -118,6 +121,9 @@ const trackutils = {
     let intermediateDistance = 0;
     let previousDistance = 0;
     for (const feature of track.features) {
+      if(feature.properties.alternative) {
+	continue;
+      }
       const line = feature.geometry.coordinates;
       const ruler = cheapruler(bounds.bbox.getCenter().lat);
       let lastInBounds = insideBounds(line[0], bounds.bbox);
@@ -172,6 +178,9 @@ const trackutils = {
     let nextPoint = track.features[0].geometry.coordinates[0];
     points.push(createPoint(nextPoint, interval * count++));
     for (const feature of track.features) {
+      if(feature.properties.alternative) {
+	continue;
+      }
       const line = feature.geometry.coordinates;
       const ruler = cheapruler(line[Math.trunc(line.length/2)][1]);
       for (let i = 0; i < line.length - 1; i++) {
