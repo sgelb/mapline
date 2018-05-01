@@ -3,7 +3,7 @@ import token from './mapboxtoken.js';
 import layers from './layers.js';
 import trackutils from './trackutils.js';
 import paperformat from './paperformat.js';
-import {Route, Alternative, Cutouts, Milemarkers} from './track.js';
+import {Route, Alternative, Cutouts, Milemarkers, AlternativeMilemarkers} from './track.js';
 
 class Mapbox {
   constructor(args, tracks, details) {
@@ -110,6 +110,7 @@ class Mapbox {
 
   updateMilemarkers(interval) {
     this.addTrack(new Milemarkers("milemarkers", trackutils.milemarkers(this._tracks.get("route").geojson, interval)));
+    this.addTrack(new AlternativeMilemarkers("alternativemilemarkers", "milemarkers", trackutils.milemarkers(this._tracks.get("route").geojson, interval)));
     this.updateTrack(this._tracks.get("milemarkers"));
   }
 

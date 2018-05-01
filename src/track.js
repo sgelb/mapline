@@ -127,10 +127,27 @@ class Milemarkers extends Track {
         "text-size": 11,
         "icon-ignore-placement": true,
         "text-optional": true,
-      }
+      },
+      "paint": {
+	"text-color": "#000000",
+      },
+      "filter": ["!=", "alternative", true]
     };
   }
+}
 
+class AlternativeMilemarkers extends Milemarkers {
+  constructor(id, source, geojson) {
+    super(id,geojson);
+    this._source = source;
+  }
+
+  get layer() {
+    let layer = super.layer;
+    layer.paint["text-color"] = "#a0a0a0";
+    layer.filter = ["==", "alternative", true];
+    return layer;  
+  }
 }
 
 class Poi extends Track {
@@ -147,4 +164,4 @@ class Poi extends Track {
   }
 }
 
-export {Route, Alternative, Cutouts, Milemarkers, Poi};
+export {Route, Alternative, Cutouts, Milemarkers, AlternativeMilemarkers, Poi};

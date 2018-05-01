@@ -10,14 +10,17 @@ function interpolate(a, b, t) {
   return [a[0] + dx * t, a[1] + dy * t];
 }
 
-function createPoint(coords, title) {
+function createPoint(coords, title, alternative) {
   return {
     "type": "Feature",
     "geometry": {
       "type": "Point",
       "coordinates": coords,
     },
-    "properties": {"title": title}
+    "properties": {
+      "title": title,
+      "alternative": alternative,
+    }
   };
 }
 
@@ -176,10 +179,17 @@ const trackutils = {
     let count = 0;
     let intermediateDistance = 0;
     let nextPoint = track.features[0].geometry.coordinates[0];
-    points.push(createPoint(nextPoint, interval * count++));
+    let mainCount = 0;
+    let mainIntermediateDistance = 0;
+    let mainNextPoint = [];
+    points.push(createPoint(nextPoint, interval * count++, false));
     for (const feature of track.features) {
       if(feature.properties.alternative) {
-	continue;
+	mainCount = count;
+	count = 1;
+	mainIntermediateDistance = intermediateDistance;
+	intermediateDistance = 0;
+	mainNextPoint = nextPoint;
       }
       const line = feature.geometry.coordinates;
       const ruler = cheapruler(line[Math.trunc(line.length/2)][1]);
@@ -195,9 +205,17 @@ const trackutils = {
             nextPoint,
             (interval - (intermediateDistance - distance)) / distance
           );
-          points.push(createPoint(intermediatePoint, interval * count++));
+	  points.push(createPoint(intermediatePoint, interval * count++, feature.properties.alternative));
           intermediateDistance = ruler.distance(intermediatePoint, nextPoint);
         }
+      }
+      if(feature.properties.alternative) {
+	let marker = createPoint(nextPoint, Math.trunc(ruler.lineDistance(line)), false);
+	marker.properties.alternative = true;
+	points.push(marker);
+	count = mainCount;
+	intermediateDistance = mainIntermediateDistance;
+	nextPoint = mainNextPoint;
       }
     }
     points.push(createPoint(nextPoint, Math.trunc(this.totalDistance(track))));
