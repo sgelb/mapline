@@ -17,6 +17,7 @@ class Mapbox {
     this._details = details || {};
     try {
       this._map = new mapboxgl.Map(args);
+      this._map.addControl(new MapboxLanguage());
     } catch(e) {
       throw Error(`Your browser does not support MapboxGL.`);
     }
@@ -186,7 +187,13 @@ function toPixels(length) {
 }
 
 function toStyleURI(style) {
-  return 'mapbox://styles/mapbox/' + style + '-v9?optimize=true';
+  switch(style) {
+  case "outdoors":
+  case "streets":
+    return 'mapbox://styles/mapbox/' + style + '-v10?optimize=true';
+  default:
+    return 'mapbox://styles/mapbox/' + style + '-v9?optimize=true';
+  }
 }
 
 export default Mapbox;
