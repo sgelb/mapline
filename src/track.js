@@ -125,7 +125,7 @@ class Poi extends Track {
       "source": this._id,
       "type": "symbol",
       "layout": {
-        "icon-image": this._id,  // TODO: create map of poi icons
+        "icon-image": "campsite-11",  // TODO: create map of poi icons
         "icon-ignore-placement": true,
       }
     };

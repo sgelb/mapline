@@ -197,6 +197,15 @@ const trackutils = {
     }
 
     throw "Unknown file format: " + format;
+  },
+
+  getPois(track) {
+    const symbolFeatures = track.features.filter(feature => {
+      if (feature.geometry) {
+        return feature.geometry.type.endsWith("Point");
+      }
+    });
+    return featureCollection(symbolFeatures);
   }
 };
 

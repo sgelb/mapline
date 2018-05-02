@@ -3,7 +3,7 @@ import token from './mapboxtoken.js';
 import layers from './layers.js';
 import trackutils from './trackutils.js';
 import paperformat from './paperformat.js';
-import {Route, Cutouts, Milemarkers} from './track.js';
+import {Route, Cutouts, Milemarkers, Poi} from './track.js';
 
 class Mapbox {
   constructor(args, tracks, details) {
@@ -55,9 +55,13 @@ class Mapbox {
     let ext = filename.split('.').pop().toLowerCase();
     this._details.filename = filename.substring(0, filename.lastIndexOf('.'));
     let geojson = trackutils.togeojson(ext, data);
+    let pois = trackutils.getPois(geojson);
     geojson = trackutils.reduce(geojson);
     this.addTrack(new Route("route", geojson));
     this.updateTrack(this._tracks.get("route"));
+
+    this.addTrack(new Poi("poi", pois));
+    this.updateTrack(this._tracks.get("poi"));
 
     // [this._details.climb, this._details.descent] = trackutils.elevation(geojson);
     this._details.distance = trackutils.totalDistance(geojson);
