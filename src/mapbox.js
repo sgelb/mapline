@@ -3,7 +3,7 @@ import token from './mapboxtoken.js';
 import layers from './layers.js';
 import trackutils from './trackutils.js';
 import paperformat from './paperformat.js';
-import {Route, Alternative, Cutouts, Milemarkers, AlternativeMilemarkers} from './track.js';
+import {Route, Alternative, Cutouts, Milemarkers, AlternativeMilemarkers, Poi} from './track.js';
 
 class Mapbox {
   constructor(args, tracks, details) {
@@ -17,6 +17,7 @@ class Mapbox {
     this._details = details || {};
     try {
       this._map = new mapboxgl.Map(args);
+      this._map.addControl(new MapboxLanguage());
     } catch(e) {
       throw Error(`Your browser does not support MapboxGL.`);
     }
@@ -55,6 +56,7 @@ class Mapbox {
     let ext = filename.split('.').pop().toLowerCase();
     this._details.filename = filename.substring(0, filename.lastIndexOf('.'));
     let geojson = trackutils.togeojson(ext, data);
+    let pois = trackutils.getPois(geojson);
     geojson = trackutils.reduce(geojson);
     for (const feature of geojson.features) {
 	feature.properties.alternative = ("cmt" in feature.properties && feature.properties.cmt.toUpperCase().includes("ALTERNATIVE"))
@@ -64,6 +66,9 @@ class Mapbox {
     this.addTrack(new Route("route", geojson));
     this.addTrack(new Alternative("alternative", "route", geojson));
     this.updateTrack(this._tracks.get("route"));
+
+    this.addTrack(new Poi("poi", pois));
+    this.updateTrack(this._tracks.get("poi"));
   }
 
   _formatDetail(value, decimal, unit) {
@@ -132,6 +137,7 @@ class Mapbox {
 
   set style(style) {
     this._map.setStyle(style);
+    this._map.addControl(new MapboxLanguage());
   }
 
   clearTracks() {
@@ -191,7 +197,13 @@ function toPixels(length) {
 }
 
 function toStyleURI(style) {
-  return 'mapbox://styles/mapbox/' + style + '-v9?optimize=true';
+  switch(style) {
+  case "outdoors":
+  case "streets":
+    return 'mapbox://styles/mapbox/' + style + '-v10?optimize=true';
+  default:
+    return 'mapbox://styles/mapbox/' + style + '-v9?optimize=true';
+  }
 }
 
 export default Mapbox;
