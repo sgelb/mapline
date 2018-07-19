@@ -194,9 +194,9 @@ function toggleAdvancedOptions() {
 }
 
 function toggleHiddenForm(id) {
-  Array.from(form.querySelectorAll(id)).forEach(field =>
-    field.classList.toggle("hidden")
-  );
+  Array.from(form.querySelectorAll(id)).forEach(field => {
+    field.classList.toggle("hidden");
+  });
 }
 
 function toggleGenerateButtonField() {
@@ -330,9 +330,10 @@ function setPaperformatOptions() {
   });
 
   // if available, set a5 as default. otherwise, use last entry
-  paperform.value = validFormats.indexOf("a5") >= 0
-    ? "a5"
-    : validFormats[validFormats.length - 1];
+  paperform.value =
+    validFormats.indexOf("a5") >= 0
+      ? "a5"
+      : validFormats[validFormats.length - 1];
 }
 
 // Helper functions

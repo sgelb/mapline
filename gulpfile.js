@@ -7,7 +7,6 @@ const clean = require("gulp-clean");
 const rename = require("gulp-rename");
 const source = require("vinyl-source-stream");
 const uglify = require("gulp-uglify");
-const runSequence = require("run-sequence");
 const gitRevision = require("git-revision");
 const replace = require("gulp-replace");
 
@@ -43,7 +42,7 @@ gulp.task("watch", function(cb) {
         [
           babelify,
           {
-            presets: ["es2015"],
+            presets: ["env"],
             plugins: [["transform-runtime", { polyfill: true }]]
           }
         ]
@@ -74,14 +73,12 @@ gulp.task("assets", () => {
   return gulp.src(config.assets.src).pipe(gulp.dest(config.assets.dest));
 });
 
-gulp.task("copy", () => {
-  runSequence("clean", ["css", "html", "assets"]);
-});
+gulp.task("copy", gulp.series('clean', gulp.parallel('css', 'html', 'assets')));
 
-gulp.task("bundle", ["copy"], () => {
+gulp.task("bundle", gulp.series("copy", () => {
   return browserify(config.js.src)
     .transform(babelify, {
-      presets: ["es2015"],
+      presets: ["env"],
       plugins: [["transform-runtime", { polyfill: true }]]
     })
     .bundle()
@@ -92,6 +89,6 @@ gulp.task("bundle", ["copy"], () => {
       rename({ dirname: "", basename: config.js.output, extname: ".min.js" })
     )
     .pipe(gulp.dest(config.js.dest));
-});
+}));
 
-gulp.task("default", ["bundle"]);
+gulp.task("default", gulp.series("bundle"));

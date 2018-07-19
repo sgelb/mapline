@@ -6,12 +6,12 @@
     <title>Mapline</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no"/>
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css"
-          integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ"
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css"
+          integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B"
           crossorigin="anonymous">
 
-    <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v0.37.0/mapbox-gl.css"
-          integrity="sha384-dBuL2U5sp4xrJdgc+LyTfmfb+hM7Qfw3edrrW+ECyg3Zuhcxzarw29Fs145HX+uu"
+    <link rel="stylesheet" href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.css"
+          integrity="sha384-r+py76P1N9OKDLtJqgMsRj0/GhOKDdopdb6tlfKGPyEQZV469EhEY3cXKMsdGhQi"
           crossorigin="anonymous">
 
     <link rel="stylesheet" href="css/style.css"/>
@@ -64,7 +64,9 @@
                   <!-- or chosen track name and remove track button -->
                   <div id="trackField" class="hidable hidden input-group">
                     <input type="text" id="trackFileName" class="form-control" readonly>
-                    <span id="remove-track" class="input-group-addon close">&times;</span>
+                    <div id="remove-track" class="input-group-append">
+                      <div class="input-group-text close">&times;</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -101,7 +103,9 @@
                 <div class="form-group">
                   <label title="Map scale. Must be larger than 5000" for="scale">Scale</label>
                   <div class="input-group">
-                    <span class="input-group-addon">1:</span>
+                    <div class="input-group-prepend">
+                      <div class="input-group-text">1:</div>
+                    </div>
                     <input id="scale" type="number" class="form-control disableable" disabled min="5000" step="1000" value="75000">
                   </div>
                   <div class="form-control-feedback small hidden"></div>
@@ -139,7 +143,9 @@
                   <label title="Show distance markers in this interval. Value of 0 disables markers." for="milemarkers">Distance markers</label>
                   <div class="input-group">
                     <input id="milemarkers" type="number" class="form-control disableable" disabled min="0" value="10">
-                    <span class="input-group-addon">km</span>
+                    <div class="input-group-append">
+                      <div class="input-group-text">km</div>
+                    </div>
                   </div>
                   <div class="form-control-feedback small hidden"></div>
                 </div>
@@ -153,7 +159,9 @@
                   <label title="Margin around maps on pages" for="margin">Margin</label>
                   <div class="input-group">
                     <input id="margin" type="number" class="form-control disableable" disabled min="0" value="10">
-                    <span class="input-group-addon">mm</span>
+                    <div class="input-group-append">
+                      <div class="input-group-text">mm</div>
+                    </div>
                   </div>
                   <div class="form-control-feedback small hidden"></div>
                 </div>
@@ -167,7 +175,9 @@
                   <label for="dpi">Resolution</label>
                   <div class="input-group">
                     <input id="dpi" type="number" class="form-control disableable" disabled min="0" value="300">
-                    <span class="input-group-addon">dpi</span>
+                    <div class="input-group-append">
+                      <div class="input-group-text">dpi</div>
+                    </div>
                   </div>
                   <div class="form-control-feedback small hidden"></div>
                 </div>
@@ -181,7 +191,9 @@
                   <label for="trackWidth">Track width</label>
                   <div class="input-group">
                     <input id="trackWidth" type="number" class="form-control disableable" disabled min="1" value="3">
-                    <span class="input-group-addon">px</span>
+                    <div class="input-group-append">
+                      <div class="input-group-text">px</div>
+                    </div>
                   </div>
                   <div class="form-control-feedback small hidden"></div>
                 </div>
@@ -247,12 +259,16 @@
     </div>
 
     <!-- load external scripts -->
-    <script src="https://api.mapbox.com/mapbox-gl-js/v0.37.0/mapbox-gl.js"
-            integrity="sha384-X98rjd9bu/UyWTMOagB7/PDVtfSlpxJ2W3Q7DIdeiDUoHuLNp2p+jQcdB8HM3w+8"
+    <!-- <script src="https://api.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.js" -->
+    <!--         integrity="sha384-MX3D2yNc8LFKGeJwIYiH3w3pGV2bhCANHDzohWztX+vu+L9dtCe+Mn+k5kff3v6v" -->
+    <!--         crossorigin="anonymous"></script> -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.min.js"
+            integrity="sha384-lSj0aTWVnJw0+81gGbestvpGEeP5pmhB8JST1Xj586u1rDpNTGckR9aBBPWwjhRb"
             crossorigin="anonymous"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"
-            integrity="sha384-nnVOr5/FzHTBIbkd2P1OjPZ8BMKYqZi+ZP5DxNiQ5Yrpju3F6G4rf0eCGsahefa/"
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.4.1/jspdf.min.js"
+            integrity="sha384-B3ZwMLt/CqFLkq5omwYXeXs+qquHvXKcwP56Ue+09Fet7TmYmwk/35GWwejM5vWg"
             crossorigin="anonymous"></script>
 
     <script type="text/javascript" src="js/bundle.min.js"></script>
