@@ -14,7 +14,7 @@ const validator = new FormValidator();
   try {
     map = new Mapbox({
       container: "map",
-      style: toStyleURI("outdoors"),
+      style: "outdoors",
       center: [13.463, 47.386],
       zoom: 11
     });
@@ -64,7 +64,7 @@ function initUI() {
 
   // map style
   form.style.addEventListener("change", function() {
-    map.style = toStyleURI(this.value);
+    map.style = map.toStyleURI(this.value);
   });
 
   // map scale
@@ -337,10 +337,6 @@ function setPaperformatOptions() {
 }
 
 // Helper functions
-
-function toStyleURI(style) {
-  return "mapbox://styles/mapbox/" + style + "-v9?optimize=true";
-}
 
 function showAlertBox(message) {
   const alertBox = document.getElementById("alertbox");

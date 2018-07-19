@@ -47,10 +47,6 @@ class Track {
     });
   }
 
-  get before() {
-    return "housenum-label";
-  }
-
   get layer() {}
 }
 
