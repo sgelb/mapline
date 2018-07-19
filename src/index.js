@@ -3,6 +3,7 @@ import Printmap from "./printmap.js";
 import paperformat from "./paperformat.js";
 import Mapbox from "./mapbox.js";
 import FormValidator from "./formvalidator.js";
+import exampleGpx from "../assets/vercors.gpx"
 
 let map;
 const form = document.getElementById("config");
@@ -39,7 +40,7 @@ function initUI() {
       map.clearTracks();
     }
     const xhr = new XMLHttpRequest();
-    xhr.open("GET", "./assets/vercors.gpx", true);
+    xhr.open("GET", exampleGpx, true);
     xhr.onload = function(e) {
       if (this.status == 200) {
         loadTrack(new Blob([this.response]), "vercors.gpx");
