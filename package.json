@@ -1,6 +1,6 @@
 {
   "name": "mapline",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "Create a pdf of maps along a track in printable quality",
   "main": "src/index.js",
   "keywords": [],
@@ -9,6 +9,7 @@
   "dependencies": {
     "@mapbox/geojson-normalize": "0.0.1",
     "@mapbox/mapbox-gl-language": "^0.10.0",
+    "@mapbox/togeojson": "^0.16.0",
     "babel-polyfill": "^6.26.0",
     "babel-runtime": "^6.26.0",
     "cheap-ruler": "^2.5.1",

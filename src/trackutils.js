@@ -2,7 +2,7 @@ import mapboxgl from "mapbox-gl";
 import cheapruler from "cheap-ruler";
 import normalize from "@mapbox/geojson-normalize";
 import { DOMParser } from "xmldom";
-import toGeoJSON from "./togeojson.js";
+import toGeoJSON from "@mapbox/togeojson"
 
 // copied from https://github.com/mapbox/cheap-ruler
 function interpolate(a, b, t) {
