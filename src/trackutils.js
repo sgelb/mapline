@@ -10,14 +10,17 @@ function interpolate(a, b, t) {
   return [a[0] + dx * t, a[1] + dy * t];
 }
 
-function createPoint(coords, title) {
+function createPoint(coords, title, alternative) {
   return {
     "type": "Feature",
     "geometry": {
       "type": "Point",
       "coordinates": coords,
     },
-    "properties": {"title": title}
+    "properties": {
+      "title": title,
+      "alternative": alternative,
+    }
   };
 }
 
@@ -80,9 +83,16 @@ const trackutils = {
 
   // return total distance of track in kilometer
   totalDistance(track) {
-    const line = track.features[0].geometry.coordinates;
-    const ruler = cheapruler(line[Math.trunc(line.length/2)][1]);
-    return parseFloat(ruler.lineDistance(line));
+    let totalDistance = 0;
+    for (const feature of track.features) {
+      if(feature.properties.alternative) {
+	continue;
+      }
+      const line = feature.geometry.coordinates;
+      const ruler = cheapruler(line[Math.trunc(line.length/2)][1]);
+      totalDistance += parseFloat(ruler.lineDistance(line));
+    }
+    return totalDistance;
   },
 
   // return cumulated climb and descent of track in meter
@@ -110,46 +120,53 @@ const trackutils = {
 
   // return distance of first track section within bounds
   distanceInBounds(bounds, track) {
-    const line = track.features[0].geometry.coordinates;
-    const ruler = cheapruler(bounds.bbox.getCenter().lat);
     let insideDistance = 0;
-    let inBounds = insideBounds(line[0], bounds.bbox);
-    for (let i = 1; i < line.length - 1; i++) {
-
-      // inside bounds
-      if (insideBounds(line[i], bounds.bbox)) {
-        if (inBounds) {
-          insideDistance += ruler.distance(line[i-1], line[i]);
+    let intermediateDistance = 0;
+    let previousDistance = 0;
+    for (const feature of track.features) {
+      if(feature.properties.alternative) {
+	continue;
+      }
+      const line = feature.geometry.coordinates;
+      const ruler = cheapruler(bounds.bbox.getCenter().lat);
+      let lastInBounds = insideBounds(line[0], bounds.bbox);
+      for (let i = 1; i < line.length - 1; i++) {
+        // inside bounds
+        let thisInBounds = insideBounds(line[i], bounds.bbox);
+        if (thisInBounds) {
+          if (lastInBounds) {
+            insideDistance += ruler.distance(line[i-1], line[i]);
+          } else {
+            // last point was outside bounds, add distance to intersection
+            const intersection = intersect(line[i-1], line[i], bounds.geometry.coordinates[0]);
+            const intersectionDistance = ruler.distance(line[i], intersection);
+            insideDistance += intersectionDistance;
+          }
         } else {
-          // last point was outside bounds, add distance to intersection
-          inBounds = true;
-          const intersection = intersect(line[i-1], line[i], bounds.geometry.coordinates[0]);
-          const intersectionDistance = ruler.distance(line[i], intersection);
-          insideDistance += intersectionDistance;
+          // outside bounds
+          if (lastInBounds) {
+            // last point was inside these bounds, find intersection
+            const intersection = intersect(line[i-1], line[i], bounds.geometry.coordinates[0]);
+            const intersectionDistance = ruler.distance(line[i-1], intersection);
+            insideDistance += intersectionDistance;
+            
+            intermediateDistance = previousDistance + ruler.lineDistance(line.slice(0, i)) + intersectionDistance;
+          }
         }
-        continue;
+        lastInBounds = thisInBounds;
       }
 
-      // outside bounds
-      if (inBounds) {
-        // last point was inside these bounds, find intersection
-        const intersection = intersect(line[i-1], line[i], bounds.geometry.coordinates[0]);
-        const intersectionDistance = ruler.distance(line[i-1], intersection);
-        insideDistance += intersectionDistance;
-
-        const intermediateDistance = ruler.lineDistance(line.slice(0, i)) + intersectionDistance;
-
-        return [insideDistance, intermediateDistance];
-      }
+      if(intermediateDistance == 0 || lastInBounds) {
+        intermediateDistance = previousDistance + ruler.lineDistance(line);
+      } 
+      previousDistance += ruler.lineDistance(line);
     }
 
-    // track never was inside bounds
-    if (inBounds === false) {
+    if (insideDistance == 0) {
       return [0, 0];
     }
 
-    // track ends inside of bounds.
-    return [insideDistance, this.totalDistance(track)];
+    return [insideDistance, intermediateDistance];
   },
 
   // return FeatureCollection with Points in given interval along given line
@@ -157,31 +174,51 @@ const trackutils = {
     if (interval <= 0) {
       return featureCollection([]);
     }
-
-    const line = track.features[0].geometry.coordinates;
-    const ruler = cheapruler(line[Math.trunc(line.length/2)][1]);
+    
     const points = [];
     let count = 0;
     let intermediateDistance = 0;
-    points.push(createPoint(line[0], interval * count++));
+    let nextPoint = track.features[0].geometry.coordinates[0];
+    let mainCount = 0;
+    let mainIntermediateDistance = 0;
+    let mainNextPoint = [];
+    points.push(createPoint(nextPoint, interval * count++, false));
+    for (const feature of track.features) {
+      if(feature.properties.alternative) {
+	mainCount = count;
+	count = 1;
+	mainIntermediateDistance = intermediateDistance;
+	intermediateDistance = 0;
+	mainNextPoint = nextPoint;
+      }
+      const line = feature.geometry.coordinates;
+      const ruler = cheapruler(line[Math.trunc(line.length/2)][1]);
+      for (let i = 0; i < line.length - 1; i++) {
+        let currentPoint = line[i];
+        nextPoint = line[i + 1];
+        let distance = ruler.distance(currentPoint, nextPoint);
+        intermediateDistance += distance;
 
-    for (let i = 0; i < line.length - 1; i++) {
-      let currentPoint = line[i];
-      let nextPoint = line[i + 1];
-      let distance = ruler.distance(currentPoint, nextPoint);
-      intermediateDistance += distance;
-
-      if (intermediateDistance > interval) {
-        let intermediatePoint = interpolate(
-          currentPoint,
-          nextPoint,
-          (interval - (intermediateDistance - distance)) / distance
-        );
-        points.push(createPoint(intermediatePoint, interval * count++));
-        intermediateDistance = ruler.distance(intermediatePoint, nextPoint);
+        if (intermediateDistance > interval) {
+          let intermediatePoint = interpolate(
+            currentPoint,
+            nextPoint,
+            (interval - (intermediateDistance - distance)) / distance
+          );
+	  points.push(createPoint(intermediatePoint, interval * count++, feature.properties.alternative));
+          intermediateDistance = ruler.distance(intermediatePoint, nextPoint);
+        }
+      }
+      if(feature.properties.alternative) {
+	let marker = createPoint(nextPoint, Math.trunc(ruler.lineDistance(line)), false);
+	marker.properties.alternative = true;
+	points.push(marker);
+	count = mainCount;
+	intermediateDistance = mainIntermediateDistance;
+	nextPoint = mainNextPoint;
       }
     }
-    points.push(createPoint(line[line.length - 1], Math.trunc(this.totalDistance(track))));
+    points.push(createPoint(nextPoint, Math.trunc(this.totalDistance(track))));
     return featureCollection(points);
   },
 
@@ -197,6 +234,15 @@ const trackutils = {
     }
 
     throw "Unknown file format: " + format;
+  },
+
+  getPois(track) {
+    const symbolFeatures = track.features.filter(feature => {
+      if (feature.geometry) {
+        return feature.geometry.type.endsWith("Point");
+      }
+    });
+    return featureCollection(symbolFeatures);
   }
 };
 

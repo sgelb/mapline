@@ -70,7 +70,22 @@ class Route extends Track {
         "line-width": 3,
         "line-opacity": 0.6,
       },
+      "filter": ["!=", "alternative", true]
     };
+  }
+}
+
+class Alternative extends Route {
+  constructor(id, source, geojson) {
+    super(id,geojson);
+    this._source = source;
+  }
+
+  get layer() {
+    let layer = super.layer;
+    layer.paint["line-dasharray"] = [3, 2];
+    layer.filter = ["==", "alternative", true];
+    return layer;  
   }
 }
 
@@ -112,10 +127,27 @@ class Milemarkers extends Track {
         "text-size": 11,
         "icon-ignore-placement": true,
         "text-optional": true,
-      }
+      },
+      "paint": {
+	"text-color": "#000000",
+      },
+      "filter": ["!=", "alternative", true]
     };
   }
+}
 
+class AlternativeMilemarkers extends Milemarkers {
+  constructor(id, source, geojson) {
+    super(id,geojson);
+    this._source = source;
+  }
+
+  get layer() {
+    let layer = super.layer;
+    layer.paint["text-color"] = "#404040";
+    layer.filter = ["==", "alternative", true];
+    return layer;  
+  }
 }
 
 class Poi extends Track {
@@ -125,11 +157,11 @@ class Poi extends Track {
       "source": this._id,
       "type": "symbol",
       "layout": {
-        "icon-image": this._id,  // TODO: create map of poi icons
+        "icon-image": "campsite-11",  // TODO: create map of poi icons
         "icon-ignore-placement": true,
       }
     };
   }
 }
 
-export {Route, Cutouts, Milemarkers, Poi};
+export {Route, Alternative, Cutouts, Milemarkers, AlternativeMilemarkers, Poi};
