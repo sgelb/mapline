@@ -1,4 +1,5 @@
 import mapboxgl from "mapbox-gl";
+import MapBoxLanguage from "@mapbox/mapbox-gl-language"
 
 import mapcutter from "./mapcutter.js";
 import token from "./mapboxtoken.js";
@@ -29,6 +30,7 @@ class Mapbox {
   _addControls() {
     this._map.addControl(new mapboxgl.NavigationControl(), "top-right");
     this._map.addControl(new mapboxgl.ScaleControl());
+    this._map.addControl(new MapBoxLanguage());
   }
 
   _updateAllTracks() {
