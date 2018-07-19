@@ -13,6 +13,11 @@ header {
   margin-bottom: 1.5em;
 }
 
+header h1 a, a:hover {
+  color: inherit;
+  text-decoration: inherit;
+}
+
 header h1 small {
   font-size: 60%;
 }

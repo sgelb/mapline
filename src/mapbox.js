@@ -1,5 +1,5 @@
 import mapboxgl from "mapbox-gl";
-import MapBoxLanguage from "@mapbox/mapbox-gl-language"
+import MapBoxLanguage from "@mapbox/mapbox-gl-language";
 
 import mapcutter from "./mapcutter.js";
 import token from "./mapboxtoken.js";
@@ -9,7 +9,7 @@ import paperformat from "./paperformat.js";
 import { Route, Cutouts, Milemarkers } from "./track.js";
 
 class Mapbox {
-  constructor(args, tracks, details) {
+  constructor(options, tracks, details) {
     mapboxgl.accessToken = token;
 
     if (!mapboxgl.supported()) {
@@ -19,7 +19,7 @@ class Mapbox {
     this._tracks = tracks || new Map();
     this._details = details || {};
     try {
-      this._map = new mapboxgl.Map(args);
+      this._map = new mapboxgl.Map(options);
     } catch (e) {
       throw Error(`Your browser does not support MapboxGL.`);
     }
@@ -28,7 +28,9 @@ class Mapbox {
   }
 
   _addControls() {
-    this._map.addControl(new mapboxgl.NavigationControl(), "top-right");
+    this._map.addControl(
+      new mapboxgl.NavigationControl({ showCompass: false })
+    );
     this._map.addControl(new mapboxgl.ScaleControl());
     this._map.addControl(new MapBoxLanguage());
   }
