@@ -218,11 +218,7 @@ function resizeContainer(container, width, height) {
 
 function toPixels(length) {
   // 96 dpi / 25.4mm/in = dots per mm
-  return 96 / 25.4 * length + "px";
-}
-
-function toStyleURI(style) {
-  return "mapbox://styles/mapbox/" + style + "-v9?optimize=true";
+  return (96 / 25.4) * length + "px";
 }
 
 export default Mapbox;

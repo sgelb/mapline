@@ -269,7 +269,7 @@ function initProgressbarUpdater(printmap) {
   });
 
   return function(currentItem, maxItems, isCanceled) {
-    let percent = Math.trunc(100 / maxItems * (currentItem + 1)) + "%";
+    let percent = Math.trunc((100 / maxItems) * (currentItem + 1)) + "%";
     progressbar.style.width = percent;
     progressbar.innerHTML = percent;
     let text = `Map ${currentItem + 1} of ${maxItems}`;
@@ -317,7 +317,7 @@ function setPaperformatOptions() {
   }
 
   const maxSize =
-    25.4 * Math.min(maxBuffer, 4096) / parseInt(form.dpi.value, 10);
+    (25.4 * Math.min(maxBuffer, 4096)) / parseInt(form.dpi.value, 10);
   const validFormats = paperformat.validFormats(maxSize * maxSize);
 
   const paperform = form.paperformat;
@@ -338,10 +338,6 @@ function setPaperformatOptions() {
 
 // Helper functions
 
-function toStyleURI(style) {
-  return "mapbox://styles/mapbox/" + style + "-v9?optimize=true";
-}
-
 function showAlertBox(message) {
   const alertBox = document.getElementById("alertbox");
   alertBox.querySelector(".close").addEventListener("click", function() {
@@ -351,6 +347,20 @@ function showAlertBox(message) {
   const alert = alertBox.querySelector("#alert-msg");
   alert.innerHTML = message;
   alertBox.classList.remove("hidden");
+}
+
+function toStyleURI(style) {
+  switch (style) {
+    case "streets":
+    case "outdoors":
+    case "satellite-streets":
+      return "mapbox://styles/mapbox/" + style + "-v10?optimize=true";
+    case "navigation-guidance-day":
+    case "navigation-guidance-night":
+      return "mapbox://styles/mapbox/" + style + "-v2?optimize=true";
+    default:
+      return "mapbox://styles/mapbox/" + style + "-v9?optimize=true";
+  }
 }
 
 function capitalize(text) {
