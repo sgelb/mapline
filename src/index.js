@@ -16,7 +16,8 @@ const validator = new FormValidator();
       container: "map",
       style: toStyleURI("outdoors"),
       center: [13.463, 47.386],
-      zoom: 11
+      zoom: 11,
+      hash: true,
     });
     setPaperformatOptions();
   } catch (e) {
