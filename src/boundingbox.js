@@ -110,6 +110,15 @@ class BoundingBox {
       }
     };
   }
+
+  // return a clone of bounds
+  cloneBounds() {
+    if (this.bounds.isEmpty()) {
+      return new mapboxgl.LngLatBounds();
+    }
+
+    return mapboxgl.LngLatBounds.convert(this.bounds.toArray());
+  }
 }
 
 export default BoundingBox;
