@@ -338,13 +338,7 @@ function setPaperformatOptions() {
 // Helper functions
 
 function toStyleURI(style) {
-  switch(style) {
-  case "outdoors":
-  case "streets":
-    return 'mapbox://styles/mapbox/' + style + '-v10?optimize=true';
-  default:
-    return 'mapbox://styles/mapbox/' + style + '-v9?optimize=true';
-  }
+  return "mapbox://styles/mapbox/" + style + "-v9?optimize=true";
 }
 
 function showAlertBox(message) {

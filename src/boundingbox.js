@@ -107,14 +107,6 @@ class BoundingBox {
       }
     };
   }
-
-  cloneBounds() {
-      if(!(this.bounds._sw && this.bounds._ne)) {
-          return new mapboxgl.LngLatBounds();
-      }
-
-      return new mapboxgl.LngLatBounds.convert(this.bounds.toArray());
-  }
 }
 
 export default BoundingBox;
