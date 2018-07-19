@@ -1,3 +1,4 @@
+import jsPDF from "jspdf";
 import layers from "./layers.js";
 
 class Printmap {
@@ -30,7 +31,7 @@ class Printmap {
     console.time("PDF generation");
 
     // initialise pdf. delete first page to simplify addImage-loop
-    const pdf = new jspdf({ compress: true });
+    const pdf = new jsPDF({ compress: true });
     pdf.setFontSize(9);
     pdf.deletePage(1);
 

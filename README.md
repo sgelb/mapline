@@ -1,5 +1,4 @@
-## mapline
-
+# mapline
 
 Create a collection of accurate maps in print quality along your gpx track, in
 your scale, your format and the infos you need.
@@ -34,24 +33,32 @@ token](https://www.mapbox.com/help/create-api-access-token/). Save it in
 
     export default '<your access token here>';
 
-- `npm install` installs all needed dependencies
-- `gulp watch` starts a development server on localhost:9966
-- `gulp bundle` bundles everything in www/, ready to deploy
+- `yarn install` should install all dependencies
+- `yarn serve` to start a dev server
+- `yarn build` to bundle for production in `/dist`
 
 
 ### Limitations
 
 An application written in Javascript, using WebGL and running entirely in the
 browser has of course some limitations.
-- [canvas size](https://webglstats.com/webgl/parameter/MAX_RENDERBUFFER_SIZE) and hence the maximum page format depend on your graphics card
-- Javascript engines have a hardcoded maximum string size. This limits the size of the output PDF to [~268.44MB](https://github.com/atom/atom/issues/7210#issuecomment-160994222)
+
+- [canvas size](https://webglstats.com/webgl/parameter/MAX_RENDERBUFFER_SIZE)
+  and hence the maximum page format depend on your graphics card
+- Javascript engines have a hardcoded maximum string size. This limits the size
+  of the output PDF to
+  [~268.44MB](https://github.com/atom/atom/issues/7210#issuecomment-160994222)
 
 ### Missing features and nice-to-haves
 
-Before this javascript implementation using vector tiles, I wrote a Python programm which rendered the maps from a local PostGIS database. It took ages, it had some features which are still missing in `Mapline`. This is what I want to implement in the future:
 - a map style better suited for cycle tours and printing in black&white
 - possibility to show points of views like drinking water or camping places
-- a scale bar
+- a scale bar on the printouts
 - elevation stats and marking of steep slopes
-- support for additional/multiple gpx features besides tracks and routes
+- support for additional/multiple gpx features like POIs
+
+### Want to participate?
+
+Although development is really slow, this is not a dead project. Pull-requests
+are welcome, but please open a ticket before, so we can talk about it before.
 
