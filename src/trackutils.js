@@ -1,3 +1,4 @@
+import mapboxgl from "mapbox-gl";
 import cheapruler from "cheap-ruler";
 import normalize from "@mapbox/geojson-normalize";
 import { DOMParser } from "xmldom";

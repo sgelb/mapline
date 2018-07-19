@@ -1,3 +1,5 @@
+import mapboxgl from "mapbox-gl";
+
 import mapcutter from "./mapcutter.js";
 import token from "./mapboxtoken.js";
 import layers from "./layers.js";
@@ -51,7 +53,10 @@ class Mapbox {
   }
 
   loadRoute(data, filename) {
-    let ext = filename.split(".").pop().toLowerCase();
+    let ext = filename
+      .split(".")
+      .pop()
+      .toLowerCase();
     this._details.filename = filename.substring(0, filename.lastIndexOf("."));
     let geojson = trackutils.togeojson(ext, data);
     geojson = trackutils.reduce(geojson);
@@ -94,7 +99,9 @@ class Mapbox {
       // Map 3 of 7 · 36.7km · 123.4 of 2156.5km total
       let text = `Map ${mapCount} of ${totalMapCount}`;
       text += ` · ${formatDetail(localLength, 2, "km")}`;
-      text += ` · ${formatDetail(intermediateLength, 2, "km")} of ${details.get("Length")} total`;
+      text += ` · ${formatDetail(intermediateLength, 2, "km")} of ${details.get(
+        "Length"
+      )} total`;
 
       return text;
     };
@@ -168,9 +175,8 @@ class Mapbox {
   }
 
   cutoutMap(feature, format, margin) {
-    let orientation = feature.properties.width > feature.properties.height
-      ? "l"
-      : "p";
+    let orientation =
+      feature.properties.width > feature.properties.height ? "l" : "p";
     let [width, height] = paperformat.dimensions(format, margin, orientation);
     let details = this.getPrintDetails();
 
