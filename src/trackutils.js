@@ -114,10 +114,12 @@ function reduce(track, type) {
       return feature.geometry.type.endsWith(type);
     }
   });
-  if (reducedFeatures.length === 0) {
+
+  if (reducedFeatures.length === 0 && type === "LineString") {
     console.log("No track or route found.");
     throw new Error("No track or route found.");
   }
+
   return featureCollection(reducedFeatures);
 }
 
@@ -272,11 +274,6 @@ const trackutils = {
   // return featureCollection of points
   pois(track) {
     track = reduce(track, "Point");
-
-    if (track.length === 0) {
-      return;
-    }
-
     const points = track.features.map(feature => {
       return createPoint(feature.geometry.coordinates, {
         title: feature.properties.name,
