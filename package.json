@@ -1,18 +1,20 @@
 {
   "name": "mapline",
   "version": "0.12.0",
-  "description": "Create a pdf of maps along a track in printable quality",
+  "description": "Create maps along a track in print quality.",
   "main": "src/index.js",
   "keywords": [],
+  "homepage": "https://github.com/sgelb/mapline",
   "author": "sgelb",
   "license": "GPL-3.0-or-later",
   "scripts": {
     "serve": "parcel serve index.html",
-    "build": "parcel build --no-source-maps --detailed-report index.html"
+    "build": "parcel build --no-cache --no-source-maps --detailed-report index.html",
+    "demo": "parcel build --no-cache --no-source-maps --public-url ./ --out-dir ./demo/mapline/ --detailed-report index.html "
   },
   "browserslist": [
     "defaults",
-    "not ie <999",
+    "not Explorer < 999",
     "not Android < 999"
   ],
   "dependencies": {
