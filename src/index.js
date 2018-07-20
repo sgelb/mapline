@@ -3,7 +3,7 @@ import Printmap from "./printmap.js";
 import paperformat from "./paperformat.js";
 import Mapbox from "./mapbox.js";
 import FormValidator from "./formvalidator.js";
-import exampleGpx from "../assets/vercors.gpx"
+import exampleGpx from "../assets/vercors.gpx";
 
 let map;
 const form = document.getElementById("config");

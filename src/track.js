@@ -115,8 +115,14 @@ class Poi extends Track {
       source: this._id,
       type: "symbol",
       layout: {
-        "icon-image": this._id, // TODO: create map of poi icons
-        "icon-ignore-placement": true
+        // "icon-image": this._id, // TODO: create map of poi icons
+        "icon-image": "triangle-11",
+        "text-field": "{title}",
+        "text-anchor": "top",
+        "text-offset": [0, 0.5],
+        "text-size": 11,
+        "icon-ignore-placement": true,
+        "text-optional": true
       }
     };
   }

@@ -4,8 +4,9 @@
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
  creator="BRouter-1.4.8" version="1.1">
+ <name>Vercors</name>
+ <wpt lon="5.5" lat="45.08"><name>TESTPOI</name></wpt>
  <trk>
-  <name>Vercors</name>
   <trkseg>
    <trkpt lon="5.686973" lat="45.175918"><ele>218.75</ele></trkpt>
    <trkpt lon="5.686932" lat="45.175931"><ele>218.75</ele></trkpt>

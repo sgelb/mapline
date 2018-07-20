@@ -6,7 +6,7 @@ import token from "./mapboxtoken.js";
 import layers from "./layers.js";
 import trackutils from "./trackutils.js";
 import paperformat from "./paperformat.js";
-import { Route, Cutouts, Milemarkers } from "./track.js";
+import { Route, Cutouts, Milemarkers, Poi } from "./track.js";
 
 class Mapbox {
   constructor(options, tracks, details) {
@@ -62,10 +62,13 @@ class Mapbox {
       .pop()
       .toLowerCase();
     this._details.filename = filename.substring(0, filename.lastIndexOf("."));
-    let geojson = trackutils.togeojson(ext, data);
-    geojson = trackutils.reduce(geojson);
-    this.addTrack(new Route("route", geojson));
+    const geojson = trackutils.togeojson(ext, data);
+
+    this.addTrack(new Route("route", trackutils.tracks(geojson)));
     this.updateTrack(this._tracks.get("route"));
+
+    this.addTrack(new Poi("poi", trackutils.pois(geojson)));
+    this.updateTrack(this._tracks.get("poi"));
 
     // [this._details.climb, this._details.descent] = trackutils.elevation(geojson);
     this._details.distance = trackutils.totalDistance(geojson);
