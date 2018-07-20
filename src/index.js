@@ -80,6 +80,11 @@ function initUI() {
   // paper format
   form.paperformat.addEventListener("change", () => reloadCutouts());
 
+  // show pois
+  form.showPois.addEventListener("change", () =>
+    map.toggleVisibility("poi", form.showPois.checked)
+  );
+
   // milemarkers
   form.milemarkers.addEventListener("change", () =>
     map.updateMilemarkers(form.milemarkers.value)
