@@ -2,7 +2,7 @@ import mapboxgl from "mapbox-gl";
 import cheapruler from "cheap-ruler";
 import normalize from "@mapbox/geojson-normalize";
 import { DOMParser } from "xmldom";
-import toGeoJSON from "@mapbox/togeojson"
+import toGeoJSON from "@mapbox/togeojson";
 
 // copied from https://github.com/mapbox/cheap-ruler
 function interpolate(a, b, t) {
@@ -76,11 +76,12 @@ function intersect(coord1, coord2, bounds) {
 
 function prepare(geojson) {
   geojson = normalize(geojson);
-  geojson = complexify(geojson, 1);
+  // geojson = complexify(geojson, 1);
   return geojson;
 }
 
-// return FeatureCollection with maximum distance between points
+// return FeatureCollection with a maximum distance between points
+// FIXME: make obsolete by improving cutting of track in boxes
 function complexify(track, interval) {
   let coordinates = track.features[0].geometry.coordinates.slice();
   const ruler = cheapruler(coordinates[Math.trunc(coordinates.length / 2)][1]);
@@ -109,7 +110,22 @@ function complexify(track, interval) {
     }
   }
 
-  return normalize(createFeature("LineString", [].concat(...result), "Japan"));
+  return normalize(createFeature("LineString", [].concat(...result)));
+}
+
+// return track reduced to FeatureCollection of "type" features
+function reduce(track, type) {
+  track = normalize(track);
+  const reducedFeatures = track.features.filter(feature => {
+    if (feature.geometry) {
+      return feature.geometry.type.endsWith(type);
+    }
+  });
+  if (reducedFeatures.length === 0) {
+    console.log("No track or route found.");
+    throw new Error("No track or route found.");
+  }
+  return featureCollection(reducedFeatures);
 }
 
 const trackutils = {
@@ -118,21 +134,6 @@ const trackutils = {
     const bounds = new mapboxgl.LngLatBounds();
     track.features.forEach(feature => bounds.extend(feature.bbox));
     return bounds;
-  },
-
-  // return track reduced to FeatureCollection of (Multi)LineString features
-  reduce(track) {
-    track = normalize(track);
-    const reducedFeatures = track.features.filter(feature => {
-      if (feature.geometry) {
-        return feature.geometry.type.endsWith("LineString");
-      }
-    });
-    if (reducedFeatures.length === 0) {
-      console.log("No track or route found.");
-      throw new Error("No track or route found.");
-    }
-    return featureCollection(reducedFeatures);
   },
 
   // return total distance of track in kilometer
@@ -264,6 +265,26 @@ const trackutils = {
     }
 
     throw "Unknown file format: " + format;
+  },
+
+  // return featureCollection of linestrings
+  tracks(track) {
+    return reduce(track, "LineString");
+  },
+
+  // return featureCollection of points
+  pois(track) {
+    track = reduce(track, "Point");
+
+    if (track.length === 0) {
+      return;
+    }
+
+    const points = track.features.map(feature => {
+      return createPoint(feature.geometry.coordinates, feature.properties.name);
+    });
+
+    return featureCollection(points);
   }
 };
 
