@@ -116,7 +116,7 @@ class Poi extends Track {
       type: "symbol",
       layout: {
         // "icon-image": this._id, // TODO: create map of poi icons
-        "icon-image": "triangle-11",
+        "icon-image": "{symbol}",
         "text-field": "{title}",
         "text-anchor": "top",
         "text-offset": [0, 0.5],

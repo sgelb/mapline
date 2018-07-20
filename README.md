@@ -10,6 +10,7 @@ your scale, your format and the infos you need.
 - Accurate scale throughout the whole route
 - Printable quality of 300dpi
 - Customizable paper format up to A2, page margins and distance markers
+- Support of waypoints
 
 Inspired by the [bikeline Cycling
 guides](http://www.esterbauer.com/international.html) and
@@ -21,7 +22,17 @@ are customizable. You want a map in 1:85.000 on A5 paper along that winding
 river? No problem.
 
 
+### Waypoints
+
+Waypoints in GPX can set a symbol name through the optional
+[`sym`](https://www.rigacci.org/wiki/doku.php/tecnica/gps_cartografia_gis/gpx)
+field. You can set the used icon by specify any [Maki
+icon](https://www.mapbox.com/maki-icons/) by using their basename e.g.
+_campsite-11_ in this field.
+
+
 ### Development
+
 
 Logic and PDF generation of `mapline` are performed client-side. Main external
 libraries are [Mapbox GL JS](https://www.mapbox.com/mapbox-gl-js/) for map
@@ -52,13 +63,13 @@ browser has of course some limitations.
 ### Missing features and nice-to-haves
 
 - a map style better suited for cycle tours and printing in black&white
-- possibility to show points of views like drinking water or camping places
+- possibility to add points of views like drinking water or camping places
 - a scale bar on the printouts
 - elevation stats and marking of steep slopes
-- support for additional/multiple gpx features like POIs
+- support for multiple tracks
 
 ### Want to participate?
 
 Although development is really slow, this is not a dead project. Pull-requests
-are welcome, but please open a ticket before, so we can talk about it before.
+are always welcome!
 

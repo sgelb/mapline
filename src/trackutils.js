@@ -11,26 +11,19 @@ function interpolate(a, b, t) {
   return [a[0] + dx * t, a[1] + dy * t];
 }
 
-function createFeature(type, coords, title) {
-  let feature = {
+function createFeature(type, coords, props = {}) {
+  return {
     type: "Feature",
     geometry: {
       type: type,
       coordinates: coords
-    }
+    },
+    properties: props
   };
-
-  if (title !== undefined) {
-    feature.properties = { title: title };
-  } else {
-    feature.properties = {};
-  }
-
-  return feature;
 }
 
-function createPoint(coords, title) {
-  return createFeature("Point", coords, title);
+function createPoint(coords, props) {
+  return createFeature("Point", coords, props);
 }
 
 function createLineString(coords) {
@@ -229,7 +222,7 @@ const trackutils = {
     const points = [];
     let count = 0;
     let intermediateDistance = 0;
-    points.push(createPoint(line[0], interval * count++));
+    points.push(createPoint(line[0], { title: interval * count++ }));
 
     for (let i = 0; i < line.length - 1; i++) {
       let currentPoint = line[i];
@@ -243,12 +236,16 @@ const trackutils = {
           nextPoint,
           (interval - (intermediateDistance - distance)) / distance
         );
-        points.push(createPoint(intermediatePoint, interval * count++));
+        points.push(
+          createPoint(intermediatePoint, { title: interval * count++ })
+        );
         intermediateDistance = ruler.distance(intermediatePoint, nextPoint);
       }
     }
     points.push(
-      createPoint(line[line.length - 1], Math.trunc(this.totalDistance(track)))
+      createPoint(line[line.length - 1], {
+        title: Math.trunc(this.totalDistance(track))
+      })
     );
     return featureCollection(points);
   },
@@ -281,7 +278,12 @@ const trackutils = {
     }
 
     const points = track.features.map(feature => {
-      return createPoint(feature.geometry.coordinates, feature.properties.name);
+      return createPoint(feature.geometry.coordinates, {
+        title: feature.properties.name,
+        symbol: feature.properties.sym
+          ? feature.properties.sym.toLowerCase()
+          : "embassy-11"
+      });
     });
 
     return featureCollection(points);
