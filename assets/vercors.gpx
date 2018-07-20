@@ -5,7 +5,8 @@
  xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
  creator="BRouter-1.4.8" version="1.1">
  <name>Vercors</name>
- <wpt lon="5.5" lat="45.08"><name>TESTPOI</name></wpt>
+ <wpt lon="5.5" lat="45.08"><name>POI 1</name></wpt>
+ <wpt lon="5.5" lat="45.09"><name>POI 2</name><sym>campsite-11</sym></wpt>
  <trk>
   <trkseg>
    <trkpt lon="5.686973" lat="45.175918"><ele>218.75</ele></trkpt>
