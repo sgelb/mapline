@@ -32,6 +32,9 @@ const layers = {
     }
     addSource(map, id);
     map.addLayer(track.layer, getBeforeLayer(map));
+  },
+  setVisibility(map, id, visibility) {
+    map.setLayoutProperty(id, "visibility", visibility ? "visible" : "none");
   }
 };
 

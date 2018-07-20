@@ -51,6 +51,12 @@ class Mapbox {
     this._map.getSource(track.id).setData(track.geojson);
   }
 
+  toggleVisibility(trackName, visibility) {
+    if (this._tracks.has(trackName)) {
+      layers.setVisibility(this._map, this._tracks.get(trackName).id, visibility);
+    }
+  }
+
   changeTrackStyle(option) {
     // option = {property: "line-color", value: "#ff0000"};
     this._map.setPaintProperty("route", option.property, option.value);
