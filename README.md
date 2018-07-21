@@ -22,13 +22,20 @@ are customizable. You want a map in 1:85.000 on A5 paper along that winding
 river? No problem.
 
 
-### Waypoints
+### Waypoints and POIs
 
-Waypoints in GPX can set a symbol name through the optional
+Waypoints contained in the GPX can set a symbol name through the optional
 [`sym`](https://www.rigacci.org/wiki/doku.php/tecnica/gps_cartografia_gis/gpx)
 field. You can set the used icon by specify any [Maki
 icon](https://www.mapbox.com/maki-icons/) by using their basename e.g.
 _campsite-11_ in this field.
+
+Additional POIs can be downloaded via
+[Overpass](https://wiki.openstreetmap.org/wiki/Overpass_API). To add more
+choices, see
+[overpass.js](https://github.com/github/sgelb/blob/master/src/overpass.js).
+POIs are downloaded for print areas only. In case of format or scale changes,
+manually refresh by toggling the checkboxes.
 
 
 ### Development

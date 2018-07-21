@@ -1,8 +1,8 @@
-import "babel-polyfill";
 import Printmap from "./printmap.js";
 import paperformat from "./paperformat.js";
 import Mapbox from "./mapbox.js";
 import FormValidator from "./formvalidator.js";
+import overpass from "./overpass.js";
 import exampleGpx from "../assets/example.gpx";
 
 let map;
@@ -43,7 +43,7 @@ function initUI() {
     xhr.open("GET", exampleGpx, true);
     xhr.onload = function(e) {
       if (this.status == 200) {
-        loadTrack(new Blob([this.response]), "vercors.gpx");
+        loadTrack(new Blob([this.response]), "example.gpx");
       }
     };
     xhr.send();
@@ -135,6 +135,8 @@ function initUI() {
     map.toggleVisibility("poi", form.showWaypoints.checked)
   );
 
+  generateOverpassEntries();
+
   // overpass checkboxes
   Array.from(
     document.getElementById("overpass").getElementsByTagName("input")
@@ -146,6 +148,21 @@ function initUI() {
 
   // generate button
   generatePdfBtn.addEventListener("click", generatePDF);
+}
+
+function generateOverpassEntries() {
+  let overpassEntries = "";
+  overpass.mapping().forEach((props, tag) => {
+    overpassEntries += `<p><div class="form-check form-check-inline">
+      <input id="${tag}" data-tag="${tag}" type="checkbox" class="form-check-input disableable" disabled>
+      <label title="Show ${
+        props.title
+      }." class="form-check-label" for="${tag}">${props.title}</label>
+      </div></p>
+      `;
+  });
+
+  document.getElementById("overpass").innerHTML = overpassEntries;
 }
 
 function loadTrack(file, fname) {

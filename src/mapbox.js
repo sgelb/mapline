@@ -90,6 +90,7 @@ class Mapbox {
       overpass
         .loadPOIs(this.cutouts.features, category)
         .then(result => {
+          console.log("Found " + result.length + " results for " + category);
           this.addTrack(new POIs(category, trackutils.addPOIs(result)));
           this.updateTrack(this._tracks.get(category));
         })
