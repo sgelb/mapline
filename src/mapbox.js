@@ -85,14 +85,17 @@ class Mapbox {
     this._details.distance = trackutils.totalDistance(geojson);
   }
 
-  loadPOIs(category) {
-    overpass
-      .loadPOIs(this.cutouts.features, category)
-      .then(result => {
-        this.addTrack(new POIs(category, trackutils.addPOIs(result)));
-        this.updateTrack(this._tracks.get(category));
-      })
-      .catch(console.error);
+  loadPOIs(category, visibility) {
+    if (visibility) {
+      overpass
+        .loadPOIs(this.cutouts.features, category)
+        .then(result => {
+          this.addTrack(new POIs(category, trackutils.addPOIs(result)));
+          this.updateTrack(this._tracks.get(category));
+        })
+        .catch(console.error);
+    }
+    this.toggleVisibility(category, visibility);
   }
 
   _formatDetail(value, decimal, unit) {

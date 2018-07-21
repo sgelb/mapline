@@ -288,7 +288,7 @@ const trackutils = {
 
   addPOIs(pois) {
     const points = pois.map(poi => {
-      return createPoint(poi.coords, poi.props)
+      return createPoint(poi.coords, poi.props);
     });
 
     return featureCollection(points);

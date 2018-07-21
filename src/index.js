@@ -80,11 +80,6 @@ function initUI() {
   // paper format
   form.paperformat.addEventListener("change", () => reloadCutouts());
 
-  // show pois
-  form.showPois.addEventListener("change", () =>
-    map.toggleVisibility("poi", form.showPois.checked)
-  );
-
   // milemarkers
   form.milemarkers.addEventListener("change", () =>
     map.updateMilemarkers(form.milemarkers.value)
@@ -134,6 +129,20 @@ function initUI() {
       value: form.trackColor.value
     })
   );
+
+  // show waypoints
+  form.showWaypoints.addEventListener("change", () =>
+    map.toggleVisibility("poi", form.showWaypoints.checked)
+  );
+
+  // overpass checkboxes
+  Array.from(
+    document.getElementById("overpass").getElementsByTagName("input")
+  ).forEach(field => {
+    field.addEventListener("change", () => {
+      map.loadPOIs(field.dataset.tag, field.checked);
+    });
+  });
 
   // generate button
   generatePdfBtn.addEventListener("click", generatePDF);
