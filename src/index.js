@@ -204,13 +204,21 @@ function loadTrack(file, fname) {
 }
 
 function toggleFormFields() {
+  toggleHiddenForm(".hidable");
+
   // disable/enable everything with class 'disableable'
-  Array.from(form.querySelectorAll(".disableable")).forEach(field =>
+  form.querySelectorAll(".disableable").forEach(field =>
     toggleField(field)
   );
 
   // generatePdfBtn
   toggleGenerateButtonField();
+}
+
+function toggleHiddenForm(id) {
+  form.querySelectorAll(id).forEach(field => {
+    field.classList.toggle("hidden");
+  });
 }
 
 function toggleGenerateButtonField() {
