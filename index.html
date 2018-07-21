@@ -130,32 +130,25 @@
               </div>
             </div>
 
-            <!-- Toggle Advanced options -->
-            <div class="row">
-              <div class="col-md-12">
-                <div class="form-group">
-                  <button id="toggleAdvancedOptions" class="btn btn-secondary btn-block btn-sm" type="button">
-                    Advanced options
+            <!-- tabs bar -->
+            <div id="collapseStuff">
+              <div class="row">
+                <div class="col-md-12">
+                  <p>
+                  <a class="btn btn-outline-secondary btn-sm" data-toggle="collapse" href="#advanced" role="button" aria-expanded="false" aria-controls="advanced">
+                    Advanced
+                  </a>
+                  <button class="btn btn-outline-secondary btn-sm" type="button" data-toggle="collapse" data-target="#pois" aria-expanded="false" aria-controls="pois">
+                    POIs
                   </button>
+                  </p>
                 </div>
               </div>
-            </div>
 
-            <!-- toggle POIs -->
-            <div class="row advanced-option hidden">
-              <div class="col-md-12">
-                <div class="form-group">
-                  <div class="form-check form-check-inline">
-                    <input id="showPois" type="checkbox" class="form-check-input disableable" disabled checked>
-                    <label class="form-check-label" for="showPois">Show POIs</label>
-                  </div>
-                </div>
-              </div>
-            </div>
+              <!-- Advanced content -->
+              <div class="collapse" id="advanced" data-parent="#collapseStuff">
 
-            <!-- distance marker interval -->
-            <div class="row advanced-option hidden">
-              <div class="col-md-12">
+                <!-- distance marker interval -->
                 <div class="form-group">
                   <label title="Show distance markers in this interval. Value of 0 disables markers." for="milemarkers">Distance markers</label>
                   <div class="input-group">
@@ -166,12 +159,8 @@
                   </div>
                   <div class="form-control-feedback small hidden"></div>
                 </div>
-              </div>
-            </div>
 
-            <!-- map margin -->
-            <div class="row advanced-option hidden">
-              <div class="col-md-12">
+                <!-- map margin -->
                 <div class="form-group">
                   <label title="Margin around maps on pages" for="margin">Margin</label>
                   <div class="input-group">
@@ -182,12 +171,8 @@
                   </div>
                   <div class="form-control-feedback small hidden"></div>
                 </div>
-              </div>
-            </div>
 
-            <!-- pdf resolution -->
-            <div class="row advanced-option hidden">
-              <div class="col-md-12">
+                <!-- pdf resolution -->
                 <div class="form-group">
                   <label for="dpi">Resolution</label>
                   <div class="input-group">
@@ -198,12 +183,8 @@
                   </div>
                   <div class="form-control-feedback small hidden"></div>
                 </div>
-              </div>
-            </div>
 
-            <!-- track width -->
-            <div class="row advanced-option hidden">
-              <div class="col-md-12">
+                <!-- track width -->
                 <div class="form-group">
                   <label for="trackWidth">Track width</label>
                   <div class="input-group">
@@ -214,12 +195,8 @@
                   </div>
                   <div class="form-control-feedback small hidden"></div>
                 </div>
-              </div>
-            </div>
 
-            <!-- track color -->
-            <div class="row advanced-option hidden">
-              <div class="col-md-12">
+                <!-- track color -->
                 <div class="form-group">
                   <label for="trackColor">Track color</label>
                   <div class="input-group">
@@ -227,7 +204,22 @@
                   </div>
                   <div class="form-control-feedback small hidden"></div>
                 </div>
+
               </div>
+
+
+              <!-- POIs tab -->
+              <div class="collapse" id="pois" data-parent="#collapseStuff">
+                <!-- toggle waypoints -->
+                <div class="form-group">
+                  <div class="form-check form-check-inline">
+                    <input id="showPois" type="checkbox" class="form-check-input disableable" disabled checked>
+                    <label title="Show waypoints from GPX file." class="form-check-label" for="showPois">Show GPX waypoints</label>
+                  </div>
+                </div>
+
+              </div>
+
             </div>
 
           </form>
@@ -273,6 +265,14 @@
     <div id="hidden-map-container">
       <div id="hidden-map"></div>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js"
+            integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em"
+            crossorigin="anonymous"></script>
 
     <script type="text/javascript" src="./src/index.js"></script>
   </body>

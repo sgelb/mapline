@@ -3,7 +3,7 @@ import Printmap from "./printmap.js";
 import paperformat from "./paperformat.js";
 import Mapbox from "./mapbox.js";
 import FormValidator from "./formvalidator.js";
-import exampleGpx from "../assets/vercors.gpx";
+import exampleGpx from "../assets/example.gpx";
 
 let map;
 const form = document.getElementById("config");
@@ -95,11 +95,6 @@ function initUI() {
     msg: "Milemarkers must be 0 or larger!"
   });
 
-  // toggle advanced options
-  form.toggleAdvancedOptions.addEventListener("click", () =>
-    toggleAdvancedOptions()
-  );
-
   // margin
   form.margin.addEventListener("change", () => reloadCutouts());
   validator.add({
@@ -183,9 +178,6 @@ function loadTrack(file, fname) {
 }
 
 function toggleFormFields() {
-  // hide/unhide everything with class 'hidable'
-  toggleHiddenForm(".hidable");
-
   // disable/enable everything with class 'disableable'
   Array.from(form.querySelectorAll(".disableable")).forEach(field =>
     toggleField(field)
@@ -193,17 +185,6 @@ function toggleFormFields() {
 
   // generatePdfBtn
   toggleGenerateButtonField();
-}
-
-function toggleAdvancedOptions() {
-  // hide/unhide everything with class 'advanced-option'
-  toggleHiddenForm(".advanced-option");
-}
-
-function toggleHiddenForm(id) {
-  Array.from(form.querySelectorAll(id)).forEach(field => {
-    field.classList.toggle("hidden");
-  });
 }
 
 function toggleGenerateButtonField() {

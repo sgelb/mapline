@@ -97,35 +97,36 @@ class Milemarkers extends Track {
       layout: {
         "icon-image": "marker-11",
         "icon-offset": [0, -5],
+        "icon-ignore-placement": true,
         "text-field": "{title} km",
         "text-anchor": "bottom",
         "text-offset": [0, -0.5],
         "text-size": 11,
-        "icon-ignore-placement": true,
         "text-optional": true
       }
     };
   }
 }
 
-class Poi extends Track {
+class POIs extends Track {
   get layer() {
     return {
       id: this._id,
       source: this._id,
       type: "symbol",
       layout: {
-        // "icon-image": this._id, // TODO: create map of poi icons
         "icon-image": "{symbol}",
+        "icon-ignore-placement": true,
+        "icon-allow-overlap": true,
         "text-field": "{title}",
         "text-anchor": "top",
         "text-offset": [0, 0.5],
         "text-size": 11,
-        "icon-ignore-placement": true,
+        "text-allow-overlap": true,
         "text-optional": true
       }
     };
   }
 }
 
-export { Route, Cutouts, Milemarkers, Poi };
+export { Route, Cutouts, Milemarkers, POIs };

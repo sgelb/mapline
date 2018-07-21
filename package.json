@@ -18,6 +18,7 @@
     "not Android < 999"
   ],
   "dependencies": {
+    "@derhuerst/query-overpass": "^0.1.0",
     "@mapbox/geojson-normalize": "^0.0.1",
     "@mapbox/mapbox-gl-language": "^0.10.0",
     "@mapbox/togeojson": "^0.16.0",

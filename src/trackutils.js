@@ -284,6 +284,14 @@ const trackutils = {
     });
 
     return featureCollection(points);
+  },
+
+  addPOIs(pois) {
+    const points = pois.map(poi => {
+      return createPoint(poi.coords, poi.props)
+    });
+
+    return featureCollection(points);
   }
 };
 

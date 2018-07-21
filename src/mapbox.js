@@ -6,7 +6,8 @@ import token from "./mapboxtoken.js";
 import layers from "./layers.js";
 import trackutils from "./trackutils.js";
 import paperformat from "./paperformat.js";
-import { Route, Cutouts, Milemarkers, Poi } from "./track.js";
+import overpass from "./overpass.js";
+import { Route, Cutouts, Milemarkers, POIs } from "./track.js";
 
 class Mapbox {
   constructor(options, tracks, details) {
@@ -53,7 +54,11 @@ class Mapbox {
 
   toggleVisibility(trackName, visibility) {
     if (this._tracks.has(trackName)) {
-      layers.setVisibility(this._map, this._tracks.get(trackName).id, visibility);
+      layers.setVisibility(
+        this._map,
+        this._tracks.get(trackName).id,
+        visibility
+      );
     }
   }
 
@@ -73,11 +78,21 @@ class Mapbox {
     this.addTrack(new Route("route", trackutils.tracks(geojson)));
     this.updateTrack(this._tracks.get("route"));
 
-    this.addTrack(new Poi("poi", trackutils.pois(geojson)));
+    this.addTrack(new POIs("poi", trackutils.pois(geojson)));
     this.updateTrack(this._tracks.get("poi"));
 
     // [this._details.climb, this._details.descent] = trackutils.elevation(geojson);
     this._details.distance = trackutils.totalDistance(geojson);
+  }
+
+  loadPOIs(category) {
+    overpass
+      .loadPOIs(this.cutouts.features, category)
+      .then(result => {
+        this.addTrack(new POIs(category, trackutils.addPOIs(result)));
+        this.updateTrack(this._tracks.get(category));
+      })
+      .catch(console.error);
   }
 
   _formatDetail(value, decimal, unit) {
