@@ -33,7 +33,7 @@ _campsite-11_ in this field.
 Additional POIs can be downloaded via
 [Overpass](https://wiki.openstreetmap.org/wiki/Overpass_API). To add more
 choices, see
-[overpass.js](https://github.com/github/sgelb/blob/master/src/overpass.js).
+[overpass.js](https://github.com/sgelb/mapline/blob/master/src/overpass.js).
 POIs are downloaded for print areas only. In case of format or scale changes,
 manually refresh by toggling the checkboxes.
 
