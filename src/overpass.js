@@ -1,18 +1,62 @@
 import queryOverpass from "@derhuerst/query-overpass";
 
-// All icon names from https://www.mapbox.com/maki-icons/ are valid sys names
-const mapping = {
-  camping: { query: "tourism=camp_site", sym: "campsite-11" },
-  drinking_water: { query: "amenity=drinking_water", sym: "drinking-water-11" },
-  shelter: {},
-  supermarket: {},
-  bike_shop: {},
-  atm: {},
-  bakery: {}
-};
+// For queries, see https://wiki.openstreetmap.org/wiki/
+// All icon names from https://www.mapbox.com/maki-icons/ are valid sym names
+const mapping = new Map();
+mapping.set("atm", {
+  title: "ATM/Bank",
+  query: "amenity~atm|bank",
+  sym: "bank-11"
+});
+mapping.set("bakery", {
+  title: "Bakery",
+  query: "shop=bakery",
+  sym: "bakery-11"
+});
+mapping.set("bike_shop", {
+  title: "Bike shop",
+  query: "shop=bicycle",
+  sym: "bicycle-11"
+});
+mapping.set("cafe", { title: "Cafe", query: "amenity=cafe", sym: "cafe-11" });
+mapping.set("camping", {
+  title: "Camping site",
+  query: "tourism=camp_site",
+  sym: "campsite-11"
+});
+mapping.set("cemetery", {
+  title: "Cemetery/Grave yard",
+  query: "landuse=cemetery][amenity=grave_yard",
+  sym: "cemetery-11"
+});
+mapping.set("drinking_water", {
+  title: "Drinking water",
+  query: "amenity=drinking_water",
+  sym: "drinking-water-11"
+});
+mapping.set("information", {
+  title: "Tourist information",
+  query: "information=office",
+  sym: "information-11"
+});
+mapping.set("restaurant", {
+  title: "Restaurant",
+  query: "amenity=restaurant",
+  sym: "restaurant-11"
+});
+mapping.set("shelter", {
+  title: "Shelter",
+  query: "amenity=shelter",
+  sym: "shelter-11"
+});
+mapping.set("supermarket", {
+  title: "Supermarket/Convenience store",
+  query: "shop~supermarket|convenience",
+  sym: "grocery-11"
+});
 
 function queryPOI(bbox, tag) {
-  if (!mapping.hasOwnProperty(tag)) {
+  if (!mapping.has(tag)) {
     throw new Error("Tag " + tag + " unknown");
   }
 
@@ -24,7 +68,7 @@ function queryPOI(bbox, tag) {
           coords: [ele.lon, ele.lat],
           props: {
             name: ele.tags.name || tag[0].toUpperCase() + tag.substr(1),
-            symbol: mapping[tag].sym
+            symbol: mapping.get(tag).sym
           }
         })
       );
@@ -43,7 +87,7 @@ function query(bbox, tag) {
 
   return `\
     [out:json][timeout:25];
-    node[${mapping[tag].query}](${box});
+    node[${mapping.get(tag).query}](${box});
     out;`;
 }
 
@@ -61,6 +105,10 @@ const overpass = {
         });
       })
       .catch(console.error);
+  },
+
+  mapping() {
+    return mapping;
   }
 };
 
