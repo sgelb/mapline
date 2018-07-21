@@ -1,10 +1,17 @@
 import queryOverpass from "@derhuerst/query-overpass";
 
+
+// All icon names from https://www.mapbox.com/maki-icons/ are valid sys names
 const mapping = {
-  camping: { query: "tourism=camp_site", sym: "campsite-11" }
+  camping: { query: "tourism=camp_site", sym: "campsite-11" },
+  drinking_water: { query: "amenity=drinking_water", sym: "drinking-water-11" }
 };
 
 function queryPOI(bbox, tag) {
+  if (!mapping.hasOwnProperty(tag)) {
+    throw new Error("Tag " + tag + " unknown");
+  }
+
   return queryOverpass(query(bbox, tag))
     .then(elements => {
       let pois = [];

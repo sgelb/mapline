@@ -213,11 +213,27 @@
                 <!-- toggle waypoints -->
                 <div class="form-group">
                   <div class="form-check form-check-inline">
-                    <input id="showPois" type="checkbox" class="form-check-input disableable" disabled checked>
-                    <label title="Show waypoints from GPX file." class="form-check-label" for="showPois">Show GPX waypoints</label>
+                    <input id="showWaypoints" type="checkbox" class="form-check-input disableable" disabled checked>
+                    <label title="Show waypoints from GPX file." class="form-check-label" for="showWaypoints">Show GPX waypoints</label>
                   </div>
                 </div>
 
+                <div class="dropdown-divider"></div>
+
+                <p>Points of Interest. Downloaded via <a href="https://wiki.openstreetmap.org/wiki/Overpass_API">Overpass</a>, this may take a while.</p>
+
+                <!-- download via turbo overpass -->
+                <div class="form-group" id="overpass">
+                  <p><div class="form-check form-check-inline">
+                    <input id="showCamping" data-tag="camping" type="checkbox" class="form-check-input disableable" disabled>
+                    <label class="form-check-label" for="showCamping">Camping</label>
+                  </div></p>
+
+                  <p><div class="form-check form-check-inline">
+                    <input id="showWater" data-tag="water" type="checkbox" class="form-check-input disableable" disabled>
+                    <label class="form-check-label" for="showWater">Drinking water</label>
+                  </div></p>
+                </div>
               </div>
 
             </div>
