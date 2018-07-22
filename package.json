@@ -10,7 +10,6 @@
   "scripts": {
     "serve": "parcel serve index.html",
     "build": "parcel build --no-cache --no-source-maps --detailed-report index.html",
-    "demo": "parcel build --no-cache --no-source-maps --public-url ./ --out-dir ./demo/mapline/ --detailed-report index.html",
     "prebuild": "parcel build --no-cache --no-source-maps --public-url ./ --out-dir ./prebuild/ index.html"
   },
   "browserslist": [
