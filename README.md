@@ -38,8 +38,14 @@ POIs are downloaded for print areas only. In case of format or scale changes,
 manually refresh by toggling the checkboxes.
 
 
-### Development
+### Prebuilds
 
+Since v0.16.0, a bundled version is published for tagged commits in `prebuild/`. See
+[prebuild/README.md](https://github.com/sgelb/mapline/prebuild/README.md) for
+more infos on how to use it.
+
+
+### Development
 
 Logic and PDF generation of `mapline` are performed client-side. Main external
 libraries are [Mapbox GL JS](https://www.mapbox.com/mapbox-gl-js/) for map

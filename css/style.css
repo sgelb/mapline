@@ -23,7 +23,7 @@ header h1 small {
 }
 
 label {
-  margin-bottom: 0.1rem;
+  margin-bottom: 0.3rem;
 }
 
 table {
@@ -53,6 +53,16 @@ section {
   height: 0;
   width: 0;
   position: fixed;
+}
+
+.flipped {
+  transform: scaleX(-1);
+  filter: flipH;
+  display: inline-block;
+}
+
+.poi {
+  line-height: 1.3em;
 }
 
 /* Modal */
