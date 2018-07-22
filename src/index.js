@@ -135,9 +135,8 @@ function initUI() {
     map.toggleVisibility("poi", form.showWaypoints.checked)
   );
 
-  generateOverpassEntries();
-
   // overpass checkboxes
+  generateOverpassEntries();
   Array.from(
     document.getElementById("overpass").getElementsByTagName("input")
   ).forEach(field => {
@@ -151,16 +150,21 @@ function initUI() {
 }
 
 function generateOverpassEntries() {
-  let overpassEntries = "";
+  let count = 0;
+  let overpassEntries = '<div class="row">';
   overpass.mapping().forEach((props, tag) => {
-    overpassEntries += `<p><div class="form-check form-check-inline">
+    overpassEntries += `<div class="col form-check form-check-inline">
       <input id="${tag}" data-tag="${tag}" type="checkbox" class="form-check-input disableable" disabled>
       <label title="Show ${
         props.title
       }." class="form-check-label" for="${tag}">${props.title}</label>
-      </div></p>
+      </div>
       `;
+    if (count++ % 2) {
+      overpassEntries += '</div><div class="row">';
+    }
   });
+  overpassEntries += "</div>";
 
   document.getElementById("overpass").innerHTML = overpassEntries;
 }
@@ -207,9 +211,7 @@ function toggleFormFields() {
   toggleHiddenForm(".hidable");
 
   // disable/enable everything with class 'disableable'
-  form.querySelectorAll(".disableable").forEach(field =>
-    toggleField(field)
-  );
+  form.querySelectorAll(".disableable").forEach(field => toggleField(field));
 
   // generatePdfBtn
   toggleGenerateButtonField();

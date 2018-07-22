@@ -44,6 +44,11 @@ section {
   height: 2rem;
 }
 
+#overpass .row {
+  margin-bottom: 0.5em;
+  margin-left: auto;
+}
+
 #map {
   height: 80vh;
 }
