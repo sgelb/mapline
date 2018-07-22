@@ -272,7 +272,7 @@ const trackutils = {
   },
 
   // return featureCollection of points
-  pois(track) {
+  waypoints(track) {
     track = reduce(track, "Point");
     const points = track.features.map(feature => {
       return createPoint(feature.geometry.coordinates, {
@@ -286,7 +286,7 @@ const trackutils = {
     return featureCollection(points);
   },
 
-  addPOIs(pois) {
+  pois(pois) {
     const points = pois.map(poi => {
       return createPoint(poi.coords, poi.props);
     });

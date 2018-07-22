@@ -132,7 +132,7 @@ function initUI() {
 
   // show waypoints
   form.showWaypoints.addEventListener("change", () =>
-    map.toggleVisibility("poi", form.showWaypoints.checked)
+    map.toggleVisibility("waypoints", form.showWaypoints.checked)
   );
 
   // overpass checkboxes
