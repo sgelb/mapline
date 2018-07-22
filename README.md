@@ -40,9 +40,10 @@ manually refresh by toggling the checkboxes.
 
 ### Prebuilds
 
-Since v0.16.0, a bundled version is published for tagged commits in `prebuild/`. See
-[prebuild/README.md](https://github.com/sgelb/mapline/prebuild/README.md) for
-more infos on how to use it.
+Since v0.16.0, a bundled version is published for tagged commits in
+`prebuild/`. See
+[prebuild/README.md](https://github.com/sgelb/mapline/blob/master/prebuild/README.md)
+for more infos on how to use it.
 
 
 ### Development
