@@ -270,7 +270,7 @@ const trackutils = {
     return reduce(track, "LineString");
   },
 
-  // return featureCollection of points
+  // return featureCollection of waypoints
   waypoints(track) {
     track = reduce(track, "Point");
     const points = track.features.map(feature => {
@@ -291,6 +291,10 @@ const trackutils = {
     });
 
     return featureCollection(points);
+  },
+
+  emptyFeatureCollection() {
+    return featureCollection([]);
   }
 };
 

@@ -79,20 +79,21 @@ class Mapbox {
     this.updateTrack(this._tracks.get("route"));
 
     this.addTrack(new POIs("waypoints", trackutils.waypoints(geojson)));
-    this.updateTrack(this._tracks.get("waypoints"));
 
     // [this._details.climb, this._details.descent] = trackutils.elevation(geojson);
     this._details.distance = trackutils.totalDistance(geojson);
   }
 
   loadPOIs(category, visibility) {
+    if (!this._tracks.has(category)) {
+      this.addTrack(new POIs(category, trackutils.emptyFeatureCollection()));
+    }
     if (visibility) {
       overpass
         .loadPOIs(this.cutouts.features, category)
         .then(result => {
           console.log("Found " + result.length + " results for " + category);
           this.addTrack(new POIs(category, trackutils.pois(result)));
-          this.updateTrack(this._tracks.get(category));
         })
         .catch(console.error);
     }
