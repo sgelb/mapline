@@ -1,6 +1,6 @@
 # mapline
 
-Create a collection of accurate maps in print quality along your gpx track, in
+Create a collection of accurate maps in print quality along your gpx or kml track, in
 your scale, your format and the infos you need.
 
 [Demo page](https://sgelb.github.io/demo/mapline/)
