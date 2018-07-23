@@ -1,7 +1,6 @@
 import mapboxgl from "mapbox-gl";
 import cheapruler from "cheap-ruler";
 import normalize from "@mapbox/geojson-normalize";
-import { DOMParser } from "xmldom";
 import toGeoJSON from "@mapbox/togeojson";
 
 // copied from https://github.com/mapbox/cheap-ruler
@@ -258,7 +257,7 @@ const trackutils = {
       return prepare(JSON.parse(data));
     }
 
-    if (format === "gpx") {
+    if (format === "gpx" || format === "kml") {
       data = new DOMParser().parseFromString(data, "text/xml");
       return prepare(toGeoJSON[format](data));
     }

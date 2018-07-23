@@ -1,6 +1,6 @@
 {
   "name": "mapline",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "description": "Create maps along a track in print quality.",
   "main": "src/index.js",
   "keywords": [],
@@ -24,8 +24,7 @@
     "@mapbox/togeojson": "^0.16.0",
     "cheap-ruler": "^2.5.1",
     "jspdf": "^1.4.1",
-    "mapbox-gl": "^0.47.0",
-    "xmldom": "^0.1.27"
+    "mapbox-gl": "^0.47.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
