@@ -4,6 +4,7 @@ import Mapbox from "./mapbox.js";
 import FormValidator from "./formvalidator.js";
 import overpass from "./overpass.js";
 import exampleGpx from "../assets/example.gpx";
+import i18n from "./i18n.js";
 
 let map;
 const form = document.getElementById("config");
@@ -74,7 +75,7 @@ function initUI() {
   validator.add({
     form: form.scale,
     validity: v => v >= 5000,
-    msg: "Scale must be 5000 or larger!"
+    msg: i18n.translateString("validate_scale")
   });
 
   // paper format
@@ -87,7 +88,7 @@ function initUI() {
   validator.add({
     form: form.milemarkers,
     validity: v => v >= 0,
-    msg: "Milemarkers must be 0 or larger!"
+    msg: i18n.translateString("validate_milemarkers")
   });
 
   // margin
@@ -95,7 +96,7 @@ function initUI() {
   validator.add({
     form: form.margin,
     validity: v => v >= 0 && v <= 50,
-    msg: "Margin must be between 0 and 50!"
+    msg: i18n.translateString("validate_margin")
   });
 
   // dpi
@@ -106,7 +107,7 @@ function initUI() {
   validator.add({
     form: form.dpi,
     validity: v => v > 0,
-    msg: "dpi must be larger than 0!"
+    msg: i18n.translateString("validate_dpi")
   });
 
   // track width
@@ -119,7 +120,7 @@ function initUI() {
   validator.add({
     form: form.trackWidth,
     validity: v => v > 0,
-    msg: "Track width must be larger than 0!"
+    msg: i18n.translateString("validate_width")
   });
 
   // track color
@@ -147,6 +148,9 @@ function initUI() {
 
   // generate button
   generatePdfBtn.addEventListener("click", generatePDF);
+
+  // translation
+  i18n.translateAll();
 }
 
 function generateOverpassEntries() {
@@ -157,7 +161,7 @@ function generateOverpassEntries() {
       <input id="${tag}" data-tag="${tag}" type="checkbox" class="form-check-input disableable" disabled>
       <label title="Show ${
         props.title
-      }." class="form-check-label" for="${tag}">${props.title}</label>
+      }." class="form-check-label" for="${tag}" data-trn="${tag}"></label>
       </div>
       `;
     if (count++ % 2) {
@@ -246,9 +250,10 @@ function updateTrackDetails(details) {
   table.innerHTML = "";
   for (let [k, v] of map.getDetails()) {
     let row = table.insertRow();
-    row.insertCell(0).innerHTML = k;
+    row.insertCell(0).dataset.trn = k;
     row.insertCell(1).innerHTML = v;
   }
+  i18n.translate(table);
 }
 
 function reloadCutouts() {
@@ -328,16 +333,11 @@ function setPaperformatOptions() {
   const maxBuffer = gl.getParameter(gl.MAX_RENDERBUFFER_SIZE);
 
   if (maxBuffer < 2048) {
-    throw new Error(
-      `Sorry, your device can't render high-res maps.
-    Please try a device with a better graphics card.`
-    );
+    throw new Error(i18n.translateString("msg_no_render"));
   }
 
   if (maxBuffer === 2048) {
-    showAlertBox(
-      "Your device can only render PDFs in A6. For larger formats, try a device with a better graphics card."
-    );
+    showAlertBox(i18n.translateString("msg_render_a6"));
   }
 
   const maxSize =
