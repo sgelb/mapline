@@ -90,7 +90,9 @@ function queryPOI(bbox, tag) {
       );
       return pois;
     })
-    .catch(console.error);
+    .catch(e => {
+      throw e;
+    });
 }
 
 function query(bbox, tag) {
@@ -120,7 +122,9 @@ const overpass = {
           return prev.concat(cur);
         });
       })
-      .catch(console.error);
+      .catch(e => {
+        throw e;
+      });
   },
 
   mapping() {

@@ -88,16 +88,19 @@ class Mapbox {
     if (!this._tracks.has(category)) {
       this.addTrack(new POIs(category, trackutils.emptyFeatureCollection()));
     }
+    this.toggleVisibility(category, visibility);
     if (visibility) {
       overpass
         .loadPOIs(this.cutouts.features, category)
         .then(result => {
           console.log("Found " + result.length + " results for " + category);
           this.addTrack(new POIs(category, trackutils.pois(result)));
+          this.updateTrack(this._tracks.get(category));
         })
-        .catch(console.error);
+        .catch(e => {
+          console.error("Error fetching POIs for " + category + ": " + e.message);
+        });
     }
-    this.toggleVisibility(category, visibility);
   }
 
   _formatDetail(value, decimal, unit) {
