@@ -4,10 +4,6 @@ const t = {
     en: "Create maps along a track in print quality.",
     de: "Erstelle druckbare Karten entlang deiner Route."
   },
-  js_required: {
-    en: "This site requires JavaScript",
-    de: "Diese Seite benötigt JavaScript."
-  },
   track: {
     en: "Track"
   },
@@ -45,7 +41,7 @@ const t = {
   },
   milemarkers: {
     en: "Distance markers",
-    de: "Kilometermarkierungen"
+    de: "Kilometersteine"
   },
   margin: {
     en: "Margin",
@@ -64,7 +60,8 @@ const t = {
     de: "Trackfarbe"
   },
   pois: {
-    en: "POIs"
+    en: "Show POIs",
+    de: "POIs anzeigen"
   },
   show_waypoints: {
     en: "Show GPX waypoints",
@@ -86,6 +83,10 @@ const t = {
     de: "PDF erstellen"
   },
   // error messages
+  msg_js_required: {
+    en: "This site requires JavaScript",
+    de: "Diese Seite benötigt JavaScript."
+  },
   msg_render_a6: {
     en:
       "Your device can only render PDFs in A6. For larger formats, try a device with a better graphics card."
@@ -101,7 +102,7 @@ const t = {
   },
   validate_milemarkers: {
     en: "Milemarkers must be 0 or larger!",
-    de: "Kilometermarkierung muß mindestens 0 betragen!"
+    de: "Kilometersteine muß mindestens 0 betragen!"
   },
   validate_margin: {
     en: "Margin must be between 0 and 50!",
@@ -172,14 +173,17 @@ const t = {
   }
 };
 
+const lang = navigator.language.substring(0, 2);
+const defaultLang = "en";
+
+
 const i18n = {
   translateAll() {
     this.translate(document);
+    this.translateTitleFields(document);
   },
 
   translate(scope) {
-    const lang = navigator.language.substring(0, 2);
-    const defaultLang = "en";
     const trn = scope.querySelectorAll("[data-trn]");
     trn.forEach(item => {
       if (t[item.dataset.trn] === undefined) {
@@ -192,13 +196,22 @@ const i18n = {
   },
 
   translateString(string) {
-    const lang = navigator.language.substring(0, 2);
-    const defaultLang = "en";
     return t[string][lang] || t[string][defaultLang];
   },
 
-  translateTitleFields() {
-    // <label data-trn="track" title="Load local gpx- or geojson file"</label>
+  translateTitleFields(scope) {
+    const title_trn = scope.querySelectorAll("[data-title-trn]");
+    title_trn.forEach(item => {
+      if (t[item.dataset.titleTrn] === undefined) {
+        console.error("No translation for " + item.dataset.titleTrn);
+      } else {
+        item.setAttribute(
+          "title",
+          t[item.dataset.titleTrn][lang] ||
+            t[item.dataset.titleTrn][defaultLang]
+        );
+      }
+    });
   }
 };
 
