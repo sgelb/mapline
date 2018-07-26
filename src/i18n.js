@@ -5,7 +5,8 @@ const t = {
     de: "Erstelle druckbare Karten entlang deiner Route."
   },
   track: {
-    en: "Track"
+    en: "Track",
+    de: "Route"
   },
   example: {
     en: "Example",
@@ -28,7 +29,7 @@ const t = {
     de: "Kartenstil"
   },
   scale: {
-    en: "scale",
+    en: "Scale",
     de: "Maßstab"
   },
   pdf_format: {
@@ -89,11 +90,15 @@ const t = {
   },
   msg_render_a6: {
     en:
-      "Your device can only render PDFs in A6. For larger formats, try a device with a better graphics card."
+      "Your device can only render PDFs in A6. For larger formats, try a device with a better graphics card.",
+    de:
+      "Dein Rechner kann nur PDFs in A6 erstellen. Nutze ein Gerät mit besserer Grafikkarte für größere Formate."
   },
   msg_no_render: {
     en:
-      "Sorry, your device can't render high-res maps. Please try a device with a better graphics card."
+      "Sorry, your device can't render high-res maps. Please try a device with a better graphics card.",
+    de:
+      "Leider kann dein Gerät keine hochauflösenden Karten erstellen. Nutze ein Gerät mit besserer Grafikkarte."
   },
   // validation messages
   validate_scale: {
@@ -173,11 +178,10 @@ const t = {
   }
 };
 
-const lang = navigator.language.substring(0, 2);
-const defaultLang = "en";
-
-
 const i18n = {
+  defaultLang: "en",
+  lang: navigator.language.substring(0, 2),
+
   translateAll() {
     this.translate(document);
     this.translateTitleFields(document);
@@ -189,14 +193,9 @@ const i18n = {
       if (t[item.dataset.trn] === undefined) {
         console.error("No translation for " + item.dataset.trn);
       } else {
-        item.innerHTML =
-          t[item.dataset.trn][lang] || t[item.dataset.trn][defaultLang];
+        item.innerHTML = this.translateString(item.dataset.trn);
       }
     });
-  },
-
-  translateString(string) {
-    return t[string][lang] || t[string][defaultLang];
   },
 
   translateTitleFields(scope) {
@@ -205,13 +204,25 @@ const i18n = {
       if (t[item.dataset.titleTrn] === undefined) {
         console.error("No translation for " + item.dataset.titleTrn);
       } else {
-        item.setAttribute(
-          "title",
-          t[item.dataset.titleTrn][lang] ||
-            t[item.dataset.titleTrn][defaultLang]
-        );
+        item.setAttribute("title", this.translateString(item.dataset.titleTrn));
       }
     });
+  },
+
+  translateString(string) {
+    return t[string][this.lang] || t[string][this.defaultLang];
+  },
+
+  setLang(lang) {
+    this.lang = lang;
+  },
+
+  supportedLanguages() {
+    return { en: "English", de: "Deutsch" };
+  },
+
+  browserLanguage() {
+    return this.lang;
   }
 };
 

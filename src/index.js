@@ -151,6 +151,31 @@ function initUI() {
 
   // translation
   i18n.translateAll();
+
+  // language toggle
+  const supportedLangs = i18n.supportedLanguages();
+  const browserLanguage = i18n.browserLanguage();
+  let switcher =
+    '<div class="btn-group btn-group-toggle" data-toggle="buttons">';
+  for (let lang in supportedLangs) {
+    let active = lang === browserLanguage ? "active" : "";
+    switcher += `<label class="btn btn-link btn-sm ${active}" data-lang="${lang}">
+                  <input type="radio" name="options" id="id_{$lang}">${
+                    supportedLangs[lang]
+                  }
+                  </label>`;
+  }
+  switcher += "</div>";
+  document.getElementById("language_switcher").innerHTML = switcher;
+
+  Array.from(
+    document.getElementById("language_switcher").getElementsByTagName("label")
+  ).forEach(field => {
+    field.addEventListener("click", () => {
+      i18n.setLang(field.dataset.lang);
+      i18n.translateAll();
+    });
+  });
 }
 
 function generateOverpassEntries() {

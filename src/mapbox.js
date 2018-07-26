@@ -98,7 +98,9 @@ class Mapbox {
           this.updateTrack(this._tracks.get(category));
         })
         .catch(e => {
-          console.error("Error fetching POIs for " + category + ": " + e.message);
+          console.error(
+            "Error fetching POIs for " + category + ": " + e.message
+          );
         });
     }
   }
@@ -112,7 +114,10 @@ class Mapbox {
 
   getDetails() {
     let details = new Map();
-    details.set("track_length", this._formatDetail(this._details.distance, 2, "km"));
+    details.set(
+      "track_length",
+      this._formatDetail(this._details.distance, 2, "km")
+    );
     // details.set("track_climb", this._formatDetail(this._details.climb, 0, "m"));
     // details.set("track_cescent", this._formatDetail(this._details.descent, 0, "m"));
     details.set("map_sheets", this._details.mapCount);

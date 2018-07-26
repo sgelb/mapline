@@ -112,43 +112,11 @@ section {
   display: none;
 }
 
-/* Tooltip */
-/* http://www.webdesignerdepot.com/2012/11/how-to-create-a-simple-css3-tooltip/ */
-
-/* Add this attribute to the element that needs a tooltip */
-[data-tooltip] {
-  position: relative;
-  z-index: 2;
-  cursor: pointer;
+#language_switcher .btn.active {
+  color: gray;
 }
 
-/* Hide the tooltip content by default */
-[data-tooltip]:before,
-[data-tooltip]:after {
-  visibility: hidden;
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Show tooltip content on hover */
-[data-tooltip]:hover:before,
-[data-tooltip]:hover:after {
-  visibility: visible;
-  opacity: 1;
-}
-
-/* Position tooltip right of the element */
-[data-tooltip]:before {
-  position: absolute;
-  bottom: 100%;
-  left: calc((10rem + 0.4rem) / -2);
-  padding: 0.4rem;
-  min-width: 10rem;
-  -webkit-border-radius: 0.3rem;
-  -moz-border-radius: 0.3rem;
-  border-radius: 0.3rem;
-	background: rgba(0, 0, 0, 0.8);
-  color: #fff;
-  content: attr(data-tooltip);
-  text-align: center;
+#language_switcher .btn.active:hover {
+  text-decoration: none;
+  cursor: default;
 }
