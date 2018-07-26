@@ -1,6 +1,6 @@
 {
   "name": "mapline",
-  "version": "0.17.1",
+  "version": "0.17.2",
   "description": "Create maps along a track in print quality.",
   "main": "src/index.js",
   "keywords": [],
@@ -9,8 +9,7 @@
   "license": "GPL-3.0-or-later",
   "scripts": {
     "serve": "parcel serve index.html",
-    "build": "parcel build --no-cache --no-source-maps --detailed-report index.html",
-    "prebuild": "parcel build --no-cache --no-source-maps --public-url ./ --out-dir ./prebuild/ index.html"
+    "build": "parcel build --no-cache --no-source-maps --detailed-report index.html"
   },
   "browserslist": [
     "defaults",

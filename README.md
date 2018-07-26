@@ -38,14 +38,6 @@ POIs are downloaded for print areas only. In case of format or scale changes,
 manually refresh by toggling the checkboxes.
 
 
-### Prebuilds
-
-Since v0.16.0, a bundled version is published for tagged commits in
-`prebuild/`. See
-[prebuild/README.md](https://github.com/sgelb/mapline/blob/master/prebuild/README.md)
-for more infos on how to use it.
-
-
 ### Development
 
 Logic and PDF generation of `mapline` are performed client-side. Main external
@@ -58,9 +50,21 @@ token](https://www.mapbox.com/help/create-api-access-token/). Save it in
 
     export default '<your access token here>';
 
-- `yarn install` should install all dependencies
-- `yarn serve` to start a dev server
-- `yarn build` to bundle for production in `/dist`
+- `yarn run install` should install all dependencies
+- `yarn run serve` to start a dev server
+- `yarn run build` generates a production build in `/dist`
+
+
+### Prebuilds
+
+Since v0.16.0, a bundled version is published for tagged commits in
+`prebuild/`. See
+[prebuild/README.md](https://github.com/sgelb/mapline/blob/master/prebuild/README.md)
+for more infos on how to use it.
+
+Prebuilds are generated using git hooks, see
+[git-hooks/README.md](https://github.com/sgelb/mapline/blob/master/git-hooks/README.md)
+for details.
 
 
 ### Limitations
