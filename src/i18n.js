@@ -70,13 +70,10 @@ const t = {
   },
   pois_header: {
     en:
-      "Points of Interest. " +
-      'Downloaded via <a href="https://wiki.openstreetmap.org/wiki/Overpass_API">Overpass</a>, ' +
-      "this may take a while. Only the printable areas are searched for POIs. Toggle to refresh.",
+      "Points of Interest. Downloading may take a while. Only the printable areas are searched for POIs. Toggle to refresh.",
     de:
       "Points of Interest. " +
-      'Das Herunterladen über <a href="https://wiki.openstreetmap.org/wiki/Overpass_API">Overpass</a> ' +
-      "kann etwas dauern, bitte Geduld. Es wird nur für die druckbaren Bereiche gesucht. " +
+      "Das Herunterladen kann etwas dauern, bitte Geduld. Es wird nur für die druckbaren Bereiche gesucht. " +
       "Zum Aktualisieren ab- und wieder anwählen."
   },
   generate: {
@@ -193,7 +190,12 @@ const i18n = {
       if (t[item.dataset.trn] === undefined) {
         console.error("No translation for " + item.dataset.trn);
       } else {
-        item.innerHTML = this.translateString(item.dataset.trn);
+        // FIXME: this breaks very easily, an <a> in the string is sufficient
+        if (item.hasChildNodes()) {
+          item.childNodes[0].nodeValue = this.translateString(item.dataset.trn);
+        } else {
+          item.innerHTML = this.translateString(item.dataset.trn);
+        }
       }
     });
   },

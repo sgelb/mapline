@@ -184,9 +184,7 @@ function generateOverpassEntries() {
   overpass.mapping().forEach((props, tag) => {
     overpassEntries += `<div class="col form-check form-check-inline">
       <input id="${tag}" data-tag="${tag}" type="checkbox" class="form-check-input disableable" disabled>
-      <label title="Show ${
-        props.title
-      }." class="form-check-label" for="${tag}" data-trn="${tag}"></label>
+      <label class="form-check-label" for="${tag}" data-trn="${tag}"></label>
       </div>
       `;
     if (count++ % 2) {
