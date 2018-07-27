@@ -180,6 +180,11 @@ class Mapbox {
     return this._details.filename;
   }
 
+  set name(filename) {
+    this._details.filename = filename;
+  }
+
+
   routeName() {
     return (
       this._tracks.get("route").geojson.features[0].properties.name || this.name

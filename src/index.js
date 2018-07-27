@@ -1,10 +1,10 @@
-import Printmap from "./printmap.js";
-import paperformat from "./paperformat.js";
-import Mapbox from "./mapbox.js";
 import FormValidator from "./formvalidator.js";
-import overpass from "./overpass.js";
-import exampleGpx from "../assets/example.gpx";
+import Mapbox from "./mapbox.js";
+import Printmap from "./printmap.js";
 import i18n from "./i18n.js";
+import overpass from "./overpass.js";
+import paperformat from "./paperformat.js";
+import exampleGpx from "../assets/example.gpx";
 
 let map;
 const form = document.getElementById("config");
@@ -60,6 +60,7 @@ function initUI() {
 
   // "remove track"-button. visible after chosing a track
   form.querySelector("#remove-track").addEventListener("click", () => {
+    map.name = "";
     validator.resetInvalidForms();
     toggleFormFields();
     map.clearTracks();
