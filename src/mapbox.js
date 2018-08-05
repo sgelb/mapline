@@ -1,12 +1,12 @@
 import mapboxgl from "mapbox-gl";
 import MapBoxLanguage from "@mapbox/mapbox-gl-language";
 
-import mapcutter from "./mapcutter.js";
-import token from "./mapboxtoken.js";
 import layers from "./layers.js";
-import trackutils from "./trackutils.js";
-import paperformat from "./paperformat.js";
+import mapcutter from "./mapcutter.js";
 import overpass from "./overpass.js";
+import paperformat from "./paperformat.js";
+import token from "./mapboxtoken.js";
+import trackutils from "./trackutils.js";
 import { Route, Cutouts, Milemarkers, POIs } from "./track.js";
 
 class Mapbox {
@@ -129,7 +129,7 @@ class Mapbox {
     let cutouts = this.cutouts.features;
     let route = this._tracks.get("route").geojson;
     let totalMapCount = details.get("Map sheets");
-    let formatDetail = this._formatDetail;
+    let formatDetail = this.roundWithUnit;
 
     return function(mapCount) {
       let [localLength, intermediateLength] = trackutils.distanceInBounds(
@@ -183,7 +183,6 @@ class Mapbox {
   set name(filename) {
     this._details.filename = filename;
   }
-
 
   routeName() {
     return (

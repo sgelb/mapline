@@ -325,10 +325,11 @@ function initProgressbarUpdater(printmap) {
     let percent = Math.trunc((100 / maxItems) * (currentItem + 1)) + "%";
     progressbar.style.width = percent;
     progressbar.innerHTML = percent;
-    let text = `Map ${currentItem + 1} of ${maxItems}`;
+    let text = i18n.translateString("map");
+    text += ` ${currentItem + 1} ${i18n.translateString("msg_of")} ${maxItems}`;
 
     if (isCanceled) {
-      text = "Canceling";
+      text = i18n.translateString("msg_canceling");
     }
 
     if (currentItem === maxItems) {

@@ -17,8 +17,28 @@ const t = {
     de: "Öffne gpx- oder kml-Datei"
   },
   track_length: {
-    en: "Length",
+    en: "Distance",
     de: "Länge"
+  },
+  track_ascent_descent: {
+    en: "Ascent/Descent",
+    de: "Auf- und Abstieg"
+  },
+  track_ascent: {
+    en: "Ascent",
+    de: "Aufstieg"
+  },
+  track_descent: {
+    en: "Descent",
+    de: "Abstieg"
+  },
+  track_min_max_elevation: {
+    en: "Min/Max elevation",
+    de: "Niedrigster/höchster Punkt"
+  },
+  map: {
+    en: "Map",
+    de: "Karte"
   },
   map_sheets: {
     en: "Map sheets",
@@ -42,7 +62,7 @@ const t = {
   },
   milemarkers: {
     en: "Distance markers",
-    de: "Kilometersteine"
+    de: "Abstandsmarker"
   },
   margin: {
     en: "Margin",
@@ -80,7 +100,19 @@ const t = {
     en: "Generate PDF",
     de: "PDF erstellen"
   },
-  // error messages
+  generating_pdf: {
+    en: "Generating PDF",
+    de: "Erstelle PDF"
+  },
+  initializing: {
+    en: "Initializing&hellip;",
+    de: "Initialisiere&hellip;"
+  },
+  cancel: {
+    en: "Cancel",
+    de: "Abbrechen"
+  },
+  // messages
   msg_js_required: {
     en: "This site requires JavaScript",
     de: "Diese Seite benötigt JavaScript."
@@ -96,6 +128,14 @@ const t = {
       "Sorry, your device can't render high-res maps. Please try a device with a better graphics card.",
     de:
       "Leider kann dein Gerät keine hochauflösenden Karten erstellen. Nutze ein Gerät mit besserer Grafikkarte."
+  },
+  msg_canceling: {
+    en: "Canceling",
+    de: "Abbrechen"
+  },
+  msg_of: {
+    en: "of",
+    de: "von"
   },
   // validation messages
   validate_scale: {
@@ -189,14 +229,16 @@ const i18n = {
     trn.forEach(item => {
       if (t[item.dataset.trn] === undefined) {
         console.error("No translation for " + item.dataset.trn);
-      } else {
-        // FIXME: this breaks very easily, an <a> in the string is sufficient
-        if (item.hasChildNodes()) {
-          item.childNodes[0].nodeValue = this.translateString(item.dataset.trn);
-        } else {
-          item.innerHTML = this.translateString(item.dataset.trn);
-        }
+        return;
       }
+
+      // FIXME: this breaks very easily, an <a> in the string is sufficient
+      if (item.hasChildNodes()) {
+        item.childNodes[0].nodeValue = this.translateString(item.dataset.trn);
+        return;
+      }
+
+      item.innerHTML = this.translateString(item.dataset.trn);
     });
   },
 

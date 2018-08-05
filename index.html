@@ -29,7 +29,7 @@
       </header>
 
       <noscript>
-        <div data-trn"msg_js_required" class="alert alert-danger" role="alert"></div>
+        <div data-trn="msg_js_required" class="alert alert-danger" role="alert"></div>
       </noscript>
 
       <!-- alert/error box -->
@@ -129,18 +129,18 @@
             </div>
 
             <!-- tabs bar -->
-            <div id="collapseStuff">
+            <div id="collapse-group">
               <div class="row">
                 <div class="col-md-12">
                   <p>
-                  <button class="btn btn-outline-secondary btn-sm" type="button" data-toggle="collapse" data-target="#pois" aria-expanded="false" aria-controls="pois" data-trn="pois"></button>
-                  <button class="btn btn-outline-secondary btn-sm" data-toggle="collapse" href="#advanced" role="button" aria-expanded="false" aria-controls="advanced" data-trn="advanced"></button>
+                  <button class="btn btn-outline-secondary btn-sm collapsed" type="button" data-toggle="collapse" data-target="#pois" aria-expanded="false" aria-controls="pois" data-trn="pois"></button>
+                  <button class="btn btn-outline-secondary btn-sm collapsed" type="button" data-toggle="collapse" data-target="#advanced" aria-expanded="false" aria-controls="advanced" data-trn="advanced"></button>
                   </p>
                 </div>
               </div>
 
               <!-- POIs tab -->
-              <div class="collapse" id="pois" data-parent="#collapseStuff">
+              <div class="collapse" id="pois" data-parent="#collapse-group">
                 <!-- toggle waypoints -->
                 <div class="form-group">
                   <div class="form-check form-check-inline">
@@ -160,7 +160,7 @@
               </div>
 
               <!-- Advanced content -->
-              <div class="collapse" id="advanced" data-parent="#collapseStuff">
+              <div class="collapse" id="advanced" data-parent="#collapse-group">
 
                 <!-- distance marker interval -->
                 <div class="form-group">
@@ -246,12 +246,12 @@
     <div class="modal-overlay hidden" id="modal-overlay"></div>
     <div class="modal row hidden" id="modal">
       <div class="modal-body col-md-12">
-        <h3>Generating PDF</h3>
-        <div id="progress-text">Initializing&hellip;</div>
+        <h3 data-trn="generating_pdf"></h3>
+        <div id="progress-text" data-trn="initializing"></div>
         <div class="progress">
           <div class="progress-bar progress-bar-striped progress-bar-animated" id="progress-bar" style="width: 0%"></div>
         </div>
-        <button class="btn btn-danger float-right" id="cancel-button">Cancel</button>
+        <button class="btn btn-danger float-right" id="cancel-button" data-trn="cancel"></button>
       </div>
     </div>
 
