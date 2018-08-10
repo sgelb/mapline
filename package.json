@@ -1,6 +1,6 @@
 {
   "name": "mapline",
-  "version": "0.18.2",
+  "version": "0.18.3",
   "description": "Create maps along a track in print quality.",
   "main": "src/index.js",
   "keywords": [],

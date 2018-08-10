@@ -126,9 +126,9 @@ class Mapbox {
     );
     details.set(
       "track_ascent_descent",
-      "&nearr;" +
+      "Δ" +
         this.roundWithUnit(this._details.ascent, 0, "m") +
-        ", &searr;" +
+        ",  ∇" +
         this.roundWithUnit(this._details.descent, 0, "m")
     );
     details.set(
