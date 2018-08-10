@@ -108,6 +108,10 @@ section {
   margin-top: 1rem;
 }
 
+.progress {
+  margin-top: 1rem;
+}
+
 .hidden {
   display: none;
 }

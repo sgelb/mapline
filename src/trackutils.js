@@ -150,8 +150,8 @@ const trackutils = {
     let max_ele = -Infinity;
     let last = line[0][2];
     line.forEach(coord => {
-      min_ele = Math.min(min_ele, coord[2])
-      max_ele = Math.max(max_ele, coord[2])
+      min_ele = Math.min(min_ele, coord[2]);
+      max_ele = Math.max(max_ele, coord[2]);
       let diff = coord[2] - last;
       if (diff > 0) {
         ascent += diff;

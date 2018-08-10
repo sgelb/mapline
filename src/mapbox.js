@@ -1,6 +1,7 @@
 import mapboxgl from "mapbox-gl";
 import MapBoxLanguage from "@mapbox/mapbox-gl-language";
 
+import i18n from "./i18n.js";
 import layers from "./layers.js";
 import mapcutter from "./mapcutter.js";
 import overpass from "./overpass.js";
@@ -133,7 +134,7 @@ class Mapbox {
     details.set(
       "track_min_max_elevation",
       "&DownArrowBar;" +
-      this.roundWithUnit(this._details.min_ele, 0, "m") +
+        this.roundWithUnit(this._details.min_ele, 0, "m") +
         ", &UpArrowBar;" +
         this.roundWithUnit(this._details.max_ele, 0, "m")
     );
@@ -145,7 +146,7 @@ class Mapbox {
     let details = this.getDetails();
     let cutouts = this.cutouts.features;
     let route = this._tracks.get("route").geojson;
-    let totalMapCount = details.get("Map sheets");
+    let totalMapCount = details.get("map_sheets");
     let formatDetail = this.roundWithUnit;
 
     return function(mapCount) {
@@ -155,10 +156,16 @@ class Mapbox {
       );
 
       // Map 3 of 7 · 36.7km · 123.4 of 2156.5km total
-      let text = `Map ${mapCount} of ${totalMapCount}`;
+      let text = `${i18n.translateString(
+        "map"
+      )} ${mapCount} ${i18n.translateString("msg_of")} ${totalMapCount}`;
       text += ` · ${formatDetail(localLength, 2, "km")}`;
-      text += ` · ${formatDetail(intermediateLength, 2, "km")} of ${details.get(
-        "Length"
+      text += ` · ${formatDetail(
+        intermediateLength,
+        2,
+        "km"
+      )} ${i18n.translateString("msg_of")} ${details.get(
+        "track_length"
       )} total`;
 
       return text;
