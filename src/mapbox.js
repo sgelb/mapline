@@ -80,7 +80,12 @@ class Mapbox {
 
     this.addTrack(new POIs("waypoints", trackutils.waypoints(geojson)));
 
-    // [this._details.climb, this._details.descent] = trackutils.elevation(geojson);
+    [
+      this._details.ascent,
+      this._details.descent,
+      this._details.min_ele,
+      this._details.max_ele
+    ] = trackutils.elevation(geojson);
     this._details.distance = trackutils.totalDistance(geojson);
   }
 
@@ -105,21 +110,33 @@ class Mapbox {
     }
   }
 
-  _formatDetail(value, decimal, unit) {
-    if (value !== undefined) {
-      return `${value.toFixed(decimal)}${unit}`;
+  roundWithUnit(value, decimal_part, unit = "") {
+    if (value === undefined) {
+      return "unknown";
     }
-    return "unknown";
+    return `${value.toFixed(decimal_part)}${unit}`;
   }
 
   getDetails() {
     let details = new Map();
     details.set(
       "track_length",
-      this._formatDetail(this._details.distance, 2, "km")
+      this.roundWithUnit(this._details.distance, 2, "km")
     );
-    // details.set("track_climb", this._formatDetail(this._details.climb, 0, "m"));
-    // details.set("track_cescent", this._formatDetail(this._details.descent, 0, "m"));
+    details.set(
+      "track_ascent_descent",
+      "&nearr;" +
+        this.roundWithUnit(this._details.ascent, 0, "m") +
+        ", &searr;" +
+        this.roundWithUnit(this._details.descent, 0, "m")
+    );
+    details.set(
+      "track_min_max_elevation",
+      "&DownArrowBar;" +
+      this.roundWithUnit(this._details.min_ele, 0, "m") +
+        ", &UpArrowBar;" +
+        this.roundWithUnit(this._details.max_ele, 0, "m")
+    );
     details.set("map_sheets", this._details.mapCount);
     return details;
   }
