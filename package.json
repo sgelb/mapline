@@ -17,13 +17,13 @@
     "not Android < 999"
   ],
   "dependencies": {
-    "@derhuerst/query-overpass": "^0.1.0",
+    "@derhuerst/query-overpass": "^1.0.1",
     "@mapbox/geojson-normalize": "^0.0.1",
     "@mapbox/mapbox-gl-language": "^0.10.0",
     "@mapbox/togeojson": "^0.16.0",
     "cheap-ruler": "^2.5.1",
     "jspdf": "^1.4.1",
-    "mapbox-gl": "^0.47.0"
+    "mapbox-gl": "^0.51.0"
   },
   "devDependencies": {
     "autoprefixer": "^9.0.1",
