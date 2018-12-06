@@ -129,6 +129,10 @@ const t = {
     de:
       "Leider kann dein Gerät keine hochauflösenden Karten erstellen. Nutze ein Gerät mit besserer Grafikkarte."
   },
+  msg_mapbox_error: {
+    en: "I'm sorry, your browser ist not support by Mapline.",
+    de: "Es tut uns leid, dein Browser wird von Mapline nicht unterstützt."
+  },
   msg_canceling: {
     en: "Canceling",
     de: "Abbrechen"

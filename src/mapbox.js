@@ -15,7 +15,7 @@ class Mapbox {
     mapboxgl.accessToken = token;
 
     if (!mapboxgl.supported()) {
-      throw Error("Your browser does not support MapboxGL.");
+      throw Error(i18n.translate("msg_mapbox_error"));
     }
 
     this._tracks = tracks || new Map();
@@ -23,7 +23,7 @@ class Mapbox {
     try {
       this._map = new mapboxgl.Map(options);
     } catch (e) {
-      throw Error(`Your browser does not support MapboxGL.`);
+      throw Error(i18n.translate("msg_mapbox_error"));
     }
     this._map.on("styledata", () => this._updateAllTracks());
     this._addControls();
