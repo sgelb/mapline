@@ -81,7 +81,6 @@ browser has of course some limitations.
 ### Missing features and nice-to-haves
 
 - a map style better suited for cycle tours and printing in black&white
-- possibility to add points of views like drinking water or camping places
 - a scale bar on the printouts
 - elevation stats and marking of steep slopes
 - support for multiple tracks
