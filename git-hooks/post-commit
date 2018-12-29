@@ -34,6 +34,9 @@ if [ -e .commit ]; then
     sed -i "s/$token/\"MAPBOX_TOKEN\"/g" ./src.js
     linenumber=$(grep -n MAPBOX_TOKEN ./src.js | cut -d : -f 1)
 
+    echo ":: Set version string in index.html"
+    sed -i "s/__VERSION__/$version/g" ./index.html
+
     echo ":: Generate README.md"
     cat <<- EOF > README.md
 		# Prebuild for version [${version}](https://github.com/sgelb/mapline/releases/tag/v${version})
