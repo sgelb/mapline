@@ -1,8 +1,10 @@
-import "babel-polyfill";
-import Printmap from "./printmap.js";
-import paperformat from "./paperformat.js";
-import Mapbox from "./mapbox.js";
 import FormValidator from "./formvalidator.js";
+import Mapbox from "./mapbox.js";
+import Printmap from "./printmap.js";
+import i18n from "./i18n.js";
+import overpass from "./overpass.js";
+import paperformat from "./paperformat.js";
+import exampleGpx from "../assets/example.gpx";
 
 let map;
 const form = document.getElementById("config");
@@ -16,7 +18,8 @@ const validator = new FormValidator();
       container: "map",
       style: toStyleURI("outdoors"),
       center: [13.463, 47.386],
-      zoom: 11
+      zoom: 11,
+      hash: true
     });
     setPaperformatOptions();
   } catch (e) {
@@ -38,10 +41,10 @@ function initUI() {
       map.clearTracks();
     }
     const xhr = new XMLHttpRequest();
-    xhr.open("GET", "./assets/vercors.gpx", true);
+    xhr.open("GET", exampleGpx, true);
     xhr.onload = function(e) {
       if (this.status == 200) {
-        loadTrack(new Blob([this.response]), "vercors.gpx");
+        loadTrack(new Blob([this.response]), "example.gpx");
       }
     };
     xhr.send();
@@ -57,6 +60,7 @@ function initUI() {
 
   // "remove track"-button. visible after chosing a track
   form.querySelector("#remove-track").addEventListener("click", () => {
+    map.name = "";
     validator.resetInvalidForms();
     toggleFormFields();
     map.clearTracks();
@@ -72,7 +76,7 @@ function initUI() {
   validator.add({
     form: form.scale,
     validity: v => v >= 5000,
-    msg: "Scale must be 5000 or larger!"
+    msg: i18n.translateString("validate_scale")
   });
 
   // paper format
@@ -85,20 +89,15 @@ function initUI() {
   validator.add({
     form: form.milemarkers,
     validity: v => v >= 0,
-    msg: "Milemarkers must be 0 or larger!"
+    msg: i18n.translateString("validate_milemarkers")
   });
-
-  // toggle advanced options
-  form.toggleAdvancedOptions.addEventListener("click", () =>
-    toggleAdvancedOptions()
-  );
 
   // margin
   form.margin.addEventListener("change", () => reloadCutouts());
   validator.add({
     form: form.margin,
     validity: v => v >= 0 && v <= 50,
-    msg: "Margin must be between 0 and 50!"
+    msg: i18n.translateString("validate_margin")
   });
 
   // dpi
@@ -109,7 +108,7 @@ function initUI() {
   validator.add({
     form: form.dpi,
     validity: v => v > 0,
-    msg: "dpi must be larger than 0!"
+    msg: i18n.translateString("validate_dpi")
   });
 
   // track width
@@ -122,7 +121,7 @@ function initUI() {
   validator.add({
     form: form.trackWidth,
     validity: v => v > 0,
-    msg: "Track width must be larger than 0!"
+    msg: i18n.translateString("validate_width")
   });
 
   // track color
@@ -133,8 +132,69 @@ function initUI() {
     })
   );
 
+  // show waypoints
+  form.showWaypoints.addEventListener("change", () =>
+    map.toggleVisibility("waypoints", form.showWaypoints.checked)
+  );
+
+  // overpass checkboxes
+  generateOverpassEntries();
+  Array.from(
+    document.getElementById("overpass").getElementsByTagName("input")
+  ).forEach(field => {
+    field.addEventListener("change", () => {
+      map.loadPOIs(field.dataset.tag, field.checked);
+    });
+  });
+
   // generate button
   generatePdfBtn.addEventListener("click", generatePDF);
+
+  // translation
+  i18n.translateAll();
+
+  // language toggle
+  const supportedLangs = i18n.supportedLanguages();
+  const browserLanguage = i18n.browserLanguage();
+  let switcher =
+    '<div class="btn-group btn-group-toggle" data-toggle="buttons">';
+  for (let lang in supportedLangs) {
+    let active = lang === browserLanguage ? "active" : "";
+    switcher += `<label class="btn btn-link btn-sm ${active}" data-lang="${lang}">
+                  <input type="radio" name="options" id="id_{$lang}">${
+                    supportedLangs[lang]
+                  }
+                  </label>`;
+  }
+  switcher += "</div>";
+  document.getElementById("language_switcher").innerHTML = switcher;
+
+  Array.from(
+    document.getElementById("language_switcher").getElementsByTagName("label")
+  ).forEach(field => {
+    field.addEventListener("click", () => {
+      i18n.setLang(field.dataset.lang);
+      i18n.translateAll();
+    });
+  });
+}
+
+function generateOverpassEntries() {
+  let count = 0;
+  let overpassEntries = '<div class="row">';
+  overpass.mapping().forEach((props, tag) => {
+    overpassEntries += `<div class="col form-check form-check-inline">
+      <input id="${tag}" data-tag="${tag}" type="checkbox" class="form-check-input disableable" disabled>
+      <label class="form-check-label" for="${tag}" data-trn="${tag}"></label>
+      </div>
+      `;
+    if (count++ % 2) {
+      overpassEntries += '</div><div class="row">';
+    }
+  });
+  overpassEntries += "</div>";
+
+  document.getElementById("overpass").innerHTML = overpassEntries;
 }
 
 function loadTrack(file, fname) {
@@ -176,27 +236,19 @@ function loadTrack(file, fname) {
 }
 
 function toggleFormFields() {
-  // hide/unhide everything with class 'hidable'
   toggleHiddenForm(".hidable");
 
   // disable/enable everything with class 'disableable'
-  Array.from(form.querySelectorAll(".disableable")).forEach(field =>
-    toggleField(field)
-  );
+  form.querySelectorAll(".disableable").forEach(field => toggleField(field));
 
   // generatePdfBtn
   toggleGenerateButtonField();
 }
 
-function toggleAdvancedOptions() {
-  // hide/unhide everything with class 'advanced-option'
-  toggleHiddenForm(".advanced-option");
-}
-
 function toggleHiddenForm(id) {
-  Array.from(form.querySelectorAll(id)).forEach(field =>
-    field.classList.toggle("hidden")
-  );
+  form.querySelectorAll(id).forEach(field => {
+    field.classList.toggle("hidden");
+  });
 }
 
 function toggleGenerateButtonField() {
@@ -222,9 +274,10 @@ function updateTrackDetails(details) {
   table.innerHTML = "";
   for (let [k, v] of map.getDetails()) {
     let row = table.insertRow();
-    row.insertCell(0).innerHTML = k;
+    row.insertCell(0).dataset.trn = k;
     row.insertCell(1).innerHTML = v;
   }
+  i18n.translate(table);
 }
 
 function reloadCutouts() {
@@ -269,13 +322,14 @@ function initProgressbarUpdater(printmap) {
   });
 
   return function(currentItem, maxItems, isCanceled) {
-    let percent = Math.trunc(100 / maxItems * (currentItem + 1)) + "%";
+    let percent = Math.trunc((100 / maxItems) * (currentItem + 1)) + "%";
     progressbar.style.width = percent;
     progressbar.innerHTML = percent;
-    let text = `Map ${currentItem + 1} of ${maxItems}`;
+    let text = i18n.translateString("map");
+    text += ` ${currentItem + 1} ${i18n.translateString("msg_of")} ${maxItems}`;
 
     if (isCanceled) {
-      text = "Canceling";
+      text = i18n.translateString("msg_canceling");
     }
 
     if (currentItem === maxItems) {
@@ -304,20 +358,15 @@ function setPaperformatOptions() {
   const maxBuffer = gl.getParameter(gl.MAX_RENDERBUFFER_SIZE);
 
   if (maxBuffer < 2048) {
-    throw new Error(
-      `Sorry, your device can't render high-res maps.
-    Please try a device with a better graphics card.`
-    );
+    throw new Error(i18n.translateString("msg_no_render"));
   }
 
   if (maxBuffer === 2048) {
-    showAlertBox(
-      "Your device can only render PDFs in A6. For larger formats, try a device with a better graphics card."
-    );
+    showAlertBox(i18n.translateString("msg_render_a6"));
   }
 
   const maxSize =
-    25.4 * Math.min(maxBuffer, 4096) / parseInt(form.dpi.value, 10);
+    (25.4 * Math.min(maxBuffer, 4096)) / parseInt(form.dpi.value, 10);
   const validFormats = paperformat.validFormats(maxSize * maxSize);
 
   const paperform = form.paperformat;
@@ -330,16 +379,13 @@ function setPaperformatOptions() {
   });
 
   // if available, set a5 as default. otherwise, use last entry
-  paperform.value = validFormats.indexOf("a5") >= 0
-    ? "a5"
-    : validFormats[validFormats.length - 1];
+  paperform.value =
+    validFormats.indexOf("a5") >= 0
+      ? "a5"
+      : validFormats[validFormats.length - 1];
 }
 
 // Helper functions
-
-function toStyleURI(style) {
-  return "mapbox://styles/mapbox/" + style + "-v9?optimize=true";
-}
 
 function showAlertBox(message) {
   const alertBox = document.getElementById("alertbox");
@@ -350,6 +396,20 @@ function showAlertBox(message) {
   const alert = alertBox.querySelector("#alert-msg");
   alert.innerHTML = message;
   alertBox.classList.remove("hidden");
+}
+
+function toStyleURI(style) {
+  switch (style) {
+    case "streets":
+    case "outdoors":
+    case "satellite-streets":
+      return "mapbox://styles/mapbox/" + style + "-v10?optimize=true";
+    case "navigation-guidance-day":
+    case "navigation-guidance-night":
+      return "mapbox://styles/mapbox/" + style + "-v2?optimize=true";
+    default:
+      return "mapbox://styles/mapbox/" + style + "-v9?optimize=true";
+  }
 }
 
 function capitalize(text) {

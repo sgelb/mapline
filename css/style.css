@@ -13,12 +13,17 @@ header {
   margin-bottom: 1.5em;
 }
 
+header h1 a, a:hover {
+  color: inherit;
+  text-decoration: inherit;
+}
+
 header h1 small {
   font-size: 60%;
 }
 
 label {
-  margin-bottom: 0.1rem;
+  margin-bottom: 0.3rem;
 }
 
 table {
@@ -39,6 +44,11 @@ section {
   height: 2rem;
 }
 
+#overpass .row {
+  margin-bottom: 0.5em;
+  margin-left: auto;
+}
+
 #map {
   height: 80vh;
 }
@@ -48,6 +58,16 @@ section {
   height: 0;
   width: 0;
   position: fixed;
+}
+
+.flipped {
+  transform: scaleX(-1);
+  filter: flipH;
+  display: inline-block;
+}
+
+.poi {
+  line-height: 1.3em;
 }
 
 /* Modal */
@@ -88,48 +108,27 @@ section {
   margin-top: 1rem;
 }
 
+.progress {
+  margin-top: 1rem;
+}
+
 .hidden {
   display: none;
 }
 
-/* Tooltip */
-/* http://www.webdesignerdepot.com/2012/11/how-to-create-a-simple-css3-tooltip/ */
-
-/* Add this attribute to the element that needs a tooltip */
-[data-tooltip] {
-  position: relative;
-  z-index: 2;
-  cursor: pointer;
+#language_switcher .btn {
+  padding-right: 0rem;
 }
 
-/* Hide the tooltip content by default */
-[data-tooltip]:before,
-[data-tooltip]:after {
-  visibility: hidden;
-  opacity: 0;
-  pointer-events: none;
+#language_switcher .btn.active {
+  color: gray;
 }
 
-/* Show tooltip content on hover */
-[data-tooltip]:hover:before,
-[data-tooltip]:hover:after {
-  visibility: visible;
-  opacity: 1;
+#language_switcher .btn.active:hover {
+  text-decoration: none;
+  cursor: default;
 }
 
-/* Position tooltip right of the element */
-[data-tooltip]:before {
-  position: absolute;
-  bottom: 100%;
-  left: calc((10rem + 0.4rem) / -2);
-  padding: 0.4rem;
-  min-width: 10rem;
-  -webkit-border-radius: 0.3rem;
-  -moz-border-radius: 0.3rem;
-  border-radius: 0.3rem;
-	background: rgba(0, 0, 0, 0.8);
-  color: #fff;
-  content: attr(data-tooltip);
-  text-align: center;
+#credits {
+  margin-top: 0.4rem;
 }
-

@@ -4,13 +4,23 @@ function hasSource(map, id) {
 
 function addSource(map, id) {
   map.addSource(id, {
-    "type": 'geojson',
-    "data": emptyFeatureCollection()
+    type: "geojson",
+    data: emptyFeatureCollection()
   });
 }
 
 function emptyFeatureCollection() {
-  return {"type": "FeatureCollection", "features": []};
+  return { type: "FeatureCollection", features: [] };
+}
+
+function getBeforeLayer(map) {
+  // find specific layer to put overlay before. stack on top otherwise
+  if (map.getLayer("housenum-label")) {
+    return "housenum-label";
+  }
+  if (map.getLayer("motorway-junction")) {
+    return "motorway-junction";
+  }
 }
 
 const layers = {
@@ -21,7 +31,10 @@ const layers = {
       return;
     }
     addSource(map, id);
-    map.addLayer(track.layer, track.before);
+    map.addLayer(track.layer, getBeforeLayer(map));
+  },
+  setVisibility(map, id, visibility) {
+    map.setLayoutProperty(id, "visibility", visibility ? "visible" : "none");
   }
 };
 

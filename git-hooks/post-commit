@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+
+# If the package version in package.json changed:
+# - generate new prebuilds
+# - tag git commit with new package version
+
+# https://coderwall.com/p/mk18zq/automatic-git-version-tagging-for-npm-modules
+version=$(git diff HEAD^..HEAD -- package.json | grep '^+\s*\"version\":' | sed -s 's/[^0-9\.]//g')
+
+# .commit is touched in pre-commit. Because we run `git commit --amend` in this
+# script, we need it to make sure we don't run into an endless loop
+if [ -e .commit ]; then
+  rm .commit
+  if [ "$version" != "" ]; then
+    echo "New package version"
+    cd "$(git rev-parse --show-toplevel)" || exit
+
+    echo ":: Generate prebuilds"
+    yarn run parcel build --no-cache --no-source-maps --public-url ./ --out-dir ./prebuild/ index.html
+
+    cd prebuild || exit
+
+    echo ":: Rename files"
+    for oldfile in *.*.{js,css,gpx}; do
+      newfile=$(sed s'/[0-9a-f]\{8\}.//' <<<"$oldfile")
+      # Adapt references inside files
+      sed -i "s/$oldfile/$newfile/g" ./*.{js,css,html}
+      # Rename files if necessary
+      mv "${oldfile}" "${newfile}" 2> /dev/null
+    done;
+
+    echo ":: Remove mapbox token"
+    token=$(grep -oP '".*"' ../src/mapboxtoken.js)
+    sed -i "s/$token/\"MAPBOX_TOKEN\"/g" ./src.js
+    linenumber=$(grep -n MAPBOX_TOKEN ./src.js | cut -d : -f 1)
+
+    echo ":: Set version string in index.html"
+    sed -i "s/__VERSION__/$version/g" ./index.html
+
+    echo ":: Generate README.md"
+    cat <<- EOF > README.md
+		# Prebuild for version [${version}](https://github.com/sgelb/mapline/releases/tag/v${version})
+
+		Find and replace \`MAPBOX_TOKEN\` in \`prebuild/src.js\` (Line ${linenumber})
+		with your own [Mapbox access token](https://www.mapbox.com/help/create-api-access-token/).
+		EOF
+
+    echo ":: Add updated prebuild to commit"
+    git add ./*
+    git commit --amend -C HEAD --no-verify
+
+    echo ":: Create new tag v$version"
+    git tag -a -f "v$version" -m "$(git log -1 --format=%s)"
+  fi
+fi
+exit

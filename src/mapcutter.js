@@ -1,6 +1,6 @@
-import paperformat from './paperformat.js';
-import BoundingBox from './boundingbox.js';
-import trackutils from './trackutils.js';
+import paperformat from "./paperformat.js";
+import BoundingBox from "./boundingbox.js";
+import trackutils from "./trackutils.js";
 
 // return FeatureCollection of bounds in specified scale and format along route
 const mapcutter = function(route, options) {
@@ -9,12 +9,12 @@ const mapcutter = function(route, options) {
   height -= 2 * options.margin;
 
   // real world width and height of map on cutout in meter
-  const rw = width / 1000 * options.scale;
-  const rh = height / 1000 * options.scale;
+  const rw = (width / 1000) * options.scale;
+  const rh = (height / 1000) * options.scale;
 
   // add padding around route on print map in mm
-  const rwp = (width - 2*options.padding) / 1000 * options.scale;
-  const rhp = (height - 2*options.padding) / 1000 * options.scale;
+  const rwp = ((width - 2 * options.padding) / 1000) * options.scale;
+  const rhp = ((height - 2 * options.padding) / 1000) * options.scale;
 
   const bounds = [];
   let bbox = new BoundingBox(route.features[0].geometry.coordinates[0][1]);

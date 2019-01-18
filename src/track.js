@@ -1,6 +1,6 @@
-import mapcutter from './mapcutter.js';
-import trackutils from './trackutils.js';
-import layers from './layers.js';
+import mapcutter from "./mapcutter.js";
+import trackutils from "./trackutils.js";
+import layers from "./layers.js";
 
 class Track {
   constructor(id, geojson) {
@@ -42,34 +42,29 @@ class Track {
 
   clearLayerData(map) {
     map.getSource(this._id).setData({
-      "type": "FeatureCollection",
-      "features": []
+      type: "FeatureCollection",
+      features: []
     });
-  }
-
-  get before() {
-    return "housenum-label";
   }
 
   get layer() {}
 }
 
-
 class Route extends Track {
   get layer() {
     return {
-      "id": this._id,
-      "source": this._id,
-      "type": "line",
-      "layout": {
+      id: this._id,
+      source: this._id,
+      type: "line",
+      layout: {
         "line-join": "round",
         "line-cap": "square"
       },
-      "paint": {
+      paint: {
         "line-color": "#ff69b4",
         "line-width": 3,
-        "line-opacity": 0.6,
-      },
+        "line-opacity": 0.6
+      }
     };
   }
 }
@@ -77,59 +72,61 @@ class Route extends Track {
 class Cutouts extends Track {
   get layer() {
     return {
-      "id": this._id,
-      "source": this._id,
-      "type": "line",
-      "paint": {
+      id: this._id,
+      source: this._id,
+      type: "line",
+      paint: {
         "line-color": "#444444",
         "line-width": 2,
         "line-offset": -3,
         "line-opacity": 0.6,
         "line-dasharray": {
-          "stops": [
-            [0, [1000, 0]],
-            [12, [3, 2]]
-          ]
+          stops: [[0, [1000, 0]], [12, [3, 2]]]
         }
       }
     };
   }
-
 }
 
 class Milemarkers extends Track {
   get layer() {
     return {
-      "id": this._id,
-      "source": this._id,
-      "type": "symbol",
-      "layout": {
+      id: this._id,
+      source: this._id,
+      type: "symbol",
+      layout: {
         "icon-image": "marker-11",
         "icon-offset": [0, -5],
+        "icon-ignore-placement": true,
         "text-field": "{title} km",
         "text-anchor": "bottom",
         "text-offset": [0, -0.5],
         "text-size": 11,
-        "icon-ignore-placement": true,
-        "text-optional": true,
+        "text-optional": true
       }
     };
   }
-
 }
 
-class Poi extends Track {
+class POIs extends Track {
   get layer() {
     return {
-      "id": this._id,
-      "source": this._id,
-      "type": "symbol",
-      "layout": {
-        "icon-image": this._id,  // TODO: create map of poi icons
+      id: this._id,
+      source: this._id,
+      type: "symbol",
+      layout: {
+        "icon-image": "{symbol}",
         "icon-ignore-placement": true,
+        "icon-allow-overlap": true,
+        "text-field": "{title}",
+        "text-anchor": "top",
+        "text-offset": [0, 0.5],
+        "text-size": 11,
+        "text-allow-overlap": true,
+        "text-optional": true
       }
     };
   }
 }
 
-export {Route, Cutouts, Milemarkers, Poi};
+export { Route, Cutouts, Milemarkers, POIs };

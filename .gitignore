@@ -1,4 +1,7 @@
 node_modules/
 www/
+dist/
+demo/
+.cache
 src/mapboxtoken.js
 TODO.md

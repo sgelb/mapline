@@ -1,3 +1,4 @@
+import mapboxgl from "mapbox-gl";
 import cheapruler from "cheap-ruler";
 
 class BoundingBox {
@@ -43,8 +44,10 @@ class BoundingBox {
   // return if bounds width and height are larger than arguments
   largerThan(maxWidth, maxHeight) {
     let [width, height] = this._dimensions();
-    return (width > maxWidth || height > maxHeight) &&
-      (height > maxWidth || width > maxHeight);
+    return (
+      (width > maxWidth || height > maxHeight) &&
+      (height > maxWidth || width > maxHeight)
+    );
   }
 
   // resize bounds to width and height
@@ -108,12 +111,13 @@ class BoundingBox {
     };
   }
 
+  // return a clone of bounds
   cloneBounds() {
-      if(!(this.bounds._sw && this.bounds._ne)) {
-          return new mapboxgl.LngLatBounds();
-      }
+    if (this.bounds.isEmpty()) {
+      return new mapboxgl.LngLatBounds();
+    }
 
-      return new mapboxgl.LngLatBounds.convert(this.bounds.toArray());
+    return mapboxgl.LngLatBounds.convert(this.bounds.toArray());
   }
 }
 
