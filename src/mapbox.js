@@ -20,6 +20,7 @@ class Mapbox {
 
     this._tracks = tracks || new Map();
     this._details = details || {};
+    this._language = new MapBoxLanguage();
     try {
       this._map = new mapboxgl.Map(options);
     } catch (e) {
@@ -34,7 +35,7 @@ class Mapbox {
       new mapboxgl.NavigationControl({ showCompass: false })
     );
     this._map.addControl(new mapboxgl.ScaleControl());
-    this._map.addControl(new MapBoxLanguage());
+    this._map.addControl(this._language);
   }
 
   _updateAllTracks() {
@@ -219,7 +220,9 @@ class Mapbox {
   }
 
   set style(style) {
+    this._map.removeControl(this._language);
     this._map.setStyle(style);
+    this._map.addControl(this._language);
   }
 
   clearTracks() {

@@ -403,12 +403,12 @@ function toStyleURI(style) {
     case "streets":
     case "outdoors":
     case "satellite-streets":
-      return "mapbox://styles/mapbox/" + style + "-v10?optimize=true";
+      return "mapbox://styles/mapbox/" + style + "-v10";
     case "navigation-guidance-day":
     case "navigation-guidance-night":
-      return "mapbox://styles/mapbox/" + style + "-v2?optimize=true";
+      return "mapbox://styles/mapbox/" + style + "-v2";
     default:
-      return "mapbox://styles/mapbox/" + style + "-v9?optimize=true";
+      return "mapbox://styles/mapbox/" + style + "-v9";
   }
 }
 
