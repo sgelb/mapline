@@ -3,8 +3,11 @@
 Create a collection of accurate maps in print quality along your gpx or kml track, in
 your scale, your format and the infos you need.
 
-[Demo page](https://sgelb.github.io/demo/mapline/)
-
+### Adaptations
+Compared to the [original](https://github.com/sgelb/mapline) this fork adds
+some features that I personally like. For example support for tracks made up
+from separate segments in the same file. Or showing alternative routes with a
+different style.
 
 ### Features
 - Accurate scale throughout the whole route
@@ -50,7 +53,7 @@ token](https://www.mapbox.com/help/create-api-access-token/). Save it in
 
     export default '<your access token here>';
 
-- `yarn run install` should install all dependencies
+- `yarn install` should install all dependencies
 - `yarn run serve` to start a dev server
 - `yarn run build` generates a production build in `/dist`
 
@@ -83,7 +86,6 @@ browser has of course some limitations.
 - a map style better suited for cycle tours and printing in black&white
 - a scale bar on the printouts
 - elevation stats and marking of steep slopes
-- support for multiple tracks
 
 ### Want to participate?
 
