@@ -145,28 +145,28 @@ const trackutils = {
 
   // return cumulated ascent and descent and min/max elevation of track in meter
   elevation(track) {
-    const line = track.features[0].geometry.coordinates;
-    if (line[0].length < 3) {
-      return [NaN, NaN, NaN, NaN];
-    }
-
     let ascent = 0;
     let descent = 0;
     let min_ele = Infinity;
     let max_ele = -Infinity;
-    let last = line[0][2];
-    line.forEach(coord => {
-      min_ele = Math.min(min_ele, coord[2]);
-      max_ele = Math.max(max_ele, coord[2]);
-      let diff = coord[2] - last;
-      if (diff > 0) {
-        ascent += diff;
-      } else {
-        descent -= diff;
+    for (const feature of track.features) {
+      const line = feature.geometry.coordinates;
+      if (line[0].length < 3) {   // no elevation data
+	return [NaN, NaN, NaN, NaN];
       }
-      last = coord[2];
-    });
-
+      let last = line[0][2];
+      line.forEach(coord => {
+	min_ele = Math.min(min_ele, coord[2]);
+	max_ele = Math.max(max_ele, coord[2]);
+	let diff = coord[2] - last;
+	if (diff > 0) {
+          ascent += diff;
+	} else {
+          descent -= diff;
+	}
+	last = coord[2];
+      });
+    }
     return [ascent, descent, min_ele, max_ele];
   },
 
