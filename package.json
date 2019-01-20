@@ -4,7 +4,7 @@
   "description": "Create maps along a track in print quality.",
   "main": "src/index.js",
   "keywords": [],
-  "homepage": "https://github.com/sgelb/mapline",
+  "homepage": "https://github.com/krmr/mapline",
   "author": "sgelb",
   "license": "GPL-3.0-or-later",
   "scripts": {
