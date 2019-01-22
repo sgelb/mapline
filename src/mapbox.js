@@ -77,7 +77,8 @@ class Mapbox {
     this._details.filename = filename.substring(0, filename.lastIndexOf("."));
     const geojson = trackutils.togeojson(ext, data);
 
-    this.addTrack(new Route("route", trackutils.tracks(geojson)));
+    let tracks = trackutils.tracks(geojson);
+    this.addTrack(new Route("route", tracks));
     this.updateTrack(this._tracks.get("route"));
 
     this.addTrack(new POIs("waypoints", trackutils.waypoints(geojson)));
@@ -87,8 +88,8 @@ class Mapbox {
       this._details.descent,
       this._details.min_ele,
       this._details.max_ele
-    ] = trackutils.elevation(geojson);
-    this._details.distance = trackutils.totalDistance(geojson);
+    ] = trackutils.elevation(tracks);
+    this._details.distance = trackutils.totalDistance(tracks);
   }
 
   loadPOIs(category, visibility) {
