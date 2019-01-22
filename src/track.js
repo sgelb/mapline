@@ -129,4 +129,22 @@ class POIs extends Track {
   }
 }
 
-export { Route, Cutouts, Milemarkers, POIs };
+class Gradients extends Track {
+  get layer() {
+    return {
+      id: this._id,
+      source: this._id,
+      type: "symbol",
+      layout: {
+	"symbol-placement": "line",
+        "symbol-spacing": 10,
+        "icon-ignore-placement": true,
+        "icon-allow-overlap": true,
+        "icon-image": "triangle-15",
+	"icon-rotate": 90
+      }
+    };
+  }
+}
+
+export { Route, Cutouts, Milemarkers, POIs, Gradients };

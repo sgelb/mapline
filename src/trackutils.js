@@ -253,6 +253,41 @@ const trackutils = {
     return featureCollection(points);
   },
 
+  gradients(track) {
+    let result =  { type: "FeatureCollection", features: [] };
+    for (const feature of track.features) {
+      const line = feature.geometry.coordinates;
+      let newFeature = {
+        "type": "Feature",
+        "geometry": {
+          "type": "LineString",
+          "coordinates": []
+        }
+      };
+      let previousPoint = line[0];
+      newFeature.geometry.coordinates.push([ previousPoint[0],  previousPoint[1],  0.0] );
+      const ruler = cheapruler(line[Math.trunc(line.length/2)][1]);
+      for (let i = 1; i < line.length - 1; i++) {
+        let currentPoint = line[i];
+        let distance = 1000.0*ruler.distance(currentPoint, previousPoint);
+	let elevationChange = currentPoint[2] - previousPoint[2];
+	let gradient = 100*elevationChange/distance;
+	newFeature.geometry.coordinates.push([ currentPoint[0],  currentPoint[1],  gradient]);
+	previousPoint = currentPoint;
+      }
+      result.features.push(newFeature);
+    }
+    return result;
+
+    for (const feature of track.features) {
+      let line = feature.geometry.coordinates;
+      const ruler = cheapruler(line[Math.trunc(line.length/2)][1]);
+      for (let i = 1; i < line.length - 1; i++) {
+      }
+    }
+    return featureCollection(track);
+  },
+
   // convert data to geojson
   togeojson(format, data) {
     if (format === "geojson") {

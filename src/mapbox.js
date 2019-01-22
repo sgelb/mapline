@@ -8,7 +8,7 @@ import overpass from "./overpass.js";
 import paperformat from "./paperformat.js";
 import token from "./mapboxtoken.js";
 import trackutils from "./trackutils.js";
-import { Route, Cutouts, Milemarkers, POIs } from "./track.js";
+import { Route, Cutouts, Milemarkers, POIs, Gradients } from "./track.js";
 
 class Mapbox {
   constructor(options, tracks, details) {
@@ -89,6 +89,11 @@ class Mapbox {
       this._details.max_ele
     ] = trackutils.elevation(geojson);
     this._details.distance = trackutils.totalDistance(geojson);
+
+    let gradients = trackutils.gradients(trackutils.tracks(geojson));
+    this.addTrack(new Gradients("gradients", gradients));
+    this.updateTrack(this._tracks.get("gradients"));
+
   }
 
   loadPOIs(category, visibility) {
