@@ -47,7 +47,7 @@ class Track {
     });
   }
 
-  get layer() {}
+  get layer() { }
 }
 
 class Route extends Track {
@@ -129,22 +129,22 @@ class POIs extends Track {
   }
 }
 
-class Gradients extends Track {
+class Slopes extends Track {
   get layer() {
     return {
       id: this._id,
       source: this._id,
       type: "symbol",
       layout: {
-	"symbol-placement": "line",
-        "symbol-spacing": 10,
+        "symbol-placement": "line-center",
+        "symbol-spacing": 125,
         "icon-ignore-placement": true,
         "icon-allow-overlap": true,
-        "icon-image": "triangle-15",
-	"icon-rotate": 90
+        "icon-image": "{symbol}",
+        "icon-rotate": ['*', 90, ['get', 'slopesign']],
       }
     };
   }
 }
 
-export { Route, Cutouts, Milemarkers, POIs, Gradients };
+export { Route, Cutouts, Milemarkers, POIs, Slopes };
