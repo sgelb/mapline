@@ -223,6 +223,11 @@ const trackutils = {
       return featureCollection([]);
     }
 
+    // also skip empty tracks
+    if (track.features.length <= 0) {
+      return featureCollection([]);
+    }
+
     const points = [];
     let count = 0;
     let intermediateDistance = 0;
