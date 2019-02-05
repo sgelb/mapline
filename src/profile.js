@@ -41,7 +41,6 @@ function isRelevant(profile) {
         return false;
     }
 
-    // get the change in elevation
     let deltaEle = (profile[profile.length - 1].elevation - profile[0].elevation);
 
     // the criterion is the elevation change
@@ -109,10 +108,36 @@ function slopeSections(profile) {
         if (!isRelevant(segmentProfile)) {
             continue;
         }
-
         let maxSlope = segmentProfile.map(p => { return Math.abs(p.slope); }).reduce((a, b) => { return Math.max(a, b); });
-        segment.slope = maxSlope * Math.sign(segmentProfile[0].slope);
-        result.push(segment);
+
+        if (maxSlope < 10.0) {
+            segment.slope = 5.0 * Math.sign(segmentProfile[0].slope);
+            result.push(segment);
+        } else {
+            let steepSegments = getSegments(segmentProfile, (p => { return Math.abs(p.slope) >= 10.0; }));
+            let segmentStart = segment.start;
+            for (const steepSegment of steepSegments) {
+                let steepProfile = segmentProfile.slice(steepSegment.start, steepSegment.end);
+                if (!isRelevant(steepProfile)) {
+                    continue;
+                }
+                if (steepSegment.start > 0) {
+                    if (isRelevant(segmentProfile.slice(0, steepSegment.start))) {
+                        // add the leading less steep part
+                        result.push({ start: segmentStart, end: steepSegment.start + segment.start, slope: 5.0 * Math.sign(segmentProfile[0].slope) });
+                    }
+                }
+                // add the steep part
+                result.push({ start: steepSegment.start + segment.start, end: steepSegment.end + segment.start, slope: 10.0 * Math.sign(segmentProfile[0].slope) });
+                segmentStart = steepSegment.end + segment.start;
+            }
+            if (segmentStart > 0 && segmentStart < segment.end) {
+                if (isRelevant(segmentProfile.slice(segmentStart - segment.start))) {
+                    // add the trailing less steep part
+                    result.push({ start: segmentStart, end: segment.end, slope: 5.0 * Math.sign(segmentProfile[0].slope) });
+                }
+            }
+        }
     }
     return result;
 }
