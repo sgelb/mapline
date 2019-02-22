@@ -1,7 +1,7 @@
 import mapboxgl from "mapbox-gl";
 import MapBoxLanguage from "@mapbox/mapbox-gl-language";
 
-import i18n from "./i18n.js";
+import I18n from "./i18n.js";
 import layers from "./layers.js";
 import mapcutter from "./mapcutter.js";
 import overpass from "./overpass.js";
@@ -10,8 +10,10 @@ import token from "./mapboxtoken.js";
 import trackutils from "./trackutils.js";
 import { Route, Cutouts, Milemarkers, POIs } from "./track.js";
 
+const i18n = new I18n();
+
 class Mapbox {
-  constructor(options, tracks, details) {
+  constructor(options, tracks, details, language) {
     mapboxgl.accessToken = token;
 
     if (!mapboxgl.supported()) {
@@ -20,6 +22,12 @@ class Mapbox {
 
     this._tracks = tracks || new Map();
     this._details = details || {};
+    this._language =
+      language ||
+      new MapBoxLanguage({
+        defaultLanguage: i18n.currentLanguage()
+      });
+
     try {
       this._map = new mapboxgl.Map(options);
     } catch (e) {
@@ -34,7 +42,7 @@ class Mapbox {
       new mapboxgl.NavigationControl({ showCompass: false })
     );
     this._map.addControl(new mapboxgl.ScaleControl());
-    this._map.addControl(new MapBoxLanguage());
+    this._map.addControl(this._language);
   }
 
   _updateAllTracks() {
@@ -219,6 +227,11 @@ class Mapbox {
   }
 
   set style(style) {
+    this._map.removeControl(this._language);
+    this._language = new MapBoxLanguage({
+      defaultLanguage: i18n.currentLanguage()
+    });
+    this._map.addControl(this._language);
     this._map.setStyle(style);
   }
 
@@ -232,10 +245,12 @@ class Mapbox {
         container: container,
         style: this._map.getStyle(),
         interactive: false,
-        renderWorldCopies: false
+        renderWorldCopies: false,
+        fadeDuration: 0
       },
       this._tracks,
-      this._details
+      this._details,
+      this._language
     );
   }
 
