@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpsies="https://www.gpsies.com/GPX/1/0" creator="GPSies https://www.gpsies.com - Example" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd https://www.gpsies.com/GPX/1/0 https://www.gpsies.com/gpsies.xsd">
-<wpt lon="5.5" lat="45.08"><name>Example waypoint</name></wpt>
+  <wpt lon="5.5" lat="45.08"><name>Example waypoint</name><sym>zoo-15</sym></wpt>
 <trk>
   <name>Vercors</name>
     <trkseg>

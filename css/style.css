@@ -116,19 +116,6 @@ section {
   display: none;
 }
 
-#language_switcher .btn {
-  padding-right: 0rem;
-}
-
-#language_switcher .btn.active {
-  color: gray;
-}
-
-#language_switcher .btn.active:hover {
-  text-decoration: none;
-  cursor: default;
-}
-
 #credits {
   margin-top: 0.4rem;
 }

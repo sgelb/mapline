@@ -219,14 +219,35 @@ const t = {
   }
 };
 
-const i18n = {
-  defaultLang: "en",
-  lang: navigator.language.substring(0, 2),
+class I18n {
+  constructor() {
+    this._defaultLanguage = "en";
+    this._supportedLanguages = ["en", "de"];
+    this._lang = this._getSupportedBrowserLanguage();
+  }
+
+  _getSupportedBrowserLanguage() {
+    const lang = navigator.languages.find(lang =>
+      this._supportedLanguages.includes(lang.substring(0, 2))
+    );
+    return lang === undefined ? this._defaultLanguage : lang.substring(0, 2);
+  }
+
+  _translateTitleFields(scope) {
+    const title_trn = scope.querySelectorAll("[data-title-trn]");
+    title_trn.forEach(item => {
+      if (t[item.dataset.titleTrn] === undefined) {
+        console.error("No translation for " + item.dataset.titleTrn);
+      } else {
+        item.setAttribute("title", this.translateString(item.dataset.titleTrn));
+      }
+    });
+  }
 
   translateAll() {
     this.translate(document);
-    this.translateTitleFields(document);
-  },
+    this._translateTitleFields(document);
+  }
 
   translate(scope) {
     const trn = scope.querySelectorAll("[data-trn]");
@@ -244,34 +265,15 @@ const i18n = {
 
       item.innerHTML = this.translateString(item.dataset.trn);
     });
-  },
-
-  translateTitleFields(scope) {
-    const title_trn = scope.querySelectorAll("[data-title-trn]");
-    title_trn.forEach(item => {
-      if (t[item.dataset.titleTrn] === undefined) {
-        console.error("No translation for " + item.dataset.titleTrn);
-      } else {
-        item.setAttribute("title", this.translateString(item.dataset.titleTrn));
-      }
-    });
-  },
+  }
 
   translateString(string) {
-    return t[string][this.lang] || t[string][this.defaultLang];
-  },
-
-  setLang(lang) {
-    this.lang = lang;
-  },
-
-  supportedLanguages() {
-    return { en: "English", de: "Deutsch" };
-  },
-
-  browserLanguage() {
-    return this.lang;
+    return t[string][this._lang];
   }
-};
 
-export default i18n;
+  currentLanguage() {
+    return this._lang;
+  }
+}
+
+export default I18n;
