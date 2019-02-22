@@ -1,7 +1,7 @@
 import FormValidator from "./formvalidator.js";
 import Mapbox from "./mapbox.js";
 import Printmap from "./printmap.js";
-import i18n from "./i18n.js";
+import I18n from "./i18n.js";
 import overpass from "./overpass.js";
 import paperformat from "./paperformat.js";
 import exampleGpx from "../assets/example.gpx";
@@ -10,6 +10,7 @@ let map;
 const form = document.getElementById("config");
 const generatePdfBtn = document.getElementById("generate-btn");
 const validator = new FormValidator();
+const i18n = new I18n();
 
 (function() {
   // Preview map
@@ -17,8 +18,8 @@ const validator = new FormValidator();
     map = new Mapbox({
       container: "map",
       style: toStyleURI("outdoors"),
-      center: [13.463, 47.386],
-      zoom: 11,
+      center: [14.8, 47.5],
+      zoom: 7,
       hash: true
     });
     setPaperformatOptions();
@@ -152,31 +153,6 @@ function initUI() {
 
   // translation
   i18n.translateAll();
-
-  // language toggle
-  const supportedLangs = i18n.supportedLanguages();
-  const browserLanguage = i18n.browserLanguage();
-  let switcher =
-    '<div class="btn-group btn-group-toggle" data-toggle="buttons">';
-  for (let lang in supportedLangs) {
-    let active = lang === browserLanguage ? "active" : "";
-    switcher += `<label class="btn btn-link btn-sm ${active}" data-lang="${lang}">
-                  <input type="radio" name="options" id="id_{$lang}">${
-                    supportedLangs[lang]
-                  }
-                  </label>`;
-  }
-  switcher += "</div>";
-  document.getElementById("language_switcher").innerHTML = switcher;
-
-  Array.from(
-    document.getElementById("language_switcher").getElementsByTagName("label")
-  ).forEach(field => {
-    field.addEventListener("click", () => {
-      i18n.setLang(field.dataset.lang);
-      i18n.translateAll();
-    });
-  });
 }
 
 function generateOverpassEntries() {
@@ -399,16 +375,23 @@ function showAlertBox(message) {
 }
 
 function toStyleURI(style) {
+  const enableOptimize = i18n.currentLanguage() === "en";
   switch (style) {
     case "streets":
     case "outdoors":
     case "satellite-streets":
-      return "mapbox://styles/mapbox/" + style + "-v10";
+      return (
+        "mapbox://styles/mapbox/" + style + "-v10?optimize=" + enableOptimize
+      );
     case "navigation-guidance-day":
     case "navigation-guidance-night":
-      return "mapbox://styles/mapbox/" + style + "-v2";
+      return (
+        "mapbox://styles/mapbox/" + style + "-v2?optimize=" + enableOptimize
+      );
     default:
-      return "mapbox://styles/mapbox/" + style + "-v9";
+      return (
+        "mapbox://styles/mapbox/" + style + "-v9?optimize=" + enableOptimize
+      );
   }
 }
 

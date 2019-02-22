@@ -16,7 +16,10 @@ mapping.set("bike_shop", {
   query: "shop=bicycle",
   sym: "bicycle-11"
 });
-mapping.set("cafe", { title: "Cafe", query: "amenity=cafe", sym: "cafe-11" });
+mapping.set("cafe", {
+  query: "amenity=cafe",
+  sym: "cafe-11"
+});
 mapping.set("camping", {
   query: "tourism=camp_site",
   sym: "campsite-11"
