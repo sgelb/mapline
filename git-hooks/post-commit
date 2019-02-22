@@ -8,15 +8,15 @@
 version=$(git diff HEAD^..HEAD -- package.json | grep '^+\s*\"version\":' | sed -s 's/[^0-9\.]//g')
 
 # .commit is touched in pre-commit. Because we run `git commit --amend` in this
-# script, we need it to make sure we don't run into an endless loop
+# script, it ensures that this function runs only once and not in an endless loop
 if [ -e .commit ]; then
   rm .commit
   if [ "$version" != "" ]; then
-    echo "New package version"
+    echo "Package version updated"
     cd "$(git rev-parse --show-toplevel)" || exit
 
     echo ":: Generate prebuilds"
-    yarn run parcel build --no-cache --no-source-maps --public-url ./ --out-dir ./prebuild/ index.html
+    yarn run parcel build --no-content-hash --no-cache --no-source-maps --public-url ./ --out-dir ./prebuild/ index.html
 
     cd prebuild || exit
 
@@ -29,15 +29,15 @@ if [ -e .commit ]; then
       mv "${oldfile}" "${newfile}" 2> /dev/null
     done;
 
-    echo ":: Remove mapbox token"
+    echo ":: Replace mapbox token with placeholder"
     token=$(grep -oP '".*"' ../src/mapboxtoken.js)
     sed -i "s/$token/\"MAPBOX_TOKEN\"/g" ./src.js
     linenumber=$(grep -n MAPBOX_TOKEN ./src.js | cut -d : -f 1)
 
-    echo ":: Set version string in index.html"
+    echo ":: Add current version string to index.html"
     sed -i "s/__VERSION__/$version/g" ./index.html
 
-    echo ":: Generate README.md"
+    echo ":: Update mapbox token info in README.md"
     cat <<- EOF > README.md
 		# Prebuild for version [${version}](https://github.com/sgelb/mapline/releases/tag/v${version})
 
