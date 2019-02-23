@@ -32,7 +32,6 @@ const mapcutter = function(route, options) {
         bbox.extend(coord);
       }
     }
-
     bbox.resize(rw, rh);
     bounds.push(bbox.toFeature());
   }
