@@ -216,6 +216,22 @@ const t = {
   supermarket: {
     en: "Supermarket",
     de: "Supermarkt"
+  },
+  slopes: {
+    en: "Slopes",
+    de: "Steigungen"
+  },
+  smoothing: {
+    en: "Smoothing",
+    de: "Glättung"
+  },
+  slope_threshold: {
+    en: "Slope",
+    de: "Steigung"
+  },
+  steep_slope_threshold: {
+    en: "Steep slope",
+    de: "Starke Steigung"
   }
 };
 

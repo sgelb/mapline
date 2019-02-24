@@ -12,7 +12,7 @@ const generatePdfBtn = document.getElementById("generate-btn");
 const validator = new FormValidator();
 const i18n = new I18n();
 
-(function() {
+(function () {
   // Preview map
   try {
     map = new Mapbox({
@@ -43,7 +43,7 @@ function initUI() {
     }
     const xhr = new XMLHttpRequest();
     xhr.open("GET", exampleGpx, true);
-    xhr.onload = function(e) {
+    xhr.onload = function (e) {
       if (this.status == 200) {
         loadTrack(new Blob([this.response]), "example.gpx");
       }
@@ -52,7 +52,7 @@ function initUI() {
   });
 
   // track input button
-  form.trackFile.addEventListener("change", function() {
+  form.trackFile.addEventListener("change", function () {
     loadTrack(this.files[0]);
     // reset value. otherwise, this listener is not triggered when the same track
     // file is chosen immediately again after removing it
@@ -68,7 +68,7 @@ function initUI() {
   });
 
   // map style
-  form.style.addEventListener("change", function() {
+  form.style.addEventListener("change", function () {
     map.style = toStyleURI(this.value);
   });
 
@@ -138,6 +138,23 @@ function initUI() {
     map.toggleVisibility("waypoints", form.showWaypoints.checked)
   );
 
+  // smoothing
+  form.smoothing.addEventListener("change", () => reloadSlopes());
+
+  // slope threshold
+  form.slopeThreshold.addEventListener("change", () => {
+    form.steepSlopeThreshold.min = form.slopeThreshold.value;
+    if(form.steepSlopeThreshold.value < form.slopeThreshold.value) {
+      form.steepSlopeThreshold.value = form.slopeThreshold.value;
+    }
+    reloadSlopes();
+  });
+
+  // steep slope threshold
+  form.steepSlopeThreshold.addEventListener("change", () => {
+    reloadSlopes();
+  });
+
   // overpass checkboxes
   generateOverpassEntries();
   Array.from(
@@ -177,7 +194,7 @@ function loadTrack(file, fname) {
   const filename = fname || file.name;
   const reader = new FileReader();
 
-  reader.onload = function() {
+  reader.onload = function () {
     let route = {};
     try {
       map.loadRoute(reader.result, filename);
@@ -200,6 +217,12 @@ function loadTrack(file, fname) {
     // bounds
     map.updateBounds({
       padding: 10
+    });
+
+    map.updateSlopes({
+      smoothing: form.smoothing.value,
+      slopeThreshold: form.slopeThreshold.value,
+      steepSlopeThreshold: form.steepSlopeThreshold.value
     });
 
     // UI changes
@@ -268,6 +291,16 @@ function reloadCutouts() {
   }
 }
 
+function reloadSlopes() {
+  if (validator.allValid()) {
+    map.updateSlopes({
+      smoothing: form.smoothing.value,
+      slopeThreshold: form.slopeThreshold.value,
+      steepSlopeThreshold: form.steepSlopeThreshold.value
+    });
+  }
+}
+
 function generatePDF() {
   const printmap = new Printmap();
   const progressbarUpdater = initProgressbarUpdater(printmap);
@@ -293,11 +326,11 @@ function initProgressbarUpdater(printmap) {
   modal.classList.remove("hidden");
   modalOverlay.classList.remove("hidden");
 
-  closeButton.addEventListener("click", function() {
+  closeButton.addEventListener("click", function () {
     printmap.cancel();
   });
 
-  return function(currentItem, maxItems, isCanceled) {
+  return function (currentItem, maxItems, isCanceled) {
     let percent = Math.trunc((100 / maxItems) * (currentItem + 1)) + "%";
     progressbar.style.width = percent;
     progressbar.innerHTML = percent;
@@ -365,7 +398,7 @@ function setPaperformatOptions() {
 
 function showAlertBox(message) {
   const alertBox = document.getElementById("alertbox");
-  alertBox.querySelector(".close").addEventListener("click", function() {
+  alertBox.querySelector(".close").addEventListener("click", function () {
     alertBox.classList.add("hidden");
   });
 

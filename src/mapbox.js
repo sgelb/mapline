@@ -112,11 +112,6 @@ class Mapbox {
       this._details.max_ele
     ] = trackutils.elevation(tracks);
     this._details.distance = trackutils.totalDistance(tracks);
-
-    let slopes = trackutils.slopes(tracks);
-    this.addTrack(new Slopes("slopes", slopes));
-    this.updateTrack(this._tracks.get("slopes"));
-
   }
 
   loadPOIs(category, visibility) {
@@ -227,6 +222,13 @@ class Mapbox {
       trackutils.bounds(this._tracks.get("cutouts").geojson),
       options
     );
+  }
+
+  updateSlopes(options) {
+    let tracks = this._tracks.get("route").geojson;
+    let slopes = trackutils.slopes(tracks, options);
+    this.addTrack(new Slopes("slopes", slopes));
+    this.updateTrack(this._tracks.get("slopes"));
   }
 
   get name() {

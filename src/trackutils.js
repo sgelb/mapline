@@ -303,20 +303,24 @@ const trackutils = {
     return featureCollection([]);
   },
 
-  slopes(track) {
+  slopes(track, options) {
     let result = featureCollection([]);
     for (const feature of track.features) {
       let line = feature.geometry.coordinates;
 
+      let smoothing = Math.pow(10, -options.smoothing);
+      let slopeThreshold = options.slopeThreshold/100;
+      let steepSlopeThreshold = options.steepSlopeThreshold/100;
+
       // find the section with significant slope
-      let slopeSegments = profile.slopes(line);
+      let slopeSegments = profile.slopes(line, smoothing, slopeThreshold);
 
       // create features
       for (const part of slopeSegments) {
         let newFeature = createFeature("LineString", line.slice(part.start, part.end));
         newFeature.properties.slopesign = Math.sign(part.slope);
         newFeature.properties.slope = Math.abs(part.slope);
-        if (newFeature.properties.slope >= 10) {
+        if (newFeature.properties.slope >= steepSlopeThreshold) {
           newFeature.properties.symbol = "gradient-steep";
         } else {
           newFeature.properties.symbol = "gradient";
