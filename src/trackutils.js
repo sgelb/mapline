@@ -70,6 +70,8 @@ function intersect(coord1, coord2, bounds) {
 function prepare(geojson) {
   geojson = normalize(geojson);
   // geojson = complexify(geojson, 1);
+  geojson = deduplicate(geojson);
+
   return geojson;
 }
 
@@ -121,6 +123,36 @@ function reduce(track, type) {
   }
 
   return featureCollection(reducedFeatures);
+}
+
+// remove duplicate points in tracks but average their elevation
+function deduplicate(geojson) {
+  for (const feature of geojson.features) {
+    if (feature.geometry && feature.geometry.type.endsWith("LineString")) {
+      let i = 0;
+      while (i < feature.geometry.coordinates.length) {
+        let current = feature.geometry.coordinates[i];
+        let j = i + 1;
+        let average = current[2];
+        while (j < feature.geometry.coordinates.length) {
+          let next = feature.geometry.coordinates[j];
+          if (next[0] == current[0] && next[1] == current[1]) {
+            average += next[2];
+            j++;
+          } else {
+            break;
+          }
+        }
+        if (j > i + 1) {
+          feature.geometry.coordinates[i][2] = average / (j - i);
+          feature.geometry.coordinates.splice(i + 1, j - i - 1);
+        }
+        i++;
+      }
+    }
+  }
+
+  return geojson;
 }
 
 const trackutils = {
@@ -309,8 +341,8 @@ const trackutils = {
       let line = feature.geometry.coordinates;
 
       let smoothing = Math.pow(10, -options.smoothing);
-      let slopeThreshold = options.slopeThreshold/100;
-      let steepSlopeThreshold = options.steepSlopeThreshold/100;
+      let slopeThreshold = options.slopeThreshold / 100;
+      let steepSlopeThreshold = options.steepSlopeThreshold / 100;
 
       // find the section with significant slope
       let slopeSegments = profile.slopes(line, smoothing, slopeThreshold);
