@@ -17,8 +17,8 @@ const mapcutter = function(route, options) {
   const rhp = ((height - 2 * options.padding) / 1000) * options.scale;
 
   const bounds = [];
+  let bbox = new BoundingBox(route.features[0].geometry.coordinates[0][1]);
   for (const feature of route.features) {
-    let bbox = new BoundingBox(feature.geometry.coordinates[0][1]);
     for (const coord of feature.geometry.coordinates) {
       let oldBbox = bbox.cloneBounds();
       bbox.extend(coord);
@@ -32,9 +32,10 @@ const mapcutter = function(route, options) {
         bbox.extend(coord);
       }
     }
-    bbox.resize(rw, rh);
-    bounds.push(bbox.toFeature());
   }
+
+  bbox.resize(rw, rh);
+  bounds.push(bbox.toFeature());
 
   return { type: "FeatureCollection", features: bounds };
 };
