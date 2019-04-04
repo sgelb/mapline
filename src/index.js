@@ -90,7 +90,7 @@ function initUI() {
   validator.add({
     form: form.milemarkers,
     validity: v => v >= 0,
-    msg: i18n.translateString("validate_milemarkers")
+    msg: i18n.translateString("validate_larger_zero")
   });
 
   // margin
@@ -98,7 +98,15 @@ function initUI() {
   validator.add({
     form: form.margin,
     validity: v => v >= 0 && v <= 50,
-    msg: i18n.translateString("validate_margin")
+    msg: i18n.translateString("validate_between_zero_and_fifty")
+  });
+
+  // padding
+  form.padding.addEventListener("change", () => reloadCutouts());
+  validator.add({
+    form: form.padding,
+    validity: v => v >= 0 && v <= 50,
+    msg: i18n.translateString("validate_between_zero_and_fifty")
   });
 
   // dpi
@@ -109,7 +117,7 @@ function initUI() {
   validator.add({
     form: form.dpi,
     validity: v => v > 0,
-    msg: i18n.translateString("validate_dpi")
+    msg: i18n.translateString("validate_larger_zero")
   });
 
   // track width
@@ -122,7 +130,7 @@ function initUI() {
   validator.add({
     form: form.trackWidth,
     validity: v => v > 0,
-    msg: i18n.translateString("validate_width")
+    msg: i18n.translateString("validate_larger_zero")
   });
 
   // track color
@@ -191,7 +199,7 @@ function loadTrack(file, fname) {
       scale: form.scale.value,
       format: form.paperformat.value,
       margin: form.margin.value,
-      padding: 10
+      padding: form.padding.value
     });
 
     // milemarkers
@@ -262,7 +270,7 @@ function reloadCutouts() {
       scale: form.scale.value,
       format: form.paperformat.value,
       margin: form.margin.value,
-      padding: 10
+      padding: form.padding.value
     });
     updateTrackDetails();
   }
