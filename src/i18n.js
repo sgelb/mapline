@@ -264,7 +264,7 @@ class I18n {
   }
 
   translateString(string) {
-    return t[string][this._lang];
+    return t[string][this._lang] || t[string][this._defaultLanguage];
   }
 
   currentLanguage() {
