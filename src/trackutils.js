@@ -70,6 +70,8 @@ function intersect(coord1, coord2, bounds) {
 function prepare(geojson) {
   geojson = normalize(geojson);
   // geojson = complexify(geojson, 1);
+  
+  geojson = mergeMultiLineString(geojson);
   geojson = deduplicate(geojson);
 
   return geojson;
@@ -150,6 +152,19 @@ function deduplicate(geojson) {
         i++;
       }
     }
+  }
+
+  return geojson;
+}
+
+// merge track segments of MultiLineStrings
+function mergeMultiLineString(geojson) {
+  for(let feature of geojson.features.filter(feature => {
+    if (feature.geometry) {
+      return feature.geometry.type == "MultiLineString";
+    }
+  })) {
+    feature.geometry.coordinates = feature.geometry.coordinates.reduce((acc, val) => acc.concat(val), []);
   }
 
   return geojson;
