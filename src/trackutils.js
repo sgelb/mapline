@@ -157,13 +157,14 @@ function deduplicate(geojson) {
   return geojson;
 }
 
-// merge track segments of MultiLineStrings
+// merge track segments of MultiLineStrings into LineString
 function mergeMultiLineString(geojson) {
   for(let feature of geojson.features.filter(feature => {
     if (feature.geometry) {
       return feature.geometry.type == "MultiLineString";
     }
   })) {
+    feature.geometry.type = "LineString";
     feature.geometry.coordinates = feature.geometry.coordinates.reduce((acc, val) => acc.concat(val), []);
   }
 
