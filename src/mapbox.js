@@ -270,6 +270,7 @@ class Mapbox {
         style: this._map.getStyle(),
         interactive: false,
         renderWorldCopies: false,
+        preserveDrawingBuffer: true,
         fadeDuration: 0
       },
       this._tracks,

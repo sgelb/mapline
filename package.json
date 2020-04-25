@@ -1,6 +1,6 @@
 {
   "name": "mapline",
-  "version": "0.20.0",
+  "version": "0.22.1",
   "description": "Create maps along a track in print quality.",
   "main": "src/index.js",
   "keywords": [],
@@ -9,7 +9,7 @@
   "license": "GPL-3.0-or-later",
   "scripts": {
     "serve": "parcel serve index.html",
-    "build": "parcel build --no-cache --no-source-maps --detailed-report index.html"
+    "build": "parcel build --no-cache --no-source-maps index.html --detailed-report"
   },
   "browserslist": [
     "defaults",
@@ -23,13 +23,13 @@
     "@mapbox/togeojson": "^0.16.0",
     "cheap-ruler": "^2.5.1",
     "jspdf": "^1.5.3",
-    "mapbox-gl": "^0.53.0"
+    "mapbox-gl": "^0.54.0"
   },
   "devDependencies": {
-    "autoprefixer": "^9.4.8",
+    "autoprefixer": "^9.6.0",
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
     "cssnano": "^4.1.10",
-    "parcel-bundler": "^1.9.7"
+    "parcel-bundler": "^1.12.3"
   }
 }

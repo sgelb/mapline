@@ -40,7 +40,6 @@ choices, see
 POIs are downloaded for print areas only. In case of format or scale changes,
 manually refresh by toggling the checkboxes.
 
-
 ### Development
 
 Logic and PDF generation of `mapline` are performed client-side. Main external
@@ -57,7 +56,6 @@ token](https://www.mapbox.com/help/create-api-access-token/). Save it in
 - `yarn run serve` to start a dev server
 - `yarn run build` generates a production build in `/dist`
 
-
 ### Prebuilds
 
 Since v0.16.0, a bundled version is published for tagged commits in
@@ -68,7 +66,6 @@ for more infos on how to use it.
 Prebuilds are generated using git hooks, see
 [git-hooks/README.md](https://github.com/sgelb/mapline/blob/master/git-hooks/README.md)
 for details.
-
 
 ### Limitations
 
@@ -89,6 +86,6 @@ browser has of course some limitations.
 
 ### Want to participate?
 
-Although development is really slow, this is not a dead project. Pull-requests
+Although development is slow, this is not a dead project and pull-requests
 are always welcome!
 

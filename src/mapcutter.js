@@ -40,7 +40,7 @@ const mapcutter = function(route, options) {
   bbox.resize(rw, rh);
   bounds.push(bbox.toFeature());
 
-  return {"type": "FeatureCollection", "features": bounds};
+  return { type: "FeatureCollection", features: bounds };
 };
 
 function alreadyCovered(bounds, coord)

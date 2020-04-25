@@ -6,10 +6,10 @@
   <title>Mapline</title>
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
 
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css"
-    integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-  <link rel="stylesheet" href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.0/mapbox-gl.css"
+  <link rel="stylesheet" href="https://api.tiles.mapbox.com/mapbox-gl-js/v0.53.1/mapbox-gl.css"
     integrity="sha384-ei25zfDKEm02PZ4scqaFN+x8TVgtttFnO4Ff3GxVHxb3s+PXoRdozrPo4TYJ898z" crossorigin="anonymous">
 
   <link rel="stylesheet" href="./css/style.css" />
@@ -131,9 +131,12 @@
             <div class="row">
               <div class="col-md-12">
                 <p>
-                  <button class="btn btn-outline-secondary btn-sm collapsed" type="button" data-toggle="collapse" data-target="#pois" aria-expanded="false" aria-controls="pois" data-trn="pois"></button>
-                  <button class="btn btn-outline-secondary btn-sm collapsed" type="button" data-toggle="collapse" data-target="#advanced" aria-expanded="false" aria-controls="advanced" data-trn="advanced"></button>
-                  <button class="btn btn-outline-secondary btn-sm collapsed" type="button" data-toggle="collapse" data-target="#slopes" aria-expanded="false" aria-controls="slopes" data-trn="slopes"></button>
+                  <button class="btn btn-outline-secondary btn-sm collapsed" type="button" data-toggle="collapse"
+                    data-target="#pois" aria-expanded="false" aria-controls="pois" data-trn="pois"></button>
+                  <button class="btn btn-outline-secondary btn-sm collapsed" type="button" data-toggle="collapse"
+                    data-target="#advanced" aria-expanded="false" aria-controls="advanced" data-trn="advanced"></button>
+                  <button class="btn btn-outline-secondary btn-sm collapsed" type="button" data-toggle="collapse"
+                    data-target="#slopes" aria-expanded="false" aria-controls="slopes" data-trn="slopes"></button>
                 </p>
               </div>
             </div>
@@ -185,6 +188,18 @@
                 <div class="form-control-feedback small hidden"></div>
               </div>
 
+              <!-- track padding -->
+              <div class="form-group">
+                <label for="padding" data-trn="padding"></label>
+                <div class="input-group">
+                  <input id="padding" type="number" class="form-control disableable" disabled min="0" value="10">
+                  <div class="input-group-append">
+                    <div class="input-group-text">mm</div>
+                  </div>
+                </div>
+                <div class="form-control-feedback small hidden"></div>
+              </div>
+
               <!-- pdf resolution -->
               <div class="form-group">
                 <label for="dpi" data-trn="dpi"></label>
@@ -227,7 +242,8 @@
               <div class="form-group">
                 <label for="smoothing" data-trn="smoothing"></label>
                 <div class="input-group">
-                  <input id="smoothing" type="number" class="form-control disableable" disabled min="0" max="10" value="7">
+                  <input id="smoothing" type="number" class="form-control disableable" disabled min="0" max="10"
+                    value="7">
                   <div class="input-group-append">
                     <div class="input-group-text"></div>
                   </div>
@@ -235,30 +251,31 @@
                 <div class="form-control-feedback small hidden"></div>
               </div>
 
-                <!-- slope threshold -->
-                <div class="form-group">
-                    <label for="slopeThreshold" data-trn="slope_threshold"></label>
-                    <div class="input-group">
-                      <input id="slopeThreshold" type="number" class="form-control disableable" disabled min="0" max="100" value="5">
-                      <div class="input-group-append">
-                        <div class="input-group-text">%</div>
-                      </div>
-                    </div>
-                    <div class="form-control-feedback small hidden"></div>
-                  </div>
-
-                    <!-- steep slope threshold -->
+              <!-- slope threshold -->
               <div class="form-group">
-                  <label for="steepSlopeThreshold" data-trn="steep_slope_threshold"></label>
-                  <div class="input-group">
-                    <input id="steepSlopeThreshold" type="number" class="form-control disableable" disabled min="0" max="100" value="10">
-                    <div class="input-group-append">
-                      <div class="input-group-text">%</div>
-                    </div>
+                <label for="slopeThreshold" data-trn="slope_threshold"></label>
+                <div class="input-group">
+                  <input id="slopeThreshold" type="number" class="form-control disableable" disabled min="0" max="100"
+                    value="5">
+                  <div class="input-group-append">
+                    <div class="input-group-text">%</div>
                   </div>
-                  <div class="form-control-feedback small hidden"></div>
                 </div>
+                <div class="form-control-feedback small hidden"></div>
+              </div>
 
+              <!-- steep slope threshold -->
+              <div class="form-group">
+                <label for="steepSlopeThreshold" data-trn="steep_slope_threshold"></label>
+                <div class="input-group">
+                  <input id="steepSlopeThreshold" type="number" class="form-control disableable" disabled min="0"
+                    max="100" value="10">
+                  <div class="input-group-append">
+                    <div class="input-group-text">%</div>
+                  </div>
+                </div>
+                <div class="form-control-feedback small hidden"></div>
+              </div>
             </div>
           </div>
         </form>
@@ -308,8 +325,8 @@
     integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
     crossorigin="anonymous"></script>
 
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
-    integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+    integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
     crossorigin="anonymous"></script>
 
   <script type="text/javascript" src="./src/index.js"></script>
