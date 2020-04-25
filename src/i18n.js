@@ -65,8 +65,12 @@ const t = {
     de: "Abstandsmarker"
   },
   margin: {
-    en: "Margin",
-    de: "Rand"
+    en: "Map margin",
+    de: "Randbreite um Karte"
+  },
+  padding: {
+    en: "Track padding",
+    de: "Abstand Track und Kartenrand"
   },
   dpi: {
     en: "Resolution",
@@ -146,21 +150,13 @@ const t = {
     en: "Scale must be 1:5000 or larger!",
     de: "Maßstab muß mindestens 1:5000 betragen!"
   },
-  validate_milemarkers: {
-    en: "Milemarkers must be 0 or larger!",
-    de: "Kilometersteine muß mindestens 0 betragen!"
+  validate_larger_zero: {
+    en: "Value must be 0 or larger!",
+    de: "Wert muß mindestens 0 betragen!"
   },
-  validate_margin: {
-    en: "Margin must be between 0 and 50!",
-    de: "Rand muß zwischen 0 - 50 sein!"
-  },
-  validate_dpi: {
-    en: "Resolution must be larger than 0!",
-    de: "Auflösung muß größer 0 sein!"
-  },
-  validate_width: {
-    en: "Track width must be larger than 0!",
-    de: "Die Trackbreite muß größer 0 sein!"
+  validate_between_zero_and_fifty: {
+    en: "Value must be between 0 and 50!",
+    de: "Wert muß zwischen 0 - 50 sein!"
   },
   // poi titles
   atm: {
@@ -268,7 +264,7 @@ class I18n {
   }
 
   translateString(string) {
-    return t[string][this._lang];
+    return t[string][this._lang] || t[string][this._defaultLanguage];
   }
 
   currentLanguage() {
