@@ -46,6 +46,7 @@ if [ -e .commit ]; then
 		EOF
 
     echo ":: Add updated prebuild to commit"
+    cd ..
     git add ./*
     git commit --amend -C HEAD --no-verify
 
