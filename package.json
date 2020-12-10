@@ -2,20 +2,16 @@
   "name": "mapline",
   "version": "0.23.0",
   "description": "Create maps along a track in print quality.",
-  "main": "src/index.js",
+  "main": "dist/index.html",
   "keywords": [],
   "homepage": "https://github.com/sgelb/mapline",
   "author": "sgelb",
   "license": "GPL-3.0-or-later",
   "scripts": {
     "serve": "parcel serve index.html",
-    "build": "parcel build --no-cache --no-source-maps --detailed-report index.html"
+    "build": "parcel build --no-content-hash --no-cache --no-source-maps --detailed-report info index.html"
   },
-  "browserslist": [
-    "defaults",
-    "not Explorer < 999",
-    "not Android < 999"
-  ],
+  "browserslist": ["defaults", "not Explorer < 999", "not Android < 999"],
   "dependencies": {
     "@derhuerst/query-overpass": "^2.0.0",
     "@mapbox/geojson-normalize": "^0.0.1",
