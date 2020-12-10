@@ -31,7 +31,7 @@ class BoundingBox {
       [this.bounds.getEast(), this.bounds.getNorth()],
       [this.bounds.getEast(), this.bounds.getSouth()],
       [this.bounds.getWest(), this.bounds.getSouth()],
-      [this.bounds.getWest(), this.bounds.getNorth()]
+      [this.bounds.getWest(), this.bounds.getNorth()],
     ];
   }
 
@@ -102,12 +102,12 @@ class BoundingBox {
       bbox: this.bounds,
       geometry: {
         type: "Polygon",
-        coordinates: [this._linestring()]
+        coordinates: [this._linestring()],
       },
       properties: {
         width: width,
-        height: height
-      }
+        height: height,
+      },
     };
   }
 

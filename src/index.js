@@ -12,7 +12,7 @@ const generatePdfBtn = document.getElementById("generate-btn");
 const validator = new FormValidator();
 const i18n = new I18n();
 
-(function() {
+(function () {
   // Preview map
   try {
     map = new Mapbox({
@@ -20,7 +20,7 @@ const i18n = new I18n();
       style: toStyleURI("outdoors"),
       center: [14.8, 47.5],
       zoom: 7,
-      hash: true
+      hash: true,
     });
     setPaperformatOptions();
   } catch (e) {
@@ -43,7 +43,7 @@ function initUI() {
     }
     const xhr = new XMLHttpRequest();
     xhr.open("GET", exampleGpx, true);
-    xhr.onload = function(e) {
+    xhr.onload = function (e) {
       if (this.status == 200) {
         loadTrack(new Blob([this.response]), "example.gpx");
       }
@@ -52,7 +52,7 @@ function initUI() {
   });
 
   // track input button
-  form.trackFile.addEventListener("change", function() {
+  form.trackFile.addEventListener("change", function () {
     loadTrack(this.files[0]);
     // reset value. otherwise, this listener is not triggered when the same track
     // file is chosen immediately again after removing it
@@ -68,7 +68,7 @@ function initUI() {
   });
 
   // map style
-  form.style.addEventListener("change", function() {
+  form.style.addEventListener("change", function () {
     map.style = toStyleURI(this.value);
   });
 
@@ -76,8 +76,8 @@ function initUI() {
   form.scale.addEventListener("change", () => reloadCutouts());
   validator.add({
     form: form.scale,
-    validity: v => v >= 5000,
-    msg: i18n.translateString("validate_scale")
+    validity: (v) => v >= 5000,
+    msg: i18n.translateString("validate_scale"),
   });
 
   // paper format
@@ -89,24 +89,24 @@ function initUI() {
   );
   validator.add({
     form: form.milemarkers,
-    validity: v => v >= 0,
-    msg: i18n.translateString("validate_larger_zero")
+    validity: (v) => v >= 0,
+    msg: i18n.translateString("validate_larger_zero"),
   });
 
   // margin
   form.margin.addEventListener("change", () => reloadCutouts());
   validator.add({
     form: form.margin,
-    validity: v => v >= 0 && v <= 50,
-    msg: i18n.translateString("validate_between_zero_and_fifty")
+    validity: (v) => v >= 0 && v <= 50,
+    msg: i18n.translateString("validate_between_zero_and_fifty"),
   });
 
   // padding
   form.padding.addEventListener("change", () => reloadCutouts());
   validator.add({
     form: form.padding,
-    validity: v => v >= 0 && v <= 50,
-    msg: i18n.translateString("validate_between_zero_and_fifty")
+    validity: (v) => v >= 0 && v <= 50,
+    msg: i18n.translateString("validate_between_zero_and_fifty"),
   });
 
   // dpi
@@ -116,28 +116,28 @@ function initUI() {
   });
   validator.add({
     form: form.dpi,
-    validity: v => v > 0,
-    msg: i18n.translateString("validate_larger_zero")
+    validity: (v) => v > 0,
+    msg: i18n.translateString("validate_larger_zero"),
   });
 
   // track width
   form.trackWidth.addEventListener("change", () =>
     map.changeTrackStyle({
       property: "line-width",
-      value: parseInt(form.trackWidth.value, 10)
+      value: parseInt(form.trackWidth.value, 10),
     })
   );
   validator.add({
     form: form.trackWidth,
-    validity: v => v > 0,
-    msg: i18n.translateString("validate_larger_zero")
+    validity: (v) => v > 0,
+    msg: i18n.translateString("validate_larger_zero"),
   });
 
   // track color
   form.trackColor.addEventListener("change", () =>
     map.changeTrackStyle({
       property: "line-color",
-      value: form.trackColor.value
+      value: form.trackColor.value,
     })
   );
 
@@ -150,7 +150,7 @@ function initUI() {
   generateOverpassEntries();
   Array.from(
     document.getElementById("overpass").getElementsByTagName("input")
-  ).forEach(field => {
+  ).forEach((field) => {
     field.addEventListener("change", () => {
       map.loadPOIs(field.dataset.tag, field.checked);
     });
@@ -185,7 +185,7 @@ function loadTrack(file, fname) {
   const filename = fname || file.name;
   const reader = new FileReader();
 
-  reader.onload = function() {
+  reader.onload = function () {
     let route = {};
     try {
       map.loadRoute(reader.result, filename);
@@ -199,7 +199,7 @@ function loadTrack(file, fname) {
       scale: form.scale.value,
       format: form.paperformat.value,
       margin: form.margin.value,
-      padding: form.padding.value
+      padding: form.padding.value,
     });
 
     // milemarkers
@@ -207,7 +207,7 @@ function loadTrack(file, fname) {
 
     // bounds
     map.updateBounds({
-      padding: 10
+      padding: 10,
     });
 
     // UI changes
@@ -223,14 +223,14 @@ function toggleFormFields() {
   toggleHiddenForm(".hidable");
 
   // disable/enable everything with class 'disableable'
-  form.querySelectorAll(".disableable").forEach(field => toggleField(field));
+  form.querySelectorAll(".disableable").forEach((field) => toggleField(field));
 
   // generatePdfBtn
   toggleGenerateButtonField();
 }
 
 function toggleHiddenForm(id) {
-  form.querySelectorAll(id).forEach(field => {
+  form.querySelectorAll(id).forEach((field) => {
     field.classList.toggle("hidden");
   });
 }
@@ -270,7 +270,7 @@ function reloadCutouts() {
       scale: form.scale.value,
       format: form.paperformat.value,
       margin: form.margin.value,
-      padding: form.padding.value
+      padding: form.padding.value,
     });
     updateTrackDetails();
   }
@@ -285,7 +285,7 @@ function generatePDF() {
     {
       format: form.paperformat.value,
       margin: parseInt(form.margin.value, 10),
-      dpi: parseInt(form.dpi.value, 10)
+      dpi: parseInt(form.dpi.value, 10),
     },
     progressbarUpdater
   );
@@ -301,11 +301,11 @@ function initProgressbarUpdater(printmap) {
   modal.classList.remove("hidden");
   modalOverlay.classList.remove("hidden");
 
-  closeButton.addEventListener("click", function() {
+  closeButton.addEventListener("click", function () {
     printmap.cancel();
   });
 
-  return function(currentItem, maxItems, isCanceled) {
+  return function (currentItem, maxItems, isCanceled) {
     let percent = Math.trunc((100 / maxItems) * (currentItem + 1)) + "%";
     progressbar.style.width = percent;
     progressbar.innerHTML = percent;
@@ -355,7 +355,7 @@ function setPaperformatOptions() {
 
   const paperform = form.paperformat;
   paperform.options.length = 0; // remove placeholder option
-  validFormats.forEach(format => {
+  validFormats.forEach((format) => {
     let option = document.createElement("option");
     option.text = capitalize(format);
     option.value = format;
@@ -373,7 +373,7 @@ function setPaperformatOptions() {
 
 function showAlertBox(message) {
   const alertBox = document.getElementById("alertbox");
-  alertBox.querySelector(".close").addEventListener("click", function() {
+  alertBox.querySelector(".close").addEventListener("click", function () {
     alertBox.classList.add("hidden");
   });
 

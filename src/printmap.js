@@ -9,13 +9,13 @@ class Printmap {
 
   setPixelRatio(dpi) {
     Object.defineProperty(window, "devicePixelRatio", {
-      get: () => dpi / 96
+      get: () => dpi / 96,
     });
   }
 
   resetPixelRatio() {
     Object.defineProperty(window, "devicePixelRatio", {
-      get: () => this.actualPixelRatio
+      get: () => this.actualPixelRatio,
     });
   }
 
@@ -51,7 +51,7 @@ class Printmap {
               ? Promise.reject(new Error("canceled by user"))
               : loadMapImage(feature);
           })
-          .then(image => {
+          .then((image) => {
             progressfn(count++, totalMaps, this.canceled);
             addMapImage(image);
             console.log(`Generated map #${count}/${totalMaps}`);
@@ -64,7 +64,7 @@ class Printmap {
           pdf.save(pdfname);
         }
       })
-      .catch(e => {
+      .catch((e) => {
         console.log("PDF generation failed: " + e.name);
       })
       .then(() => {
@@ -77,7 +77,7 @@ class Printmap {
 }
 
 function loadMap(map, format, margin) {
-  return feature => map.cutoutMap(feature, format, margin);
+  return (feature) => map.cutoutMap(feature, format, margin);
 }
 
 function addMap(pdf) {
@@ -86,7 +86,7 @@ function addMap(pdf) {
   const factor = pdf.internal.getFontSize() / pdf.internal.scaleFactor;
   const copyrightWidth = pdf.getStringUnitWidth(copyright) * factor;
 
-  return img => {
+  return (img) => {
     pdf.addPage(img.format, img.orientation);
     pdf.addImage({
       imageData: img.data,
@@ -95,7 +95,7 @@ function addMap(pdf) {
       w: img.width,
       h: img.height,
       compression: "FAST",
-      alias: "map" + count++ // setting alias improves speed ~2x
+      alias: "map" + count++, // setting alias improves speed ~2x
     });
     let y = img.margin + img.height + factor;
     pdf.setTextColor(0, 0, 0);

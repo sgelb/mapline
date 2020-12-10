@@ -12,7 +12,7 @@ pageformats.set("letter", [216, 279]);
 
 const paperformat = {
   dimensions(format, margin = 0, orientation = "p") {
-    let [w, h] = pageformats.get(format).map(x => (x -= 2 * margin));
+    let [w, h] = pageformats.get(format).map((x) => (x -= 2 * margin));
     if (orientation === "l") {
       [w, h] = [h, w];
     }
@@ -27,7 +27,7 @@ const paperformat = {
       }
     }
     return formats;
-  }
+  },
 };
 
 export default paperformat;

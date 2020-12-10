@@ -15,9 +15,9 @@ function createFeature(type, coords, props = {}) {
     type: "Feature",
     geometry: {
       type: type,
-      coordinates: coords
+      coordinates: coords,
     },
-    properties: props
+    properties: props,
   };
 }
 
@@ -76,7 +76,9 @@ function prepare(geojson) {
 // FIXME: make obsolete by improving cutting of track in boxes
 function complexify(track, interval) {
   let coordinates = track.features[0].geometry.coordinates.slice();
-  const ruler = new CheapRuler(coordinates[Math.trunc(coordinates.length / 2)][1]);
+  const ruler = new CheapRuler(
+    coordinates[Math.trunc(coordinates.length / 2)][1]
+  );
   let result = [];
 
   while (coordinates.length > 1) {
@@ -108,7 +110,7 @@ function complexify(track, interval) {
 // return track reduced to FeatureCollection of "type" features
 function reduce(track, type) {
   track = normalize(track);
-  const reducedFeatures = track.features.filter(feature => {
+  const reducedFeatures = track.features.filter((feature) => {
     if (feature.geometry) {
       return feature.geometry.type.endsWith(type);
     }
@@ -126,7 +128,7 @@ const trackutils = {
   // return bounds of track
   bounds(track) {
     const bounds = new mapboxgl.LngLatBounds();
-    track.features.forEach(feature => bounds.extend(feature.bbox));
+    track.features.forEach((feature) => bounds.extend(feature.bbox));
     return bounds;
   },
 
@@ -149,7 +151,7 @@ const trackutils = {
     let min_ele = Infinity;
     let max_ele = -Infinity;
     let last = line[0][2];
-    line.forEach(coord => {
+    line.forEach((coord) => {
       min_ele = Math.min(min_ele, coord[2]);
       max_ele = Math.max(max_ele, coord[2]);
       let diff = coord[2] - last;
@@ -249,7 +251,7 @@ const trackutils = {
     }
     points.push(
       createPoint(line[line.length - 1], {
-        title: Math.trunc(this.totalDistance(track))
+        title: Math.trunc(this.totalDistance(track)),
       })
     );
     return featureCollection(points);
@@ -277,12 +279,12 @@ const trackutils = {
   // return featureCollection of waypoints
   waypoints(track) {
     track = reduce(track, "Point");
-    const points = track.features.map(feature => {
+    const points = track.features.map((feature) => {
       return createPoint(feature.geometry.coordinates, {
         title: feature.properties.name,
         symbol: feature.properties.sym
           ? feature.properties.sym.toLowerCase()
-          : "embassy-11"
+          : "embassy-11",
       });
     });
 
@@ -290,14 +292,14 @@ const trackutils = {
   },
 
   pois(pois) {
-    const points = pois.map(poi => {
+    const points = pois.map((poi) => {
       return createPoint(poi.coords, poi.props);
     });
 
     return featureCollection(points);
   },
 
-   slopes(track, options) {
+  slopes(track, options) {
     let result = featureCollection([]);
     for (const feature of track.features) {
       let line = feature.geometry.coordinates;
@@ -311,7 +313,10 @@ const trackutils = {
 
       // create features
       for (const part of slopeSegments) {
-        let newFeature = createFeature("LineString", line.slice(part.start, part.end));
+        let newFeature = createFeature(
+          "LineString",
+          line.slice(part.start, part.end)
+        );
         newFeature.properties.slopesign = Math.sign(part.slope);
         newFeature.properties.slope = Math.abs(part.slope);
         if (newFeature.properties.slope >= steepSlopeThreshold) {
@@ -324,11 +329,11 @@ const trackutils = {
     }
 
     return result;
-   },
+  },
 
   emptyFeatureCollection() {
     return featureCollection([]);
-  }
+  },
 };
 
 export default trackutils;

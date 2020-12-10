@@ -5,7 +5,7 @@ function hasSource(map, id) {
 function addSource(map, id) {
   map.addSource(id, {
     type: "geojson",
-    data: emptyFeatureCollection()
+    data: emptyFeatureCollection(),
   });
 }
 
@@ -35,7 +35,7 @@ const layers = {
   },
   setVisibility(map, id, visibility) {
     map.setLayoutProperty(id, "visibility", visibility ? "visible" : "none");
-  }
+  },
 };
 
 export default layers;

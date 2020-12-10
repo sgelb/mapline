@@ -43,7 +43,7 @@ class Track {
   clearLayerData(map) {
     map.getSource(this._id).setData({
       type: "FeatureCollection",
-      features: []
+      features: [],
     });
   }
 
@@ -58,13 +58,13 @@ class Route extends Track {
       type: "line",
       layout: {
         "line-join": "round",
-        "line-cap": "square"
+        "line-cap": "square",
       },
       paint: {
         "line-color": "#ff69b4",
         "line-width": 3,
-        "line-opacity": 0.6
-      }
+        "line-opacity": 0.6,
+      },
     };
   }
 }
@@ -81,9 +81,12 @@ class Cutouts extends Track {
         "line-offset": -3,
         "line-opacity": 0.6,
         "line-dasharray": {
-          stops: [[0, [1000, 0]], [12, [3, 2]]]
-        }
-      }
+          stops: [
+            [0, [1000, 0]],
+            [12, [3, 2]],
+          ],
+        },
+      },
     };
   }
 }
@@ -102,8 +105,8 @@ class Milemarkers extends Track {
         "text-anchor": "bottom",
         "text-offset": [0, -0.5],
         "text-size": 11,
-        "text-optional": true
-      }
+        "text-optional": true,
+      },
     };
   }
 }
@@ -123,8 +126,8 @@ class POIs extends Track {
         "text-offset": [0, 0.5],
         "text-size": 11,
         "text-allow-overlap": true,
-        "text-optional": true
-      }
+        "text-optional": true,
+      },
     };
   }
 }

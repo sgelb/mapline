@@ -61,12 +61,12 @@ class FormValidator {
 
   _unlock() {
     if (this.allValid()) {
-      this._enablees.forEach(node => node.removeAttribute("disabled"));
+      this._enablees.forEach((node) => node.removeAttribute("disabled"));
     }
   }
 
   _lock() {
-    this._enablees.forEach(node => node.setAttribute("disabled", "true"));
+    this._enablees.forEach((node) => node.setAttribute("disabled", "true"));
   }
 }
 
