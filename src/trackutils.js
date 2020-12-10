@@ -1,5 +1,5 @@
 import mapboxgl from "mapbox-gl";
-import cheapruler from "cheap-ruler";
+import CheapRuler from "cheap-ruler";
 import normalize from "@mapbox/geojson-normalize";
 import toGeoJSON from "@mapbox/togeojson";
 
@@ -76,7 +76,7 @@ function prepare(geojson) {
 // FIXME: make obsolete by improving cutting of track in boxes
 function complexify(track, interval) {
   let coordinates = track.features[0].geometry.coordinates.slice();
-  const ruler = cheapruler(coordinates[Math.trunc(coordinates.length / 2)][1]);
+  const ruler = new CheapRuler(coordinates[Math.trunc(coordinates.length / 2)][1]);
   let result = [];
 
   while (coordinates.length > 1) {
@@ -133,8 +133,8 @@ const trackutils = {
   // return total distance of track in kilometer
   totalDistance(track) {
     const line = track.features[0].geometry.coordinates;
-    const ruler = cheapruler(line[Math.trunc(line.length / 2)][1]);
-    return parseFloat(ruler.lineDistance(line));
+    const ruler = new CheapRuler(line[Math.trunc(line.length / 2)][1]);
+    return ruler.lineDistance(line);
   },
 
   // return cumulated ascent and descent and min/max elevation of track in meter
@@ -167,7 +167,7 @@ const trackutils = {
   // return distance of first track section within bounds
   distanceInBounds(bounds, track) {
     const line = track.features[0].geometry.coordinates;
-    const ruler = cheapruler(bounds.bbox.getCenter().lat);
+    const ruler = new CheapRuler(bounds.bbox.getCenter().lat);
     let insideDistance = 0;
     let inBounds = insideBounds(line[0], bounds.bbox);
     for (let i = 1; i < line.length - 1; i++) {
@@ -223,7 +223,7 @@ const trackutils = {
     }
 
     const line = track.features[0].geometry.coordinates;
-    const ruler = cheapruler(line[Math.trunc(line.length / 2)][1]);
+    const ruler = new CheapRuler(line[Math.trunc(line.length / 2)][1]);
     const points = [];
     let count = 0;
     let intermediateDistance = 0;
@@ -296,6 +296,35 @@ const trackutils = {
 
     return featureCollection(points);
   },
+
+   slopes(track, options) {
+    let result = featureCollection([]);
+    for (const feature of track.features) {
+      let line = feature.geometry.coordinates;
+
+      let smoothing = Math.pow(10, -options.smoothing);
+      let slopeThreshold = options.slopeThreshold / 100;
+      let steepSlopeThreshold = options.steepSlopeThreshold / 100;
+
+      // find the section with significant slope
+      let slopeSegments = profile.slopes(line, smoothing, slopeThreshold);
+
+      // create features
+      for (const part of slopeSegments) {
+        let newFeature = createFeature("LineString", line.slice(part.start, part.end));
+        newFeature.properties.slopesign = Math.sign(part.slope);
+        newFeature.properties.slope = Math.abs(part.slope);
+        if (newFeature.properties.slope >= steepSlopeThreshold) {
+          newFeature.properties.symbol = "gradient-steep";
+        } else {
+          newFeature.properties.symbol = "gradient";
+        }
+        result.features.push(newFeature);
+      }
+    }
+
+    return result;
+   },
 
   emptyFeatureCollection() {
     return featureCollection([]);

@@ -4,7 +4,7 @@ import Printmap from "./printmap.js";
 import I18n from "./i18n.js";
 import overpass from "./overpass.js";
 import paperformat from "./paperformat.js";
-import exampleGpx from "../assets/example.gpx";
+import exampleGpx from "url:../assets/example.gpx";
 
 let map;
 const form = document.getElementById("config");

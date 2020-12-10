@@ -3,7 +3,7 @@ import BoundingBox from "./boundingbox.js";
 import trackutils from "./trackutils.js";
 
 // return FeatureCollection of bounds in specified scale and format along route
-const mapcutter = function(route, options) {
+const mapcutter = function (route, options) {
   let [width, height] = paperformat.dimensions(options.format);
   width -= 2 * options.margin;
   height -= 2 * options.margin;

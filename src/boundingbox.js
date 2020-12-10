@@ -1,10 +1,10 @@
 import mapboxgl from "mapbox-gl";
-import cheapruler from "cheap-ruler";
+import CheapRuler from "cheap-ruler";
 
 class BoundingBox {
   constructor(lat) {
     this._lat = lat;
-    this._ruler = cheapruler(lat, "meters");
+    this._ruler = new CheapRuler(lat, "meters");
     this.bounds = new mapboxgl.LngLatBounds();
   }
 
