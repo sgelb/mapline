@@ -11,12 +11,22 @@
     "serve": "parcel serve index.html",
     "build": "parcel build --no-content-hash --no-cache --no-source-maps --detailed-report info index.html"
   },
-  "browserslist": ["defaults", "not Explorer < 999", "not Android < 999"],
+  "browserslist": [
+    "defaults",
+    "not Explorer < 999",
+    "not Android < 999"
+  ],
+  "alias": {
+    "bootstrap-modal": "/node_modules/bootstrap/js/dist/modal.js",
+    "bootstrap-collapse": "/node_modules/bootstrap/js/dist/collapse.js"
+  },
   "dependencies": {
     "@derhuerst/query-overpass": "^2.0.0",
     "@mapbox/geojson-normalize": "^0.0.1",
     "@mapbox/mapbox-gl-language": "^0.10.0",
     "@mapbox/togeojson": "^0.16.0",
+    "@popperjs/core": "^2.5.4",
+    "bootstrap": "^5.0.0-beta1",
     "cheap-ruler": "^3.0.1",
     "jspdf": "^2.2.0",
     "mapbox-gl": "^2.0.0"

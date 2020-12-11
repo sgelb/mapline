@@ -9,8 +9,8 @@ const t = {
     de: "Route",
   },
   example: {
-    en: "Example",
-    de: "Beispiel",
+    en: "Load example file",
+    de: "Beispieldatei laden",
   },
   open_file: {
     en: "Open gpx or kml file",

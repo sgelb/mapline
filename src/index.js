@@ -5,6 +5,8 @@ import I18n from "./i18n.js";
 import overpass from "./overpass.js";
 import paperformat from "./paperformat.js";
 import exampleGpx from "url:../assets/example.gpx";
+import Modal from "bootstrap-modal";
+import Collapse from "bootstrap-collapse"
 
 let map;
 const form = document.getElementById("config");
@@ -292,16 +294,18 @@ function generatePDF() {
 }
 
 function initProgressbarUpdater(printmap) {
-  const progresstext = document.querySelector("#progress-text");
   const progressbar = document.querySelector("#progress-bar");
-  const modal = document.querySelector("#modal");
-  const modalOverlay = document.querySelector("#modal-overlay");
+  const progresstext = document.querySelector("#progress-text");
+
+  const pdfModal = new Modal(document.getElementById("pdfModal"), {
+    keyboard: false,
+    backdrop: "static",
+  });
+  pdfModal.show();
+
   const closeButton = document.querySelector("#cancel-button");
-
-  modal.classList.remove("hidden");
-  modalOverlay.classList.remove("hidden");
-
   closeButton.addEventListener("click", function () {
+    pdfModal.hide();
     printmap.cancel();
   });
 
@@ -317,11 +321,10 @@ function initProgressbarUpdater(printmap) {
     }
 
     if (currentItem === maxItems) {
-      modal.classList.add("hidden");
-      modalOverlay.classList.add("hidden");
+      pdfModal.hide();
+    } else {
+      progresstext.innerHTML = text;
     }
-
-    progresstext.innerHTML = text;
   };
 }
 
@@ -389,16 +392,15 @@ function toStyleURI(style) {
     case "outdoors":
     case "satellite-streets":
       return (
-        "mapbox://styles/mapbox/" + style + "-v10?optimize=" + enableOptimize
+        "mapbox://styles/mapbox/" + style + "-v11?optimize=" + enableOptimize
       );
-    case "navigation-guidance-day":
-    case "navigation-guidance-night":
+    case "satellite":
       return (
-        "mapbox://styles/mapbox/" + style + "-v2?optimize=" + enableOptimize
+        "mapbox://styles/mapbox/" + style + "-v9?optimize=" + enableOptimize
       );
     default:
       return (
-        "mapbox://styles/mapbox/" + style + "-v9?optimize=" + enableOptimize
+        "mapbox://styles/mapbox/" + style + "-v10?optimize=" + enableOptimize
       );
   }
 }

@@ -70,48 +70,6 @@ section {
   line-height: 1.3em;
 }
 
-/* Modal */
-
-.modal {
-  overflow-y:auto;
-  display: block;
-  width: 50vw;
-  max-height: 90vh;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  right: auto;
-  bottom: auto;
-  transform: translate(-50%, -50%);
-  background: white;
-  border-radius: 1rem;
-  z-index: 1050;
-}
-
-.modal-overlay {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
-	z-index: 1040;
-	background: rgba(0, 0, 0, 0.8);
-}
-
-.modal-body {
-	height: 100%;
-	overflow: auto;
-	padding: 2em;
-}
-
-.modal-body > button {
-  margin-top: 1rem;
-}
-
-.progress {
-  margin-top: 1rem;
-}
-
 .hidden {
   display: none;
 }
