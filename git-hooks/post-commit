@@ -16,9 +16,11 @@ if [ -e .commit ]; then
     cd "$(git rev-parse --show-toplevel)" || exit
 
     echo ":: Generate prebuilds"
-    yarn run parcel build --no-content-hash --no-cache --no-source-maps --public-url ./ --out-dir ./prebuild/ index.html
-
+    yarn prebuild
     cd prebuild || exit
+
+    echo ":: Remove not used dependency files"
+    rm html2canvas.*.js purify.*.js
 
     echo ":: Rename files"
     for oldfile in *.*.{js,css,gpx}; do
@@ -30,9 +32,10 @@ if [ -e .commit ]; then
     done;
 
     echo ":: Replace mapbox token with placeholder"
-    token=$(grep -oP '".*"' ../src/mapboxtoken.js)
-    sed -i "s/$token/\"MAPBOX_TOKEN\"/g" ./src.js
-    linenumber=$(grep -n MAPBOX_TOKEN ./src.js | cut -d : -f 1)
+    # Use first token in uncommented line
+    token=$(grep -oP '^[^/].*\K".*"' ../src/mapboxtoken.js | head -n 1)
+    sed -i "s/$token/\"MAPBOX_TOKEN\"/g" ./mapline.js
+    linenumber=$(grep -n MAPBOX_TOKEN ./mapline.js | cut -d : -f 1)
 
     echo ":: Add current version string to index.html"
     sed -i "s/__VERSION__/$version/g" ./index.html
@@ -41,7 +44,7 @@ if [ -e .commit ]; then
     cat <<- EOF > README.md
 		# Prebuild for version [${version}](https://github.com/sgelb/mapline/releases/tag/v${version})
 
-		Find and replace \`MAPBOX_TOKEN\` in \`prebuild/src.js\` (Line ${linenumber})
+		Find and replace \`MAPBOX_TOKEN\` in \`prebuild/mapline.js\` (Line ${linenumber})
 		with your own [Mapbox access token](https://www.mapbox.com/help/create-api-access-token/).
 		EOF
 

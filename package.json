@@ -1,24 +1,31 @@
 {
   "name": "mapline",
-  "version": "0.23.0",
+  "version": "0.24.0",
   "description": "Create maps along a track in print quality.",
-  "main": "dist/index.html",
   "keywords": [],
   "homepage": "https://github.com/sgelb/mapline",
   "author": "sgelb",
   "license": "GPL-3.0-or-later",
   "scripts": {
     "serve": "parcel serve index.html",
-    "build": "parcel build --no-content-hash --no-cache --no-source-maps --detailed-report info index.html"
+    "dist": "parcel build --no-content-hash --no-cache --no-source-maps --target main index.html",
+    "prebuild": "parcel build --no-content-hash --no-cache --no-source-maps --target prebuild index.html"
   },
-  "browserslist": [
-    "defaults",
-    "not Explorer < 999",
-    "not Android < 999"
-  ],
   "alias": {
     "bootstrap-modal": "/node_modules/bootstrap/js/dist/modal.js",
     "bootstrap-collapse": "/node_modules/bootstrap/js/dist/collapse.js"
+  },
+  "main": "dist/index.html",
+  "prebuild": "prebuild/index.html",
+  "targets": {
+    "main": {
+      "distDir": "dist",
+      "publicUrl": "./"
+    },
+    "prebuild": {
+      "distDir": "prebuild",
+      "publicUrl": "./"
+    }
   },
   "dependencies": {
     "@derhuerst/query-overpass": "^2.0.0",
@@ -29,7 +36,7 @@
     "bootstrap": "^5.0.0-beta1",
     "cheap-ruler": "^3.0.1",
     "jspdf": "^2.2.0",
-    "mapbox-gl": "^2.0.0"
+    "mapbox-gl": "^1.13.0"
   },
   "devDependencies": {
     "parcel": "^2.0.0-beta.1"
