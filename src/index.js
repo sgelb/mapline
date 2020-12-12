@@ -1,12 +1,14 @@
+import Modal from "bootstrap-modal";
+import Collapse from "bootstrap-collapse";
+
 import FormValidator from "./formvalidator.js";
 import Mapbox from "./mapbox.js";
 import Printmap from "./printmap.js";
 import I18n from "./i18n.js";
 import overpass from "./overpass.js";
 import paperformat from "./paperformat.js";
+
 import exampleGpx from "url:../assets/example.gpx";
-import Modal from "bootstrap-modal";
-import Collapse from "bootstrap-collapse"
 
 let map;
 const form = document.getElementById("config");

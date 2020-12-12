@@ -1,5 +1,5 @@
-import mapboxgl from "mapbox-gl";
-import MapBoxLanguage from "@mapbox/mapbox-gl-language";
+import { mapboxgl } from "mapbox-gl";
+import { MapBoxLanguage } from "@mapbox/mapbox-gl-language";
 
 import I18n from "./i18n.js";
 import layers from "./layers.js";
