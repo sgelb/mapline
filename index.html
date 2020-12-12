@@ -17,8 +17,8 @@
 
     <link
       rel="stylesheet"
-      href="https://api.mapbox.com/mapbox-gl-js/v2.0.0/mapbox-gl.css"
-      integrity="sha384-4hP1P/do8K97TrJzFuyXHddOxt7y5RRoqAy0xvJwzNxU1PpdoKW59vVYN432p2W0"
+      href="https://api.mapbox.com/mapbox-gl-js/v1.13.0/mapbox-gl.css"
+      integrity="sha384-d39gPzQ4eGpLy/1l4u2mLAT8KkPTOVrpoo8W4C8GtWBaJ+loWbZnKfvNtlmGsB12"
       crossorigin="anonymous"
     />
 
@@ -381,11 +381,16 @@
 
           <div class="modal-body">
             <div id="progress-text" data-trn="initializing" class="mb-3"></div>
-            <div
-              class="progress-bar progress-bar-striped progress-bar-animated"
-              id="progress-bar"
-              style="width: 0%"
-            ></div>
+            <div class="progress">
+              <div
+                class="progress-bar progress-bar-striped progress-bar-animated"
+                id="progress-bar"
+                style="width: 0%"
+                aria-valuenow="0"
+                aria-valuemin="0"
+                aria-valuemax="100"
+              ></div>
+            </div>
           </div>
 
           <div class="modal-footer">
