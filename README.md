@@ -5,7 +5,7 @@ your format and the infos you need.
 
 [Live Demo page](https://sgelb.github.io/mapline/)
 
-![Screenshot](screenshot.png)
+![Screenshot](screenshot.jpg)
 
 
 ### Features
