@@ -12,6 +12,14 @@ const t = {
     en: "Load example file",
     de: "Beispieldatei laden",
   },
+  settings: {
+    en: "Settings",
+    de: "Einstellungen",
+  },
+  pois: {
+    en: "POIs",
+    de: "POIs",
+  },
   open_file: {
     en: "Open gpx or kml file",
     de: "Öffne gpx- oder kml-Datei",
@@ -83,10 +91,6 @@ const t = {
   track_color: {
     en: "Track color",
     de: "Trackfarbe",
-  },
-  pois: {
-    en: "Show POIs",
-    de: "POIs anzeigen",
   },
   show_waypoints: {
     en: "Show GPX waypoints",
