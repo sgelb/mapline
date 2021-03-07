@@ -22,8 +22,8 @@ const i18n = new I18n();
     map = new Mapbox({
       container: "map",
       style: toStyleURI("outdoors"),
-      center: [14.8, 47.5],
-      zoom: 7,
+      center: [8.4, 46.7],
+      zoom: 7.3,
       hash: true,
     });
     setPaperformatOptions();
